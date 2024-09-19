@@ -4,8 +4,6 @@ type ppos = Lexing.position * Lexing.position
 
 type program = gdef list 
 
-
-
 and gdef =
   | Function of string*string*stmt list*ppos   
   | Gvar of string*ppos
