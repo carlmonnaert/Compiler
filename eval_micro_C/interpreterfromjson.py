@@ -23,8 +23,11 @@ def gfundef(data):
     globalfunc[data['name']] = {"body" : data['body'], "localvar" : {}, 'arg' : {'name' : data['arg'], 'value': 0}}
     
 def vardef(data, funcname):
-    localvar = globalfunc[funcname]['localvar']
-    localvar[data['name']] = 0
+    if funcname is not None:
+        localvar = globalfunc[funcname]['localvar']
+        localvar[data['name']] = 0
+    else:
+        raise Exception("Define local variable outside of function")
     
 def evalexpr(data, funcname):
     if 'expr' in data:
@@ -39,7 +42,7 @@ def evalexpr(data, funcname):
         if data['binop'] == '*':
             return left * right
         if data['binop'] == '/':
-            return left / right
+            return left // right
     if 'value' in data:
         return data['value']
     if 'name' in data:
@@ -138,4 +141,4 @@ def interpret(data, funcname=None):
         
 interpret(data)
 if 'main' in globalfunc:
-    interpret(globalfunc['main'])
+    interpret(globalfunc['main'], 'main')
