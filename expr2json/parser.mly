@@ -5,7 +5,8 @@
   open Ast
 
 %}
-
+// %token ALLCHAR
+// %token COMMENT
 %token <int> CST
 %token <string> IDENT
 %token PRINT, READ
@@ -15,16 +16,16 @@
 %token EQ
 %token SEMICOLON RETURN INT
 
-/* Définitions des priorités et associativités des tokens */
+/* Dï¿½finitions des prioritï¿½s et associativitï¿½s des tokens */
 
 %left PLUS MINUS 
 %left TIMES DIV
 %nonassoc uminus
 
-/* Point d'entrée de la grammaire */
+/* Point d'entrï¿½e de la grammaire */
 %start prog
 
-/* Type des valeurs retournées par l'analyseur syntaxique */
+/* Type des valeurs retournï¿½es par l'analyseur syntaxique */
 %type <Ast.program> prog
 
 %%
@@ -45,7 +46,10 @@ stmt:
 | id = IDENT EQ e = expr SEMICOLON    { Set(id,e,$loc) }
 | RETURN e = expr SEMICOLON           { Return(e,$loc) }
 ;
- 
+// randomText : ALLCHAR {}
+// | ALLCHAR e = randomText {}
+// ;
+
 expr:
 | c = CST                        { Cst(c,$loc) }
 | fct = IDENT LP arg = expr RP                 { Call(fct,arg,$loc) }

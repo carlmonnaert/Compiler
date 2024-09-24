@@ -14,6 +14,7 @@ globalvar = {}
 globalfunc = {}
 
 
+
 def gvardef(data):
     global globalvar
     globalvar[data['name']] = 0
@@ -68,6 +69,9 @@ def evalexpr(data, funcname):
         else:
             raise Exception("Function not found")
     return None
+
+
+
 def varset(data, funcname):
     if 'expr' in data:
         val = evalexpr(data['expr'], funcname)

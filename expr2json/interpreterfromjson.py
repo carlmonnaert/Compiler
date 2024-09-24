@@ -12,6 +12,7 @@ with open(json_file) as f:
 
 globalvar = {}
 globalfunc = {}
+i = 0
 
 
 def gvardef(data):

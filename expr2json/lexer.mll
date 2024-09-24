@@ -23,11 +23,13 @@ let digit = ['0'-'9']
 let ident = letter (letter | digit)*
 let integer = ['0'-'9']+
 let space = [' ' '\t']
+let allchar = ['\000' - '\255']
 
 rule token = parse
   | '\n'    { new_line lexbuf; token lexbuf }
   | space+  { token lexbuf }
   | ident as id { id_or_kwd id }
+  (* | '//'  { COMMENT} *)
   | '+'     { PLUS }
   | '-'     { MINUS }
   | '*'     { TIMES }
@@ -40,6 +42,7 @@ rule token = parse
   | ';'     { SEMICOLON }
   | integer as s { CST (int_of_string s) }
   | eof     { EOF }
+  (* | allchar* { ALLCHAR } *)
   | _ as c  { raise (Lexing_error c) }
  
 
