@@ -71,6 +71,7 @@ def eval_expr(term, local_env):
     if term["type"] == "application":
         func = fun[term["function"]]
         func["localvar"][func["arg"]] = {"value" : eval_expr(term["argvalue"], local_env)}
+        
         eval_func(func["body"], func["localvar"])
         return ret
 

@@ -5,6 +5,7 @@ int f(int a) {
     return y;
 }
 int main(int argc) {
-    x = f(5);
+    x = f(3);
     print(x);
+    return 0;
 }
