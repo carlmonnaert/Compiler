@@ -15,6 +15,7 @@ globalfunc = {}
 
 
 
+
 def gvardef(data):
     global globalvar
     globalvar[data['name']] = 0

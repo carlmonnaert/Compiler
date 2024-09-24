@@ -15,7 +15,6 @@ class Interpret_exception(BaseException):
 gvar = {} # global variables
 ret = 0 # return value
 fun = {} # global functions
-lvar = {} # local variables
 
 
 def get_var_value(var_name, local_env, pos):
@@ -71,7 +70,7 @@ def eval_expr(term, local_env):
         return eval_func(fun[term["name"]]["body"], new_local_env)
     if term["type"] == "application":
         func = fun[term["function"]]
-        
+        func["localvar"][func["arg"]] = {"value" : eval_expr(term["argvalue"], local_env)}
         eval_func(func["body"], func["localvar"])
         return ret
 
@@ -108,7 +107,6 @@ def eval_program(program):
             gvar[dic["name"]] = {"value" : 0, "start_line" : dic["start_line"], "start_char" : dic["start_char"], "end_line" : dic["end_line"], "end_char" : dic["end_char"]}  
         if dic["action"] == "fundef":
             fun[dic["name"]] = {"arg" : dic["arg"], "localvar" : {} ,"body" : dic["body"], "start_line" : dic["start_line"], "start_char" : dic["start_char"], "end_line" : dic["end_line"], "end_char" : dic["end_char"]}
-    print(fun)
     eval_func(fun["main"]["body"], fun["main"]["localvar"])
 
 if __name__ == "__main__":
