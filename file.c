@@ -7,5 +7,5 @@ int f(int a) {
 int main(int argc) {
     x = f(3);
     print(x);
-    return 0;
+    return 3;
 }
