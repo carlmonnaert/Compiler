@@ -58,7 +58,7 @@ def eval_expr(term, local_env):
         if term["binop"] == "*":
             return left * right
         if term["binop"] == "/":
-            return left / right
+            return left // right
     if term["type"] == "call":
         if term["name"] not in fun:
             raise Interpret_exception("Undefined function '%s'"%term["name"], term)
