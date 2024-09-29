@@ -6,7 +6,7 @@ int f(int a) {
 }
 
 int main(int argc) {
-    x = 5/2;
+    x = 8;
     print(x);
     return 3;
 }
