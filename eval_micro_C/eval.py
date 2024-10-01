@@ -59,15 +59,15 @@ def eval_expr(term, local_env):
             return left * right
         if term["binop"] == "/":
             return left // right
-    if term["type"] == "call":
-        if term["name"] not in fun:
-            raise Interpret_exception("Undefined function '%s'"%term["name"], term)
-        if len(term["args"]) != len(fun[term["name"]]["arg"]):
-            raise Interpret_exception("Wrong number of arguments in function call '%s'"%term["name"], term)
-        new_local_env = {}
-        for i in range(len(term["args"])):
-            new_local_env[fun[term["name"]]["arg"][i]] = {"value" : eval_expr(term["args"][i], local_env)}
-        return eval_func(fun[term["name"]]["body"], new_local_env)
+    # if term["type"] == "call":
+    #     if term["name"] not in fun:
+    #         raise Interpret_exception("Undefined function '%s'"%term["name"], term)
+    #     if len(term["arg"]) != len(fun[term["name"]]["arg"]):
+    #         raise Interpret_exception("Wrong number of arguments in function call '%s'"%term["name"], term)
+    #     new_local_env = {}
+    #     for i in range(len(term["args"])):
+    #         new_local_env[fun[term["name"]]["arg"][i]] = {"value" : eval_expr(term["args"][i], local_env)}
+    #     return eval_func(fun[term["name"]]["body"], new_local_env)
     if term["type"] == "application":
         func = fun[term["function"]]
         func["localvar"][func["arg"]] = {"value" : eval_expr(term["argvalue"], local_env)}
