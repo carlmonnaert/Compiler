@@ -4,41 +4,24 @@ format:
 	.text
 	.globl main
 main:
-	push $1
-	push $1
-	push $1
-	push $1
-	push $1
-	push $1
-	push $1
-	push $1
-	pop %rax
+	push $20
+	push $5
 	pop %rbx
-	sub %rbx, %rax
+	pop %rax
+	cqo
+	idiv %rbx
 	push %rax
-	pop %rax
+	push $4
 	pop %rbx
-	sub %rbx, %rax
+	pop %rax
+	cqo
+	idiv %rbx
 	push %rax
-	pop %rax
+	push $2
 	pop %rbx
-	sub %rbx, %rax
-	push %rax
 	pop %rax
-	pop %rbx
-	sub %rbx, %rax
-	push %rax
-	pop %rax
-	pop %rbx
-	sub %rbx, %rax
-	push %rax
-	pop %rax
-	pop %rbx
-	sub %rbx, %rax
-	push %rax
-	pop %rax
-	pop %rbx
-	sub %rbx, %rax
+	cqo
+	idiv %rbx
 	push %rax
 	pop %rsi
 	leaq format(%rip), %rdi
