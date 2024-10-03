@@ -16,6 +16,7 @@ def eval_program(program):
     list_data.append("\t.data")
     list_data.append("format:")
     list_data.append("\t.string \"%d\\n\"")
+    
     for stmt in program:
         if stmt["action"] == "fundef" and stmt["name"] == "main":
             list_instr.append("\t.text")
@@ -23,12 +24,18 @@ def eval_program(program):
             list_instr.append("main:")
             eval_stmt(stmt["body"])
 
+        if stmt["action"] == "gvardef" :
+            list_data.append("%s:"%stmt["name"])
+            list_data.append("\t.int 0")
+
+
 def eval_stmt(stmt):
     for instr in stmt:
         if instr["action"] == "return":
             eval_expr(instr["expr"])
             list_instr.append("\tpop %rax")
             list_instr.append("\tret")
+
         if instr["action"] == "print":
             eval_expr(instr["expr"])
             list_instr.append("\tpop %rsi")
@@ -43,10 +50,6 @@ def eval_stmt(stmt):
             list_instr.append("\tadd $8, %rsp")
             list_instr.append("\tpop %r8")
             list_instr.append("\tadd %r8, %rsp")
-
-
-
-            
 
 
 def eval_expr(expr):
@@ -82,6 +85,11 @@ def eval_expr(expr):
             list_instr.append("\tcqo")
             list_instr.append("\tidiv %rbx")
             list_instr.append("\tpush %rax")
+    
+    if expr["type"] == "var":
+        list_instr.append("\tpush %s(%%rip)"%expr["name"])
+
+
 
 
 
