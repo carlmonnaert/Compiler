@@ -61,8 +61,8 @@ def eval_expr(expr):
             list_instr.append("\tadd %rbx, %rax")
             list_instr.append("\tpush %rax")
         if expr["binop"] == "-":
-            eval_expr(expr["e1"])
             eval_expr(expr["e2"])
+            eval_expr(expr["e1"])
             list_instr.append("\tpop %rax")
             list_instr.append("\tpop %rbx")
             list_instr.append("\tsub %rbx, %rax")

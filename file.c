@@ -1,6 +1,6 @@
 
 
 int main(int argc) {
-    print(2+3*5);
+    print(1-1-1-1-1-1-1-1);
     return 5*2+1;
 }
