@@ -11,11 +11,10 @@ list_data = []
 list_instr = []
 
 
-
 def eval_program(program):
     list_data.append("\t.data")
     list_data.append("format:")
-    list_data.append("\t.string \"%d\\n\"")
+    list_data.append("\t.string \"%d\\n\"") 
     
     for stmt in program:
         if stmt["action"] == "fundef" and stmt["name"] == "main":
@@ -25,6 +24,7 @@ def eval_program(program):
             eval_stmt(stmt["body"])
 
         if stmt["action"] == "gvardef" :
+            list_data.append(".globl  %s"%stmt["name"])
             list_data.append("%s:"%stmt["name"])
             list_data.append("\t.int 0")
 
@@ -50,11 +50,17 @@ def eval_stmt(stmt):
             list_instr.append("\tadd $8, %rsp")
             list_instr.append("\tpop %r8")
             list_instr.append("\tadd %r8, %rsp")
-
+        
+        if instr["action"] == "varset":
+            if "%s:"%instr["name"] in list_data:
+                eval_expr(instr["expr"])
+                list_instr.append("\tpop %r8")
+                list_instr.append("\tmov %%r8, %s(%%rip)"%instr["name"])
 
 def eval_expr(expr):
     if expr["type"] == "cst":
         list_instr.append(f"\tpush ${expr['value']}")
+
     if expr["type"] == "binop":
         if expr["binop"] == "+":
             eval_expr(expr["e1"])
@@ -88,8 +94,6 @@ def eval_expr(expr):
     
     if expr["type"] == "var":
         list_instr.append("\tpush %s(%%rip)"%expr["name"])
-
-
 
 
 

@@ -1,7 +1,7 @@
-int x ;
-
+int x;
 int main(int argc) {
+    x = 10;
+    x = x * x ;
     print(x);
-    print(10-10-10-10);
     return 0;
 }
