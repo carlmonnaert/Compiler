@@ -5,16 +5,20 @@ format:
 x:
 	.int 0
 	.text
+	.globl f
+f:
+	push $20
+	pop %rax
+	ret
+	.text
 	.globl main
 main:
-	push $10
-	pop %r8
-	mov %r8, x(%rip)
-	push x(%rip)
-	push x(%rip)
+	push $5
+	call f
+	push %rax
 	pop %rax
 	pop %rbx
-	imul %rbx, %rax
+	add %rbx, %rax
 	push %rax
 	pop %r8
 	mov %r8, x(%rip)
