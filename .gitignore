@@ -1,4 +1,4 @@
-_build
+/expr2json/_build
 a.out
 *.exe
 *.json
