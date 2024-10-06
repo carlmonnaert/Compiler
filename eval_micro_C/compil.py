@@ -16,12 +16,17 @@ def eval_program(program):
     list_data.append("\t.data")
     list_data.append("format:")
     list_data.append("\t.string \"%d\\n\"")
+    list_instr.append("\t.text")
     for stmt in program:
         if stmt["action"] == "fundef" and stmt["name"] == "main":
-            list_instr.append("\t.text")
             list_instr.append("\t.globl main")
             list_instr.append("main:")
             eval_stmt(stmt["body"])
+        elif stmt["action"] == "fundef":
+            list_instr.append("\t.globl " + stmt["name"])
+            list_instr.append(stmt["name"] + ":")
+            eval_stmt(stmt["body"])
+            
 
 def eval_stmt(stmt):
     for instr in stmt:

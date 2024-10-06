@@ -1,1 +1,5 @@
 _build
+a.out
+*.exe
+*.json
+*.s
