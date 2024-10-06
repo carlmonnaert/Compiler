@@ -23,10 +23,16 @@ def eval_program(program):
             list_instr.append("main:")
             eval_stmt(stmt["body"])
 
-        if stmt["action"] == "gvardef" :
+        elif stmt["action"] == "gvardef" :
             list_data.append(".globl  %s"%stmt["name"])
             list_data.append("%s:"%stmt["name"])
             list_data.append("\t.int 0")
+        
+        elif stmt["action"] == "fundef":
+            list_instr.append("\t.text")
+            list_instr.append("\t.globl %s"%stmt["name"])
+            list_instr.append("%s:"%stmt["name"])
+            eval_stmt(stmt["body"])
 
 
 def eval_stmt(stmt):
@@ -53,9 +59,14 @@ def eval_stmt(stmt):
         
         if instr["action"] == "varset":
             if "%s:"%instr["name"] in list_data:
-                eval_expr(instr["expr"])
-                list_instr.append("\tpop %r8")
-                list_instr.append("\tmov %%r8, %s(%%rip)"%instr["name"])
+                if instr["expr"]["type"] == "application":
+                    eval_expr(instr["expr"])
+                    list_instr.append("\tpop %r8")
+                    list_instr.append("\tmov %%r8, %s(%%rip)"%instr["name"])
+                else:
+                    eval_expr(instr["expr"])
+                    list_instr.append("\tpop %r8")
+                    list_instr.append("\tmov %%r8, %s(%%rip)"%instr["name"])
 
 def eval_expr(expr):
     if expr["type"] == "cst":
@@ -94,6 +105,11 @@ def eval_expr(expr):
     
     if expr["type"] == "var":
         list_instr.append("\tpush %s(%%rip)"%expr["name"])
+    
+    if expr["type"] == "application":
+        list_instr.append("\tcall %s"%expr["function"])
+        list_instr.append("\tpush %rax")
+
 
 
 
