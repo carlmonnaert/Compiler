@@ -1,6 +1,7 @@
-
-
+int x;
 int main(int argc) {
-    print(20/5/4/2);
-    return 5*2+1;
+    x = 10;
+    x = x * x ;
+    print(x);
+    return 0;
 }
