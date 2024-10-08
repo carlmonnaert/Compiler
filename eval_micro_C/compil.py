@@ -32,7 +32,7 @@ def eval_program(program):
         elif stmt["action"] == "gvardef" :
             list_data.append(".globl  %s"%stmt["name"])
             list_data.append("%s:"%stmt["name"])
-            list_data.append("\t.int 0")
+            list_data.append("\t.quad 0")
         
         elif stmt["action"] == "fundef":
             list_instr.append("\t.text")
