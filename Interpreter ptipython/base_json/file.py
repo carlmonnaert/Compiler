@@ -1,7 +1,3 @@
-a = 42
-print(a)
+for k in []:
+    print (0)
 
-def f(x):
-    return 17
-
-print(f(7))

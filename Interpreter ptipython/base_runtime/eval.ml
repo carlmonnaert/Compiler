@@ -8,8 +8,7 @@ let localisation pos =
   let l = pos.pos_lnum in
   let c = pos.pos_cnum - pos.pos_bol + 1 in
   eprintf "À la ligne %d, autour des positions %d-%d:\n"  l (c-1) c;;
-  
-  
+
 let eval_file ifile = 
   let f = open_in ifile in
   let buf = Lexing.from_channel f in
@@ -39,3 +38,4 @@ let eval_file ifile =
        exit 1;
   in
   close_in f
+
