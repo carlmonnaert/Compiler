@@ -1,12 +1,14 @@
 int x;
-
-int f(int a){
-    return 20;
-}
-
+int y;
 
 int main(int argc) {
-    x = 5 + f(2);
-    print(x);
+    x = 20;
+    y = 10;
+    print (x);
+    print(y);
+
+
+    x = y;
+    print(y);
     return 0;
 }
