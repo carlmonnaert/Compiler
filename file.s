@@ -1,28 +1,30 @@
 	.data
 format:
 	.string "%d\n"
-.globl  x
-x:
-	.int 0
 	.text
 	.globl f
 f:
-	push $20
+	push %rbp
+	mov %rsp, %rbp
+	sub $16, %rsp
+	mov %rdi, -8(%rbp)
+	push -8(%rbp)
 	pop %rax
+	add $16, %rsp
+	pop %rbp
 	ret
 	.text
 	.globl main
 main:
-	push $5
+	push %rbp
+	mov %rsp, %rbp
+	sub $24, %rsp
+	mov $10, %rdi
 	call f
 	push %rax
-	pop %rax
-	pop %rbx
-	add %rbx, %rax
-	push %rax
 	pop %r8
-	mov %r8, x(%rip)
-	push x(%rip)
+	mov %r8, -16(%rbp)
+	push -16(%rbp)
 	pop %rsi
 	leaq format(%rip), %rdi
 	mov $0, %eax
@@ -37,4 +39,6 @@ main:
 	add %r8, %rsp
 	push $0
 	pop %rax
+	add $24, %rsp
+	pop %rbp
 	ret
