@@ -1,13 +1,14 @@
-
-
-int f(int a){
-    return a;
-}
-
+int x;
+int y;
 
 int main(int argc) {
-    int x;
-    x = f(10);
-    print(x);
+    x = 20;
+    y = 10;
+    print (x);
+    print(y);
+
+
+    x = y;
+    print(y);
     return 0;
 }
