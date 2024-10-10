@@ -64,6 +64,27 @@ def eval_stmt(stmt, local_env = None):
             list_instr.append("\tadd $8, %rsp")
             list_instr.append("\tpop %r8")
             list_instr.append("\tadd %r8, %rsp")
+
+
+        if instr["action"] == "scanf":
+            eval_expr(instr["expr"], local_env)
+            list_instr.append("\tpop %rsi")
+            list_instr.append("\tleaq format(%rip), %rdi")
+            list_instr.append("\tmov $0, %eax")
+            list_instr.append("\tmov %rsp, %r8")
+            list_instr.append("\tand $0xf, %r8 ")
+            list_instr.append("\tsub %r8, %rsp")
+            list_instr.append("\tpush %r8")
+            list_instr.append("\tsub $8, %rsp")
+
+            list_instr.append("\tleaq (%rsp), %rsi")            
+            list_instr.append("\tleaq format(%rip), %rdi")            
+            list_instr.append("\tmov $0, %rax")            
+            list_instr.append("\tcall scanf")     
+                      
+            list_instr.append("\tadd $8, %rsp")
+            list_instr.append("\tpop %r8")
+            list_instr.append("\tadd %r8, %rsp")
         
         if instr["action"] == "varset":
             if instr["name"] in local_env:
