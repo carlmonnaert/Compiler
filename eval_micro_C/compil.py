@@ -128,9 +128,16 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tpush %s(%%rip)"%expr["name"])
     
     if expr["type"] == "application":
-        list_instr.append("\tmov $%s, %%rdi"%expr["argvalue"]["value"])
-        list_instr.append("\tcall %s"%expr["function"])
-        list_instr.append("\tpush %rax")
+        if expr["argvalue"]["type"] == "cst":
+            list_instr.append("\tmov $%s, %%rdi"%expr["argvalue"]["value"])
+            list_instr.append("\tcall %s"%expr["function"])
+            list_instr.append("\tpush %rax")
+        else:
+            eval_expr(expr["argvalue"], local_env)
+            list_instr.append("\tpop %rdi")
+            list_instr.append("\tcall %s"%expr["function"])
+            list_instr.append("\tpush %rax")
+
 
 
 

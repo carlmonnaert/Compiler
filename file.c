@@ -1,14 +1,15 @@
-int x;
-int y;
+
+int f(int a){
+    return g(a) + 3 ;
+}
+
+int g(int a){
+    return a + 1;
+}
 
 int main(int argc) {
-    x = 20;
-    y = 10;
-    print (x);
-    print(y);
+    print(f(5));
 
 
-    x = y;
-    print(y);
     return 0;
 }
