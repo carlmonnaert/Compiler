@@ -1,143 +1,91 @@
 [
   {
     "action": "fundef",
-    "name": "f",
-    "arg": "a",
+    "name": "main",
+    "arg": "argc",
     "body": [
       {
-        "action": "return",
-        "expr": {
-          "type": "binop",
-          "binop": "+",
-          "e1": {
-            "type": "application",
-            "function": "g",
-            "argvalue": {
-              "type": "var",
-              "name": "a",
-              "start_line": 3,
-              "start_char": 13,
-              "end_line": 3,
-              "end_char": 14
-            },
-            "start_line": 3,
-            "start_char": 11,
-            "end_line": 3,
-            "end_char": 15
-          },
-          "e2": {
-            "type": "cst",
-            "value": 3,
-            "start_line": 3,
-            "start_char": 18,
-            "end_line": 3,
-            "end_char": 19
-          },
-          "start_line": 3,
-          "start_char": 11,
-          "end_line": 3,
-          "end_char": 19
-        },
+        "action": "vardef",
+        "name": "x",
         "start_line": 3,
         "start_char": 4,
         "end_line": 3,
-        "end_char": 21
-      }
-    ],
-    "start_line": 2,
-    "start_char": 0,
-    "end_line": 4,
-    "end_char": 1
-  },
-  {
-    "action": "fundef",
-    "name": "g",
-    "arg": "a",
-    "body": [
+        "end_char": 10
+      },
       {
-        "action": "return",
+        "action": "vardef",
+        "name": "y",
+        "start_line": 4,
+        "start_char": 4,
+        "end_line": 4,
+        "end_char": 10
+      },
+      {
+        "action": "read",
+        "var": "x",
+        "start_line": 5,
+        "start_char": 4,
+        "end_line": 5,
+        "end_char": 12
+      },
+      {
+        "action": "read",
+        "var": "y",
+        "start_line": 6,
+        "start_char": 4,
+        "end_line": 6,
+        "end_char": 12
+      },
+      {
+        "action": "print",
         "expr": {
           "type": "binop",
           "binop": "+",
           "e1": {
             "type": "var",
-            "name": "a",
+            "name": "x",
             "start_line": 7,
-            "start_char": 11,
+            "start_char": 10,
             "end_line": 7,
-            "end_char": 12
+            "end_char": 11
           },
           "e2": {
-            "type": "cst",
-            "value": 1,
+            "type": "var",
+            "name": "y",
             "start_line": 7,
-            "start_char": 15,
+            "start_char": 14,
             "end_line": 7,
-            "end_char": 16
+            "end_char": 15
           },
           "start_line": 7,
-          "start_char": 11,
+          "start_char": 10,
           "end_line": 7,
-          "end_char": 16
+          "end_char": 15
         },
         "start_line": 7,
         "start_char": 4,
         "end_line": 7,
         "end_char": 17
-      }
-    ],
-    "start_line": 6,
-    "start_char": 0,
-    "end_line": 8,
-    "end_char": 1
-  },
-  {
-    "action": "fundef",
-    "name": "main",
-    "arg": "argc",
-    "body": [
-      {
-        "action": "print",
-        "expr": {
-          "type": "application",
-          "function": "f",
-          "argvalue": {
-            "type": "cst",
-            "value": 5,
-            "start_line": 11,
-            "start_char": 12,
-            "end_line": 11,
-            "end_char": 13
-          },
-          "start_line": 11,
-          "start_char": 10,
-          "end_line": 11,
-          "end_char": 14
-        },
-        "start_line": 11,
-        "start_char": 4,
-        "end_line": 11,
-        "end_char": 16
       },
       {
         "action": "return",
         "expr": {
           "type": "cst",
           "value": 0,
-          "start_line": 14,
+          "start_line": 10,
           "start_char": 11,
-          "end_line": 14,
+          "end_line": 10,
           "end_char": 12
         },
-        "start_line": 14,
+        "start_line": 10,
         "start_char": 4,
-        "end_line": 14,
+        "end_line": 10,
         "end_char": 13
       }
     ],
-    "start_line": 10,
+    "start_line": 2,
     "start_char": 0,
-    "end_line": 15,
+    "end_line": 11,
     "end_char": 1
   }
 ]

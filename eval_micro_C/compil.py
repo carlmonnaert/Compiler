@@ -15,6 +15,9 @@ def eval_program(program):
     list_data.append("\t.data")
     list_data.append("format:")
     list_data.append("\t.string \"%d\\n\"") 
+    # for scanf
+    list_data.append("format2:")
+    list_data.append("\t.string \"%d\"")
     
     for stmt in program:
         if stmt["action"] == "fundef":
@@ -64,6 +67,28 @@ def eval_stmt(stmt, local_env = None):
             list_instr.append("\tadd $8, %rsp")
             list_instr.append("\tpop %r8")
             list_instr.append("\tadd %r8, %rsp")
+        
+        if instr["action"] == "read":
+            list_instr.append("\tpush $0")
+            list_instr.append("\tleaq (%rsp), %rsi")
+            list_instr.append("\tleaq format2(%rip), %rdi")
+            list_instr.append("\tmov $0, %eax")
+            list_instr.append("\tmov %rsp, %r8")
+            list_instr.append("\tand $0xf, %r8 ")
+            list_instr.append("\tsub %r8, %rsp")
+            list_instr.append("\tpush %r8")
+            list_instr.append("\tsub $8, %rsp")
+            list_instr.append("\tcall scanf")
+            list_instr.append("\tadd $8, %rsp")
+            list_instr.append("\tpop %r8")
+            list_instr.append("\tadd %r8, %rsp")
+            if instr["var"] in local_env:
+                list_instr.append("\tmov %%rsi, -%d(%%rbp)"%int(local_env[instr["var"]]*8))
+                list_instr.append("\tpop %rsi")
+            else:
+                list_instr.append("\tmov %%rsi, %s(%%rip)"%instr["var"])
+                list_instr.append("\tpop %rsi")
+
         
         if instr["action"] == "varset":
             if instr["name"] in local_env:
