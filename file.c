@@ -1,14 +1,11 @@
-int x;
-int y;
 
 int main(int argc) {
-    x = 20;
-    y = 10;
-    print (x);
-    print(y);
+    int x;
+    int y;
+    read(x);
+    read(y);
+    print(x + y);
 
 
-    x = y;
-    print(y);
     return 0;
 }
