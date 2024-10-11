@@ -3,8 +3,7 @@
 # Shared cache: disabled
 # Shared cache location: /home/carl/.cache/dune/db
 # Workspace root:
-# "/home/carl/T\195\169l\195\169com/INF-108/projet_1/compil_1A/Interpreter
-# ptipython/base_runtime"
+# "/home/carl/T\195\169l\195\169com/INF-108/projet_1/compil_1A/Interpreter_ptipython/base_runtime"
 # Auto-detected concurrency: 8
 # Dune context:
 #  { name = "default"
@@ -15,4 +14,4 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_b2b58b_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_7870c1_output
