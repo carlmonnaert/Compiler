@@ -1,6 +1,6 @@
 eval $(opam env)
 
-cd expr2json ;
+cd expr2json;
 dune build ;
 cd ..
 cp expr2json/expr2json.exe .
