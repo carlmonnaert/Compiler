@@ -2,9 +2,8 @@
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Shared cache location: /home/lukas/.cache/dune/db
-# Workspace root:
-# /home/lukas/compil/projets/peu_importe/Interpreter_ptipython/base_runtime
-# Auto-detected concurrency: 8
+# Workspace root: /home/lukas/peu_importe/Interpreter_ptipython/base_runtime
+# Auto-detected concurrency: 16
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -14,4 +13,4 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_7dc506_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_914e1c_output

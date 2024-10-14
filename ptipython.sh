@@ -7,7 +7,9 @@ eval $(opam env)
 
 cd Interpreter_ptipython/base_runtime ;
 dune build ;
-cd ../..;
+cd ../base_json ;
+dune build ;
+cd ../.. ;
 cp Interpreter_ptipython/base_runtime/ptipython.exe .
 cp Interpreter_ptipython/base_json/ptipython2json.exe .
 ./ptipython2json.exe file.py

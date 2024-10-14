@@ -10,6 +10,10 @@ type value = {typ : string ; value : string};;
 
 let gvar : (string, value) Hashtbl.t = Hashtbl.create 10
 
+let toPyBool = function
+  | "true" -> "True"
+  | "false" -> "False"
+  | _ -> failwith "not a boolean"
 
 
 let rec eval_expr expr = match expr with
@@ -17,7 +21,7 @@ let rec eval_expr expr = match expr with
                           match const with 
                             | Int(str,ppos1) -> {typ = "int"; value = str}
                             | Str(str,ppos1) ->  {typ = "string"; value = str}
-                            | Bool(b,ppos1) -> {typ = "bool"; value = string_of_bool b}
+                            | Bool(b,ppos1) -> {typ = "bool"; value = toPyBool (string_of_bool b)}
                             | _ -> failwith "not implemented in eval_expr"
                             (*
                             
@@ -35,7 +39,7 @@ let rec eval_expr expr = match expr with
   | Moins(expr1,ppos) -> { typ = "int" ; value = "-"^(eval_expr expr1).value }
 
 
-  | Not(expr1, ppos) -> {typ = "bool" ; value = (if String.equal (eval_expr expr1).value "true" = true then "false" else "true")}
+  | Not(expr1, ppos) -> {typ = "bool" ; value = (if String.equal (eval_expr expr1).value "True" = true then "False" else "True")}
   (*
      begin
        match (eval_expr expr1) with 
@@ -61,10 +65,10 @@ let rec eval_expr expr = match expr with
                                       | _ -> failwith "not implemented OP"
                                     else (if String.equal a.typ "bool" = true then
                                       match binop with
-                                      | And -> {typ = "bool" ; value = (if String.equal a.value "true" = true && String.equal b.value "true" = true then "true" else "false")}
-                                      | Or -> {typ = "bool" ; value = (if String.equal a.value "true" = true || String.equal b.value "true" = true then "true" else "false")}
-                                      | Eq -> {typ = "bool" ; value = (if String.equal a.value b.value = true then "true" else "false")}
-                                      | Neq -> {typ = "bool" ; value = (if String.equal a.value b.value = false then "true" else "false")}
+                                      | And -> {typ = "bool" ; value = (if String.equal a.value "True" = true && String.equal b.value "True" = true then "True" else "False")}
+                                      | Or -> {typ = "bool" ; value = (if String.equal a.value "True" = true || String.equal b.value "True" = true then "True" else "False")}
+                                      | Eq -> {typ = "bool" ; value = (if String.equal a.value b.value = true then "True" else "False")}
+                                      | Neq -> {typ = "bool" ; value = (if String.equal a.value b.value = false then "True" else "False")}
                                       | _ -> failwith "not implemented OP"
                                     else failwith "not implemented OP"))))
                                     
