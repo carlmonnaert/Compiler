@@ -1,9 +1,9 @@
 # dune build
 # OCAMLPARAM: unset
 # Shared cache: disabled
-# Shared cache location: /home/carl/.cache/dune/db
+# Shared cache location: /home/lukas/.cache/dune/db
 # Workspace root:
-# "/home/carl/T\195\169l\195\169com/INF-108/projet_1/compil_1A/Interpreter_ptipython/base_runtime"
+# /home/lukas/compil/projets/peu_importe/Interpreter_ptipython/base_runtime
 # Auto-detected concurrency: 8
 # Dune context:
 #  { name = "default"
@@ -14,4 +14,6 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_7870c1_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_29fa1d_output
+$ (cd _build/.sandbox/d85f78175fb1268b66e487a5aa2a4aad/default && /home/lukas/.opam/default/bin/menhir parser.mly --base parser --infer-write-query parser__mock.ml.mock)
+$ (cd _build/.sandbox/32137349b94e79ba14eb110d38207044/default && /home/lukas/.opam/default/bin/menhir --explain parser.mly --base parser --infer-read-reply parser__mock.mli.inferred)
