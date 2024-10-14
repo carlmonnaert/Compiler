@@ -14,6 +14,4 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_29fa1d_output
-$ (cd _build/.sandbox/d85f78175fb1268b66e487a5aa2a4aad/default && /home/lukas/.opam/default/bin/menhir parser.mly --base parser --infer-write-query parser__mock.ml.mock)
-$ (cd _build/.sandbox/32137349b94e79ba14eb110d38207044/default && /home/lukas/.opam/default/bin/menhir --explain parser.mly --base parser --infer-read-reply parser__mock.mli.inferred)
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_7dc506_output

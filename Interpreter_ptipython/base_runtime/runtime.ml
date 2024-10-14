@@ -6,16 +6,22 @@ open String ;;
 exception  Error of string ;;
 exception  RuntimeError of string * Lexing.position ;;
 
-let gvar = (Hashtbl.create 10);;
+type value = {typ : string ; value : string};;
+
+let gvar : (string, value) Hashtbl.t = Hashtbl.create 10
+
+
 
 let rec eval_expr expr = match expr with
   | Const(const,ppos) -> begin
                           match const with 
-                            | Int(str,ppos1) -> (int_of_string str)
+                            | Int(str,ppos1) -> {typ = "int"; value = str}
+                            | Str(str,ppos1) ->  {typ = "string"; value = str}
+                            | Bool(b,ppos1) -> {typ = "bool"; value = string_of_bool b}
                             | _ -> failwith "not implemented in eval_expr"
                             (*
-                            | Str(str,ppos1) -> str
-                            | Bool(b,ppos1) -> b
+                            
+                            
                             | Non(ppos) -> ()
                               *)
                          end
@@ -26,9 +32,10 @@ let rec eval_expr expr = match expr with
       | Tab(left_value1,expr1,ppos) -> failwith "Tab not implemented"
   )
 
-  | Moins(expr1,ppos) -> 0-(eval_expr expr1)
+  | Moins(expr1,ppos) -> { typ = "int" ; value = "-"^(eval_expr expr1).value }
 
-  | Not(expr1, ppos) -> failwith "booleans not implemented"
+
+  | Not(expr1, ppos) -> {typ = "bool" ; value = (if String.equal (eval_expr expr1).value "true" = true then "false" else "true")}
   (*
      begin
        match (eval_expr expr1) with 
@@ -38,29 +45,51 @@ let rec eval_expr expr = match expr with
      end 
   *)
   | Op(binop,expr1,expr2,ppos)-> (
-    match binop with | Add -> (eval_expr expr1) + (eval_expr expr2)
-                     | Sub -> (eval_expr expr1) - (eval_expr expr2)
-                     | Mul -> (eval_expr expr1) * (eval_expr expr2)
-                     | Div -> (eval_expr expr1) / (eval_expr expr2)
-                     | Mod -> (eval_expr expr1) mod (eval_expr expr2)
-                     | _ -> failwith "not implemented OP"
+    match (eval_expr expr1), (eval_expr expr2) with 
+                     |a,b -> if String.equal a.typ b.typ = false then failwith "type mismatch"
+                                else (if String.equal a.typ "int" = true then 
+                                  match binop with
+                                  | Add -> {typ = "int" ; value = string_of_int ((int_of_string a.value) + (int_of_string b.value))}
+                                  | Sub -> {typ = "int" ; value = string_of_int ((int_of_string a.value) - (int_of_string b.value))}
+                                  | Mul -> {typ = "int" ; value = string_of_int ((int_of_string a.value) * (int_of_string b.value))}
+                                  | Div -> {typ = "int" ; value = string_of_int ((int_of_string a.value) / (int_of_string b.value))}
+                                  | Mod -> {typ = "int" ; value = string_of_int ((int_of_string a.value) mod (int_of_string b.value))}
+                                  | _ -> failwith "not implemented OP"
+                                    else (if String.equal a.typ "string" = true then
+                                      match binop with
+                                      | Add -> {typ = "string" ; value = a.value^b.value}
+                                      | _ -> failwith "not implemented OP"
+                                    else (if String.equal a.typ "bool" = true then
+                                      match binop with
+                                      | And -> {typ = "bool" ; value = (if String.equal a.value "true" = true && String.equal b.value "true" = true then "true" else "false")}
+                                      | Or -> {typ = "bool" ; value = (if String.equal a.value "true" = true || String.equal b.value "true" = true then "true" else "false")}
+                                      | Eq -> {typ = "bool" ; value = (if String.equal a.value b.value = true then "true" else "false")}
+                                      | Neq -> {typ = "bool" ; value = (if String.equal a.value b.value = false then "true" else "false")}
+                                      | _ -> failwith "not implemented OP"
+                                    else failwith "not implemented OP"))))
+                                    
+                                    
                       (*
                      | Leq -> (eval_expr expr1) <= (eval_expr expr2)
                      | Le -> (eval_expr expr1) < (eval_expr expr2)
                      | Geq -> (eval_expr expr1) >= (eval_expr expr2)
                      | Ge -> (eval_expr expr1) > (eval_expr expr2)
                      | Neq -> (eval_expr expr1) <> (eval_expr expr2)
-                     | Eq -> (eval_expr expr1) == (eval_expr expr2)
-                     | And -> (eval_expr expr1) && (eval_expr expr2)
-                     | Or -> (eval_expr expr1) || (eval_expr expr2)
   *)
-  )
+  
   | List(expr_list, ppos) -> failwith "evalexpr : List not implemented"
   | Ecall(fun_name,expr_list,ppos)->   ( if String.equal fun_name "print"
-                                       then begin (Printf.printf "%d\n" (match expr_list with | expr1::l -> (eval_expr expr1)
+                                       then (*begin (Printf.printf "%d\n" (match expr_list with | expr1::l -> (eval_expr expr1)
                                                                                               | _ -> failwith "someting went wrong in Ecall") 
                                                   ; 0)
-                                            end 
+                                            end *)
+                                          match expr_list with
+                                            | expr1::l -> (match (eval_expr expr1) with
+                                                          | {typ = "int" ; value = v} -> Printf.printf "%d\n" (int_of_string v) ; {typ = "int" ; value = "0"}
+                                                          | {typ = "string" ; value = v} -> Printf.printf "%s\n" v ; {typ = "int" ; value = "0"}
+                                                          | {typ = "bool" ; value = v} -> Printf.printf "%s\n" v ; {typ = "int" ; value = "0"}
+                                                          | _ -> failwith "not implemented")
+                                            | _ -> failwith "someting went wrong in Ecall"
                                        else failwith "evalexpr : Ecall not implemented")
 ;;
 
