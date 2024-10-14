@@ -22,12 +22,8 @@ let rec eval_expr expr = match expr with
                             | Int(str,ppos1) -> {typ = "int"; value = str}
                             | Str(str,ppos1) ->  {typ = "string"; value = str}
                             | Bool(b,ppos1) -> {typ = "bool"; value = toPyBool (string_of_bool b)}
+                            | Non(ppos) -> {typ = "none"; value ="None"}
                             | _ -> failwith "not implemented in eval_expr"
-                            (*
-                            
-                            
-                            | Non(ppos) -> ()
-                              *)
                          end
 
   | Val(left_value,ppos) -> (
@@ -92,6 +88,7 @@ let rec eval_expr expr = match expr with
                                                           | {typ = "int" ; value = v} -> Printf.printf "%d\n" (int_of_string v) ; {typ = "int" ; value = "0"}
                                                           | {typ = "string" ; value = v} -> Printf.printf "%s\n" v ; {typ = "int" ; value = "0"}
                                                           | {typ = "bool" ; value = v} -> Printf.printf "%s\n" v ; {typ = "int" ; value = "0"}
+                                                          | {typ = "none" ; value = v} -> Printf.printf "%s\n" v ; {typ = "int" ; value = "0"}
                                                           | _ -> failwith "not implemented")
                                             | _ -> failwith "someting went wrong in Ecall"
                                        else failwith "evalexpr : Ecall not implemented")
