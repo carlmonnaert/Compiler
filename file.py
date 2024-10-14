@@ -1,6 +1,6 @@
 
+x = True
+y = 5
 
-y = False
-
-print(y or True)
+print(x )
 
