@@ -1,6 +1,6 @@
 
 
 
-
-print(None)
+x = None
+print(x)
 

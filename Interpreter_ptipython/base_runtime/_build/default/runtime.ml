@@ -23,7 +23,7 @@ let rec eval_expr expr = match expr with
                             | Str(str,ppos1) ->  {typ = "string"; value = str}
                             | Bool(b,ppos1) -> {typ = "bool"; value = toPyBool (string_of_bool b)}
                             | Non(ppos) -> {typ = "none"; value ="None"}
-                            | _ -> failwith "not implemented in eval_expr"
+                            
                          end
 
   | Val(left_value,ppos) -> (
