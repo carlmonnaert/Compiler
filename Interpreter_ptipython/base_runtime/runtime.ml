@@ -94,6 +94,8 @@ let rec eval_expr expr = match expr with
         | Ge , x , y -> Elementary(Vbool( (cmp_gen_leq y x) && not (cmp_gen_leq y x && cmp_gen_leq x y) ))
         | Eq , x , y -> Elementary(Vbool(cmp_gen_leq x y && cmp_gen_leq y x ))
         | Neq , x , y -> Elementary(Vbool(not (cmp_gen_leq x y && cmp_gen_leq y x )))
+        | And , Elementary(Vbool(x)) , Elementary(Vbool(y)) -> Elementary(Vbool(x && y))
+        | Or , Elementary(Vbool(x)) , Elementary(Vbool(y)) -> Elementary(Vbool(x || y))
         | _ , _ , _ -> failwith "eval_expr : not implemented binop"
     end
     

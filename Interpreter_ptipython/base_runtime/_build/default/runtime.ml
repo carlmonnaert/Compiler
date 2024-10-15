@@ -94,48 +94,11 @@ let rec eval_expr expr = match expr with
         | Ge , x , y -> Elementary(Vbool( (cmp_gen_leq y x) && not (cmp_gen_leq y x && cmp_gen_leq x y) ))
         | Eq , x , y -> Elementary(Vbool(cmp_gen_leq x y && cmp_gen_leq y x ))
         | Neq , x , y -> Elementary(Vbool(not (cmp_gen_leq x y && cmp_gen_leq y x )))
+        | And , Elementary(Vbool(x)) , Elementary(Vbool(y)) -> Elementary(Vbool(x && y))
+        | Or , Elementary(Vbool(x)) , Elementary(Vbool(y)) -> Elementary(Vbool(x || y))
         | _ , _ , _ -> failwith "eval_expr : not implemented binop"
     end
     
-    
-      (*
-    match (eval_expr expr1), (eval_expr expr2) with 
-                     |Elementary(a),Elementary(b) -> if String.equal a.typ b.typ = false then failwith "type mismatch"
-                             else if String.equal a.typ "int" = true then
-                              begin
-                                match binop with
-                                  | Add -> Elementary({typ = "int" ; value = string_of_int ((int_of_string a.value) + (int_of_string b.value))})
-                                  | Sub -> Elementary({typ = "int" ; value = string_of_int ((int_of_string a.value) - (int_of_string b.value))})
-                                  | Mul -> Elementary({typ = "int" ; value = string_of_int ((int_of_string a.value) * (int_of_string b.value))})
-                                  | Div -> Elementary({typ = "int" ; value = string_of_int ((int_of_string a.value) / (int_of_string b.value))})
-                                  | Mod -> Elementary({typ = "int" ; value = string_of_int ((int_of_string a.value) mod (int_of_string b.value))})
-                                  | Leq -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value <= int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
-                                  | Le -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value < int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
-                                  | Geq -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value >= int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
-                                  | Ge -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value > int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
-                                  | Neq -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value <> int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
-                                  | Eq -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value == int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
-                                  | _ -> failwith "not implemented OP"
-                              end 
-                              else if String.equal a.typ "string" = true then
-                                begin
-                                  match binop with
-                                    | Add -> Elementary({typ = "string" ; value = a.value^b.value})
-                                    | _ -> failwith "not implemented OP"
-                                end
-                              else if String.equal a.typ "bool" = true then
-                                begin
-                                  match binop with
-                                    | And -> Elementary({typ = "bool" ; value = (if String.equal a.value "True" = true && String.equal b.value "True" = true then "True" else "False")})
-                                    | Or -> Elementary({typ = "bool" ; value = (if String.equal a.value "True" = true || String.equal b.value "True" = true then "True" else "False")})
-                                    | Eq -> Elementary({typ = "bool" ; value = (if String.equal a.value b.value = true then "True" else "False")})
-                                    | Neq -> Elementary({typ = "bool" ; value = (if String.equal a.value b.value = false then "True" else "False")})
-                                    | _ -> failwith "not implemented OP"
-                                end
-                              else failwith "not implemented OP"
-    
-    end
-    *)
     | List(expr_list, ppos) -> Combined(List.map eval_expr expr_list)
    
     | Ecall(fun_name,expr_list,ppos)->   ( if String.equal fun_name "print"
