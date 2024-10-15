@@ -6,7 +6,11 @@ open String ;;
 exception  Error of string ;;
 exception  RuntimeError of string * Lexing.position ;;
 
-type value = {typ : string ; value : string};;
+type value = 
+  | Vint of int
+  | Vstring of string
+  | Vbool of bool
+  | Vnone
 
 type gen_value = 
   | Elementary of value
@@ -17,10 +21,9 @@ let gvar : (string, gen_value) Hashtbl.t = Hashtbl.create 10
 
 (*Section d'affichage*)
 let rec print_combined gv = match gv with
-  | Elementary({typ = "int" ; value = v}) -> Printf.printf "%s" v
-  | Elementary({typ = "string" ; value = v}) -> Printf.printf "%s" v
-  | Elementary({typ = "bool" ; value = v}) -> Printf.printf "%s" v
-  | Elementary({typ = "none" ; value = v}) -> Printf.printf "%s" v
+  | Elementary(Vint(x)) -> Printf.printf "%d" x
+  | Elementary(Vstring(x)) -> Printf.printf "%s" x
+  | Elementary(Vbool(x)) -> Printf.printf "%s" (match x with | true -> "True" |false -> "False")
   | Combined(l) -> 
     begin
     Printf.printf "[";
@@ -34,21 +37,17 @@ pretty_print_list l = match l with
   | x::l1 -> (print_combined x; print_string ","; pretty_print_list l1)
 
 let print_gen_value gv = match gv with
-  | Elementary({typ = "int" ; value = v}) -> Printf.printf "%d\n" (int_of_string v)
-  | Elementary({typ = "string" ; value = v}) -> Printf.printf "%s\n" v
-  | Elementary({typ = "bool" ; value = v}) -> Printf.printf "%s\n" v
-  | Elementary({typ = "none" ; value = v}) -> Printf.printf "%s\n" v
+  | Elementary(Vint(x)) -> Printf.printf "%d\n" x
+  | Elementary(Vstring(x)) -> Printf.printf "%s\n" x
+  | Elementary(Vbool(x)) -> Printf.printf "%s\n" (match x with | true -> "True" |false -> "False")
   | Combined(l) -> print_combined gv; print_string "\n"
   | _ -> failwith "unknwown type to print"
 
 (*Section de comparaison/conversion de types*)
 let rec cmp_gen_leq x y = match x,y with
-    |Elementary(x1),Elementary(y1) when String.equal (x1.typ) (y1.typ) = false -> failwith "unable to compare Elementary of diff types"
-    |Elementary(x1), Combined(l) -> failwith "unable to compare Elementary with Combined"
-    |Combined(l),Elementary(y1) -> failwith "unable to compare Elementary with Combined"
-    |Elementary(x1),Elementary(y1) when String.equal (x1.typ) "int" -> (int_of_string x1.value) <= (int_of_string y1.value)
-    |Elementary(x1),Elementary(y1) when String.equal x1.typ "string" -> (String.compare (x1.value) (y1.value) ) <= 0 (*Str.compare envoie 0 si égalité 1 si le premier est plus grand -1 si le deuxieme est plus grand*)
-    |Elementary(x1),Elementary(y1) when String.equal x1.typ "bool" -> failwith "arithmetics not implemented  on bools"
+    |Elementary(Vint(x1)),Elementary(Vint(y1)) -> x1 <= y1
+    |Elementary(Vstring(x1)),Elementary(Vstring(y1)) -> (String.compare (x1) (y1) ) <= 0 (*Str.compare envoie 0 si égalité 1 si le premier est plus grand -1 si le deuxieme est plus grand*)
+    |Elementary(Vbool(x1)),Elementary(Vbool(y1))-> failwith "arithmetics not implemented  on bools"
     |Combined(l1),Combined(l2) -> 
       begin 
         match l1,l2 with
@@ -58,24 +57,15 @@ let rec cmp_gen_leq x y = match x,y with
           | x2::l11 , y2::l22 -> if (cmp_gen_leq x2 y2) = true && (cmp_gen_leq y2 x2) = true then cmp_gen_leq (Combined(l11)) (Combined(l22))
                                  else cmp_gen_leq x2 y2
       end
-    | _ , _ -> failwith "unmatched case in cmp_gen_leq"
-
-let _ = match cmp_gen_leq (Combined([Elementary({typ = "int" ; value = "1"});Elementary({typ = "int" ; value = "2"})])) (Combined([Elementary({typ = "int" ; value = "1"});Elementary({typ = "int" ; value = "3"})])) with |true -> print_string "NICEEEEEEEEEEEE\n" |false -> print_string "Noooooooooooooooo\n"
-
-let toPyBool = function
-  | "true" -> "True"
-  | "false" -> "False"
-  | _ -> failwith "not a boolean"
-
-
+    | _ , _ -> failwith "Unable to compare diffenrently typed elements"
 
 let rec eval_expr expr = match expr with
   | Const(const,ppos) -> begin
                           match const with 
-                            | Int(str,ppos1) -> Elementary({typ = "int"; value = str})
-                            | Str(str,ppos1) ->  Elementary({typ = "string"; value = str})
-                            | Bool(b,ppos1) -> Elementary({typ = "bool"; value = toPyBool (string_of_bool b)})
-                            | Non(ppos) -> Elementary({typ = "none"; value ="None"})                            
+                            | Int(str,ppos1) -> Elementary(Vint(int_of_string str))
+                            | Str(str,ppos1) ->  Elementary(Vstring(str))
+                            | Bool(b,ppos1) -> Elementary(Vbool(b))
+                            | Non(ppos) -> Elementary(Vnone)                            
                          end
 
   | Val(left_value,ppos) -> (
@@ -84,17 +74,32 @@ let rec eval_expr expr = match expr with
       | Tab(left_value1,expr1,ppos) -> failwith "Tab not implemented"
   )
 
-  | Moins(expr1,ppos) -> Elementary({ typ = "int" ; value = "-"^(match eval_expr expr1 with | Elementary(x) -> x | _ -> failwith "unintended combined element").value })
+  | Moins(expr1,ppos) -> (match eval_expr expr1 with | Elementary(Vint(x)) -> Elementary(Vint(-x)) | _ -> failwith "something went wrong in eval_expr : Moins")
 
 
-  | Not(expr1, ppos) -> Elementary({typ = "bool" ; value = (if String.equal (match eval_expr expr1 with | Elementary(x) -> x | _ -> failwith "unintended combined element").value "True" = true then "False" else "True")})
- 
+  | Not(expr1, ppos) -> (match eval_expr expr1 with | Elementary(Vbool(x)) -> if x = true then Elementary(Vbool(false)) else Elementary(Vbool(true)) | _ -> failwith "something went wrong in eval_expr : Not")
   | Op(binop,expr1,expr2,ppos)->
     begin
+      match binop , eval_expr expr1, eval_expr expr2 with
+        | Add , Elementary(Vint(x)) , Elementary(Vint(y)) -> Elementary(Vint(x+y))
+        | Add , Elementary(Vstring(x)) , Elementary(Vstring(y))-> Elementary(Vstring (x^y))
+        | Add , Combined(lx), Combined(ly) -> Combined(lx @ ly)
+        | Sub , Elementary(Vint(x)) , Elementary(Vint(y)) -> Elementary(Vint(x-y))
+        | Mul , Elementary(Vint(x)) , Elementary(Vint(y)) -> Elementary(Vint(x*y))
+        | Div , Elementary(Vint(x)) , Elementary(Vint(y)) -> Elementary(Vint(x/y))
+        | Mod , Elementary(Vint(x)) , Elementary(Vint(y)) -> Elementary(Vint(x mod y))
+        | Leq , x , y -> Elementary(Vbool(cmp_gen_leq x y ))
+        | Le , x , y -> Elementary(Vbool( (cmp_gen_leq x y) && not (cmp_gen_leq y x && cmp_gen_leq x y) ))
+        | Geq , x , y -> Elementary(Vbool(cmp_gen_leq y x))
+        | Ge , x , y -> Elementary(Vbool( (cmp_gen_leq y x) && not (cmp_gen_leq y x && cmp_gen_leq x y) ))
+        | Eq , x , y -> Elementary(Vbool(cmp_gen_leq x y && cmp_gen_leq y x ))
+        | Neq , x , y -> Elementary(Vbool(not (cmp_gen_leq x y && cmp_gen_leq y x )))
+        | _ , _ , _ -> failwith "eval_expr : not implemented binop"
+    end
+    
+    
+      (*
     match (eval_expr expr1), (eval_expr expr2) with 
-                     |Elementary(a),Combined(l) -> failwith "type mismatch"
-                     |Combined(l),Elementary(a) -> failwith "type mismatch"
-                     |Combined(l),Combined(s) -> failwith "not implemented OP on Combined * Combined"
                      |Elementary(a),Elementary(b) -> if String.equal a.typ b.typ = false then failwith "type mismatch"
                              else if String.equal a.typ "int" = true then
                               begin
@@ -128,12 +133,14 @@ let rec eval_expr expr = match expr with
                                     | _ -> failwith "not implemented OP"
                                 end
                               else failwith "not implemented OP"
+    
     end
+    *)
     | List(expr_list, ppos) -> Combined(List.map eval_expr expr_list)
    
     | Ecall(fun_name,expr_list,ppos)->   ( if String.equal fun_name "print"
                                        then match expr_list with
-                                              | [expr1] -> (print_gen_value (eval_expr expr1); Elementary({typ = "none" ; value = "None"}) )
+                                              | [expr1] -> (print_gen_value (eval_expr expr1); Elementary(Vnone) )
                                               | _ -> failwith "someting went wrong in print"
                                        else failwith "evalexpr : Ecall not implemented")
 ;;
