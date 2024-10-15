@@ -77,18 +77,14 @@ let rec eval_expr expr = match expr with
     | List(expr_list, ppos) -> failwith "Lists not implemented"
    
     | Ecall(fun_name,expr_list,ppos)->   ( if String.equal fun_name "print"
-                                       then (*begin (Printf.printf "%d\n" (match expr_list with | expr1::l -> (eval_expr expr1)
-                                                                                              | _ -> failwith "someting went wrong in Ecall") 
-                                                  ; 0)
-                                            end *)
-                                          match expr_list with
-                                            | expr1::l -> (match (eval_expr expr1) with
+                                       then match expr_list with
+                                              | expr1::l -> (match (eval_expr expr1) with
                                                           | {typ = "int" ; value = v} -> Printf.printf "%d\n" (int_of_string v) ; {typ = "int" ; value = "0"}
                                                           | {typ = "string" ; value = v} -> Printf.printf "%s\n" v ; {typ = "int" ; value = "0"}
                                                           | {typ = "bool" ; value = v} -> Printf.printf "%s\n" v ; {typ = "int" ; value = "0"}
                                                           | {typ = "none" ; value = v} -> Printf.printf "%s\n" v ; {typ = "int" ; value = "0"}
                                                           | _ -> failwith "not implemented")
-                                            | _ -> failwith "someting went wrong in Ecall"
+                                              | _ -> failwith "someting went wrong in Ecall"
                                        else failwith "evalexpr : Ecall not implemented")
 ;;
 
