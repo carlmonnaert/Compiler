@@ -16,14 +16,14 @@ let toPyBool = function
   | _ -> failwith "not a boolean"
 
 
+
 let rec eval_expr expr = match expr with
   | Const(const,ppos) -> begin
                           match const with 
                             | Int(str,ppos1) -> {typ = "int"; value = str}
                             | Str(str,ppos1) ->  {typ = "string"; value = str}
                             | Bool(b,ppos1) -> {typ = "bool"; value = toPyBool (string_of_bool b)}
-                            | Non(ppos) -> {typ = "none"; value ="None"}
-                            
+                            | Non(ppos) -> {typ = "none"; value ="None"}                            
                          end
 
   | Val(left_value,ppos) -> (
@@ -36,49 +36,47 @@ let rec eval_expr expr = match expr with
 
 
   | Not(expr1, ppos) -> {typ = "bool" ; value = (if String.equal (eval_expr expr1).value "True" = true then "False" else "True")}
-  (*
-     begin
-       match (eval_expr expr1) with 
-       | true -> false 
-       | false -> true
-       | _ -> failwith "something wrong in eval_expr : Not "
-     end 
-  *)
-  | Op(binop,expr1,expr2,ppos)-> (
+ 
+  | Op(binop,expr1,expr2,ppos)->
+    begin
     match (eval_expr expr1), (eval_expr expr2) with 
                      |a,b -> if String.equal a.typ b.typ = false then failwith "type mismatch"
-                                else (if String.equal a.typ "int" = true then 
-                                  match binop with
+                             else if String.equal a.typ "int" = true then
+                              begin
+                                match binop with
                                   | Add -> {typ = "int" ; value = string_of_int ((int_of_string a.value) + (int_of_string b.value))}
                                   | Sub -> {typ = "int" ; value = string_of_int ((int_of_string a.value) - (int_of_string b.value))}
                                   | Mul -> {typ = "int" ; value = string_of_int ((int_of_string a.value) * (int_of_string b.value))}
                                   | Div -> {typ = "int" ; value = string_of_int ((int_of_string a.value) / (int_of_string b.value))}
                                   | Mod -> {typ = "int" ; value = string_of_int ((int_of_string a.value) mod (int_of_string b.value))}
+                                  | Leq -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value <= int_of_string (eval_expr expr2).value)) }
+                                  | Le -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value < int_of_string (eval_expr expr2).value)) }
+                                  | Geq -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value >= int_of_string (eval_expr expr2).value)) }
+                                  | Ge -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value > int_of_string (eval_expr expr2).value)) }
+                                  | Neq -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value <> int_of_string (eval_expr expr2).value)) }
+                                  | Eq -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value == int_of_string (eval_expr expr2).value)) }
                                   | _ -> failwith "not implemented OP"
-                                    else (if String.equal a.typ "string" = true then
-                                      match binop with
-                                      | Add -> {typ = "string" ; value = a.value^b.value}
-                                      | _ -> failwith "not implemented OP"
-                                    else (if String.equal a.typ "bool" = true then
-                                      match binop with
-                                      | And -> {typ = "bool" ; value = (if String.equal a.value "True" = true && String.equal b.value "True" = true then "True" else "False")}
-                                      | Or -> {typ = "bool" ; value = (if String.equal a.value "True" = true || String.equal b.value "True" = true then "True" else "False")}
-                                      | Eq -> {typ = "bool" ; value = (if String.equal a.value b.value = true then "True" else "False")}
-                                      | Neq -> {typ = "bool" ; value = (if String.equal a.value b.value = false then "True" else "False")}
-                                      | _ -> failwith "not implemented OP"
-                                    else failwith "not implemented OP"))))
-                                    
-                                    
-                      (*
-                     | Leq -> (eval_expr expr1) <= (eval_expr expr2)
-                     | Le -> (eval_expr expr1) < (eval_expr expr2)
-                     | Geq -> (eval_expr expr1) >= (eval_expr expr2)
-                     | Ge -> (eval_expr expr1) > (eval_expr expr2)
-                     | Neq -> (eval_expr expr1) <> (eval_expr expr2)
-  *)
-  
-  | List(expr_list, ppos) -> failwith "evalexpr : List not implemented"
-  | Ecall(fun_name,expr_list,ppos)->   ( if String.equal fun_name "print"
+                              end 
+                              else if String.equal a.typ "string" = true then
+                                begin
+                                  match binop with
+                                    | Add -> {typ = "string" ; value = a.value^b.value}
+                                    | _ -> failwith "not implemented OP"
+                                end
+                              else if String.equal a.typ "bool" = true then
+                                begin
+                                  match binop with
+                                    | And -> {typ = "bool" ; value = (if String.equal a.value "True" = true && String.equal b.value "True" = true then "True" else "False")}
+                                    | Or -> {typ = "bool" ; value = (if String.equal a.value "True" = true || String.equal b.value "True" = true then "True" else "False")}
+                                    | Eq -> {typ = "bool" ; value = (if String.equal a.value b.value = true then "True" else "False")}
+                                    | Neq -> {typ = "bool" ; value = (if String.equal a.value b.value = false then "True" else "False")}
+                                    | _ -> failwith "not implemented OP"
+                                end
+                              else failwith "not implemented OP"
+    end
+    | List(expr_list, ppos) -> failwith "Lists not implemented"
+   
+    | Ecall(fun_name,expr_list,ppos)->   ( if String.equal fun_name "print"
                                        then (*begin (Printf.printf "%d\n" (match expr_list with | expr1::l -> (eval_expr expr1)
                                                                                               | _ -> failwith "someting went wrong in Ecall") 
                                                   ; 0)
