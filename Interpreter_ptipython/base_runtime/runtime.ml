@@ -8,7 +8,19 @@ exception  RuntimeError of string * Lexing.position ;;
 
 type value = {typ : string ; value : string};;
 
-let gvar : (string, value) Hashtbl.t = Hashtbl.create 10
+type gen_value = 
+  | Elementary of value
+  | Combined of gen_value list
+
+let gvar : (string, gen_value) Hashtbl.t = Hashtbl.create 10
+
+let rec print_gen_value gv = match gv with
+| Elementary({typ = "int" ; value = v}) -> Printf.printf "%d\n" (int_of_string v)
+| Elementary({typ = "string" ; value = v}) -> Printf.printf "%s\n" v
+| Elementary({typ = "bool" ; value = v}) -> Printf.printf "%s\n" v
+| Elementary({typ = "none" ; value = v}) -> Printf.printf "%s\n" v
+| Combined(l) -> List.iter print_gen_value l
+| _ -> failwith "unknown type to print"
 
 let toPyBool = function
   | "true" -> "True"
@@ -20,10 +32,10 @@ let toPyBool = function
 let rec eval_expr expr = match expr with
   | Const(const,ppos) -> begin
                           match const with 
-                            | Int(str,ppos1) -> {typ = "int"; value = str}
-                            | Str(str,ppos1) ->  {typ = "string"; value = str}
-                            | Bool(b,ppos1) -> {typ = "bool"; value = toPyBool (string_of_bool b)}
-                            | Non(ppos) -> {typ = "none"; value ="None"}                            
+                            | Int(str,ppos1) -> Elementary({typ = "int"; value = str})
+                            | Str(str,ppos1) ->  Elementary({typ = "string"; value = str})
+                            | Bool(b,ppos1) -> Elementary({typ = "bool"; value = toPyBool (string_of_bool b)})
+                            | Non(ppos) -> Elementary({typ = "none"; value ="None"})                            
                          end
 
   | Val(left_value,ppos) -> (
@@ -32,59 +44,57 @@ let rec eval_expr expr = match expr with
       | Tab(left_value1,expr1,ppos) -> failwith "Tab not implemented"
   )
 
-  | Moins(expr1,ppos) -> { typ = "int" ; value = "-"^(eval_expr expr1).value }
+  | Moins(expr1,ppos) -> Elementary({ typ = "int" ; value = "-"^(match eval_expr expr1 with | Elementary(x) -> x | _ -> failwith "unintended combined element").value })
 
 
-  | Not(expr1, ppos) -> {typ = "bool" ; value = (if String.equal (eval_expr expr1).value "True" = true then "False" else "True")}
+  | Not(expr1, ppos) -> Elementary({typ = "bool" ; value = (if String.equal (match eval_expr expr1 with | Elementary(x) -> x | _ -> failwith "unintended combined element").value "True" = true then "False" else "True")})
  
   | Op(binop,expr1,expr2,ppos)->
     begin
     match (eval_expr expr1), (eval_expr expr2) with 
-                     |a,b -> if String.equal a.typ b.typ = false then failwith "type mismatch"
+                     |Elementary(a),Combined(l) -> failwith "type mismatch"
+                     |Combined(l),Elementary(a) -> failwith "type mismatch"
+                     |Combined(l),Combined(s) -> failwith "not implemented OP on Combined * Combined"
+                     |Elementary(a),Elementary(b) -> if String.equal a.typ b.typ = false then failwith "type mismatch"
                              else if String.equal a.typ "int" = true then
                               begin
                                 match binop with
-                                  | Add -> {typ = "int" ; value = string_of_int ((int_of_string a.value) + (int_of_string b.value))}
-                                  | Sub -> {typ = "int" ; value = string_of_int ((int_of_string a.value) - (int_of_string b.value))}
-                                  | Mul -> {typ = "int" ; value = string_of_int ((int_of_string a.value) * (int_of_string b.value))}
-                                  | Div -> {typ = "int" ; value = string_of_int ((int_of_string a.value) / (int_of_string b.value))}
-                                  | Mod -> {typ = "int" ; value = string_of_int ((int_of_string a.value) mod (int_of_string b.value))}
-                                  | Leq -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value <= int_of_string (eval_expr expr2).value)) }
-                                  | Le -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value < int_of_string (eval_expr expr2).value)) }
-                                  | Geq -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value >= int_of_string (eval_expr expr2).value)) }
-                                  | Ge -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value > int_of_string (eval_expr expr2).value)) }
-                                  | Neq -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value <> int_of_string (eval_expr expr2).value)) }
-                                  | Eq -> {typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (eval_expr expr1).value == int_of_string (eval_expr expr2).value)) }
+                                  | Add -> Elementary({typ = "int" ; value = string_of_int ((int_of_string a.value) + (int_of_string b.value))})
+                                  | Sub -> Elementary({typ = "int" ; value = string_of_int ((int_of_string a.value) - (int_of_string b.value))})
+                                  | Mul -> Elementary({typ = "int" ; value = string_of_int ((int_of_string a.value) * (int_of_string b.value))})
+                                  | Div -> Elementary({typ = "int" ; value = string_of_int ((int_of_string a.value) / (int_of_string b.value))})
+                                  | Mod -> Elementary({typ = "int" ; value = string_of_int ((int_of_string a.value) mod (int_of_string b.value))})
+                                  | Leq -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value <= int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
+                                  | Le -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value < int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
+                                  | Geq -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value >= int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
+                                  | Ge -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value > int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
+                                  | Neq -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value <> int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
+                                  | Eq -> Elementary({typ = "bool" ; value = toPyBool (string_of_bool ( int_of_string (match eval_expr expr1 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value == int_of_string (match eval_expr expr2 with |Elementary(x) -> x | _ -> failwith "unintended combined element").value)) })
                                   | _ -> failwith "not implemented OP"
                               end 
                               else if String.equal a.typ "string" = true then
                                 begin
                                   match binop with
-                                    | Add -> {typ = "string" ; value = a.value^b.value}
+                                    | Add -> Elementary({typ = "string" ; value = a.value^b.value})
                                     | _ -> failwith "not implemented OP"
                                 end
                               else if String.equal a.typ "bool" = true then
                                 begin
                                   match binop with
-                                    | And -> {typ = "bool" ; value = (if String.equal a.value "True" = true && String.equal b.value "True" = true then "True" else "False")}
-                                    | Or -> {typ = "bool" ; value = (if String.equal a.value "True" = true || String.equal b.value "True" = true then "True" else "False")}
-                                    | Eq -> {typ = "bool" ; value = (if String.equal a.value b.value = true then "True" else "False")}
-                                    | Neq -> {typ = "bool" ; value = (if String.equal a.value b.value = false then "True" else "False")}
+                                    | And -> Elementary({typ = "bool" ; value = (if String.equal a.value "True" = true && String.equal b.value "True" = true then "True" else "False")})
+                                    | Or -> Elementary({typ = "bool" ; value = (if String.equal a.value "True" = true || String.equal b.value "True" = true then "True" else "False")})
+                                    | Eq -> Elementary({typ = "bool" ; value = (if String.equal a.value b.value = true then "True" else "False")})
+                                    | Neq -> Elementary({typ = "bool" ; value = (if String.equal a.value b.value = false then "True" else "False")})
                                     | _ -> failwith "not implemented OP"
                                 end
                               else failwith "not implemented OP"
     end
-    | List(expr_list, ppos) -> failwith "Lists not implemented"
+    | List(expr_list, ppos) -> Combined(List.map eval_expr expr_list)
    
     | Ecall(fun_name,expr_list,ppos)->   ( if String.equal fun_name "print"
                                        then match expr_list with
-                                              | expr1::l -> (match (eval_expr expr1) with
-                                                          | {typ = "int" ; value = v} -> Printf.printf "%d\n" (int_of_string v) ; {typ = "int" ; value = "0"}
-                                                          | {typ = "string" ; value = v} -> Printf.printf "%s\n" v ; {typ = "int" ; value = "0"}
-                                                          | {typ = "bool" ; value = v} -> Printf.printf "%s\n" v ; {typ = "int" ; value = "0"}
-                                                          | {typ = "none" ; value = v} -> Printf.printf "%s\n" v ; {typ = "int" ; value = "0"}
-                                                          | _ -> failwith "not implemented")
-                                              | _ -> failwith "someting went wrong in Ecall"
+                                              | [expr1] -> (print_gen_value (eval_expr expr1); Elementary({typ = "none" ; value = "None"}) )
+                                              | _ -> failwith "someting went wrong in print"
                                        else failwith "evalexpr : Ecall not implemented")
 ;;
 

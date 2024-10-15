@@ -1,0 +1,1 @@
+print ([1,False,["Test",4],"Bonjour",5])
