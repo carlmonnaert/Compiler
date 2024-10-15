@@ -14,17 +14,24 @@ type gen_value =
 
 let gvar : (string, gen_value) Hashtbl.t = Hashtbl.create 10
 
-let rec print_gen_value gv = match gv with
-| Elementary({typ = "int" ; value = v}) -> Printf.printf "%d," (int_of_string v)
-| Elementary({typ = "string" ; value = v}) -> Printf.printf "%s," v
-| Elementary({typ = "bool" ; value = v}) -> Printf.printf "%s," v
-| Elementary({typ = "none" ; value = v}) -> Printf.printf "%s," v
-| Combined(l) -> 
-  begin
-  Printf.printf "[";
-  List.iter print_gen_value l ;
-  Printf.printf "]";
-  end
+let print_gen_value gv = match gv with
+| Elementary({typ = "int" ; value = v}) -> Printf.printf "%d\n" (int_of_string v)
+| Elementary({typ = "string" ; value = v}) -> Printf.printf "%s\n" v
+| Elementary({typ = "bool" ; value = v}) -> Printf.printf "%s\n" v
+| Elementary({typ = "none" ; value = v}) -> Printf.printf "%s\n" v
+| Combined(l) ->
+    let rec print_combined gval = match gval with
+    | Elementary({typ = "int" ; value = v}) -> Printf.printf "%d," (int_of_string v)
+    | Elementary({typ = "string" ; value = v}) -> Printf.printf "%s," v
+    | Elementary({typ = "bool" ; value = v}) -> Printf.printf "%s," v
+    | Elementary({typ = "none" ; value = v}) -> Printf.printf "%s," v
+    | Combined(l) -> 
+      begin
+        Printf.printf "[";
+        List.iter print_combined l ;
+        Printf.printf "]";
+      end
+    in (print_combined ; Printf.printf "\n")
 | _ -> failwith "unknown type to print"
 
 let toPyBool = function
