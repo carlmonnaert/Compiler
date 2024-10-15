@@ -14,6 +14,8 @@ type gen_value =
 
 let gvar : (string, gen_value) Hashtbl.t = Hashtbl.create 10
 
+
+(*Section d'affichage*)
 let rec print_combined gv = match gv with
   | Elementary({typ = "int" ; value = v}) -> Printf.printf "%s" v
   | Elementary({typ = "string" ; value = v}) -> Printf.printf "%s" v
@@ -38,6 +40,25 @@ let print_gen_value gv = match gv with
   | Elementary({typ = "none" ; value = v}) -> Printf.printf "%s\n" v
   | Combined(l) -> print_combined gv; print_string "\n"
   | _ -> failwith "unknwown type to print"
+
+(*Section de comparaison/conversion de types*)
+let rec cmp_gen_leq x y = match x,y with
+    |Elementary(x1),Elementary(y1) when String.equal (x1.typ) (y1.typ) = false -> failwith "unable to compare Elementary of diff types"
+    |Elementary(x1), Combined(l) -> failwith "unable to compare Elementary with Combined"
+    |Combined(l),Elementary(y1) -> failwith "unable to compare Elementary with Combined"
+    |Elementary(x1),Elementary(y1) when String.equal (x1.typ) "int" -> (int_of_string x1.value) <= (int_of_string y1.value)
+    |Elementary(x1),Elementary(y1) when String.equal x1.typ "string" -> (String.compare (x1.value) (y1.value) ) <= 0 (*Str.compare envoie 0 si égalité 1 si le premier est plus grand -1 si le deuxieme est plus grand*)
+    |Elementary(x1),Elementary(y1) when String.equal x1.typ "bool" -> failwith "arithmetics not implemented  on bools"
+    |Combined(l1),Combined(l2) -> 
+      begin 
+        match l1,l2 with
+          | [] , [] -> true
+          | [] , l2 -> true
+          | l1 , [] -> false
+          | x2::l11 , y2::l22 -> if (cmp_gen_leq x2 y2) = true && (cmp_gen_leq y2 x2) = true then cmp_gen_leq (Combined(l11)) (Combined(l22))
+                                 else cmp_gen_leq x2 y2
+      end
+    | _ , _ -> failwith "unmatched case in cmp_gen_leq"
 
 let toPyBool = function
   | "true" -> "True"
