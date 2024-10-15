@@ -1,1 +1,1 @@
-print(True and False and not True)
+print(["Carl", "Monnaert"] + ["Carl", "Monnaerte"])

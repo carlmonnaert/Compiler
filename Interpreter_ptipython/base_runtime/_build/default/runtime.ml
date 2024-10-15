@@ -22,7 +22,7 @@ let gvar : (string, gen_value) Hashtbl.t = Hashtbl.create 10
 (*Section d'affichage*)
 let rec print_combined gv = match gv with
   | Elementary(Vint(x)) -> Printf.printf "%d" x
-  | Elementary(Vstring(x)) -> Printf.printf "%s" x
+  | Elementary(Vstring(x)) -> print_string"'" ; Printf.printf "%s" x ; print_string "'"
   | Elementary(Vbool(x)) -> Printf.printf "%s" (match x with | true -> "True" |false -> "False")
   | Combined(l) -> 
     begin
