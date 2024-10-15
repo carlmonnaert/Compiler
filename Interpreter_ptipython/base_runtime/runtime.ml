@@ -15,17 +15,21 @@ type gen_value =
 let gvar : (string, gen_value) Hashtbl.t = Hashtbl.create 10
 
 let rec print_combined gv = match gv with
-  | Elementary({typ = "int" ; value = v}) -> Printf.printf "%d," (int_of_string v)
-  | Elementary({typ = "string" ; value = v}) -> Printf.printf "%s," v
-  | Elementary({typ = "bool" ; value = v}) -> Printf.printf "%s," v
-  | Elementary({typ = "none" ; value = v}) -> Printf.printf "%s," v
+  | Elementary({typ = "int" ; value = v}) -> Printf.printf "%s" v
+  | Elementary({typ = "string" ; value = v}) -> Printf.printf "%s" v
+  | Elementary({typ = "bool" ; value = v}) -> Printf.printf "%s" v
+  | Elementary({typ = "none" ; value = v}) -> Printf.printf "%s" v
   | Combined(l) -> 
     begin
     Printf.printf "[";
-    List.iter (fun x -> let _ = print_combined x in () ) l ;
-    Printf.printf "]"
+    pretty_print_list l;
     end
   | _ -> failwith "unknown type to print"
+and
+pretty_print_list l = match l with
+  | [] -> print_string "]"
+  | [x] -> (print_combined x;print_string "]")
+  | x::l1 -> (print_combined x; print_string ","; pretty_print_list l1)
 
 let print_gen_value gv = match gv with
   | Elementary({typ = "int" ; value = v}) -> Printf.printf "%d\n" (int_of_string v)
