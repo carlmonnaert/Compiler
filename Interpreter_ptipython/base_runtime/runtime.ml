@@ -34,7 +34,7 @@ and
 pretty_print_list l = match l with
   | [] -> print_string "]"
   | [x] -> (print_combined x;print_string "]")
-  | x::l1 -> (print_combined x; print_string ","; pretty_print_list l1)
+  | x::l1 -> (print_combined x; print_string ", "; pretty_print_list l1)
 
 let print_gen_value gv = match gv with
   | Elementary(Vint(x)) -> Printf.printf "%d\n" x
