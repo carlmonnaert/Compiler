@@ -127,6 +127,15 @@ let rec eval_expr expr local_e = match expr with
         | Elementary(Vnone) -> Elementary(Vstring("<class 'NoneType'>"))
         | Combined(l) -> Elementary(Vstring("<class 'list'>"))
       end
+
+    | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "len" ->
+      begin 
+      match (match expr_list with | [e] -> eval_expr e local_e| _ -> failwith "wrong use of len function") with
+        | Combined(l) -> Elementary(Vint(List.length l))
+        | _ -> failwith "misuse of len function"
+      end
+
+
     | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "print" ->
       begin
         match expr_list with

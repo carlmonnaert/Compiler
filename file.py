@@ -1,5 +1,2 @@
-print(type(["bonjour"]))
-print(type("bonjour"))
-print(type(1))
-print(type(True))
-print(type(None))
+print(len([]))
+print(len([1,"bonjour",4]))
