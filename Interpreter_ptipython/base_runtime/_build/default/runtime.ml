@@ -17,6 +17,7 @@ type gen_value =
   | Combined of gen_value list
 
 let ret = ref []
+let bret = ref false
 
 type func = {fun_name : string ; args : string list ; body : stmt ; mutable local_env : (string, gen_value) Hashtbl.t}
 
@@ -142,14 +143,14 @@ let rec eval_expr expr local_e = match expr with
         | [expr1] -> (print_gen_value (eval_expr expr1 local_e); Elementary(Vnone) )
         | _ -> failwith "someting went wrong in print"
     end
+
   | Ecall(fun_name,expr_list,ppos) ->
     begin
     let f = Hashtbl.find gfun fun_name in
     List.iteri (fun i x -> Hashtbl.replace local_e x (eval_expr (List.nth expr_list i) (local_e) )) f.args;
-    let to_compare_ret = !ret in
-    eval_stmt f.body f.local_env;
+    eval_stmt f.body (Hashtbl.copy f.local_env);
     match !ret with
-      | x::ret1 when !ret != to_compare_ret -> x
+      | x::ret1 when !bret = true -> ret := ret1; x
       | _ -> Elementary(Vnone)
     end      
 
@@ -165,7 +166,7 @@ and eval_stmt stmt local_e = match stmt with
 
   | Sreturn(expr,ppos) -> 
     ret := (eval_expr expr local_e) :: (!ret);
-
+    bret := true;
   
   | Sassign(left_value,expr,ppos) ->
     begin
