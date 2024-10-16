@@ -147,7 +147,7 @@ let rec eval_expr expr local_e = match expr with
       let f = Hashtbl.find gfun fun_name in
       List.iteri (fun i x -> Hashtbl.replace local_e x (eval_expr (List.nth expr_list i) (local_e) )) f.args;
       let to_compare_ret = !ret in
-      eval_stmt f.body local_e;
+      eval_stmt f.body f.local_env;
       match !ret with
         | x::ret1 when !ret != to_compare_ret -> x
         | _ -> Elementary(Vnone)
@@ -185,10 +185,10 @@ and exec_list l counter stmt local_e = match l with
       end
 
 let eval_global_stmt gstmt = match gstmt with
-  |Gstmt(stmt,ppos) -> (eval_stmt stmt gvar )
+  |Gstmt(stmt,ppos) -> (eval_stmt stmt gvar)
   |GFunDef(fun_name,var_list,stmt,ppos) -> 
     begin
-    Hashtbl.replace gfun fun_name { fun_name = fun_name ; args = var_list ; body = stmt ; local_env = gvar };
+    Hashtbl.replace gfun fun_name { fun_name = fun_name ; args = var_list ; body = stmt ; local_env = Hashtbl.copy gvar };
     end
 ;;
 
