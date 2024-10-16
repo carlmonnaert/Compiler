@@ -39,7 +39,6 @@ let rec print_combined gv = match gv with
     Printf.printf "[";
     pretty_print_list l;
     end
-  | _ -> failwith "unknown type to print"
 and
 pretty_print_list l = match l with
   | [] -> print_string "]"
@@ -50,8 +49,8 @@ let print_gen_value gv = match gv with
   | Elementary(Vint(x)) -> Printf.printf "%d\n" x
   | Elementary(Vstring(x)) -> Printf.printf "%s\n" x
   | Elementary(Vbool(x)) -> Printf.printf "%s\n" (match x with | true -> "True" |false -> "False")
+  | Elementary(Vnone) -> print_string "None"
   | Combined(l) -> print_combined gv; print_string "\n"
-  | _ -> failwith "unknwown type to print"
 
 (*Section de comparaison/conversion de types*)
 let rec cmp_gen_leq x y = match x,y with
