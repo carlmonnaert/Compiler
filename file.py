@@ -1,2 +1,2 @@
-print(["Carl", "Monnaert"] + ["Carl", "Monnaerte"])
-print("hello")
+for x in ["Bonjour","Bonsoir"] :
+    print(x)

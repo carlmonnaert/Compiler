@@ -109,7 +109,12 @@ let rec eval_expr expr = match expr with
 ;;
 
 let rec eval_stmt stmt = match stmt with
-  | Sfor(counter,expr,stmt,ppos) -> failwith "evalexpr : Sfor not implemented"
+  | Sfor(counter,expr,stmt,ppos) -> 
+    begin
+      match eval_expr expr with 
+        | Combined(l) -> exec_list l counter stmt
+        | Elementary(e) -> failwith "unable to use for in something else than a list"
+    end
   | Sblock(stmt_list, ppos) -> List.iter eval_stmt stmt_list
   | Sreturn(expr,ppos) -> failwith "evalexpr : Sreturn not implemented"
   | Sassign(left_value,expr,ppos) ->
@@ -120,7 +125,14 @@ let rec eval_stmt stmt = match stmt with
      if Hashtbl.mem gvar var_name then Hashtbl.replace gvar var_name (eval_expr expr)
      else Hashtbl.add gvar var_name (eval_expr expr)
   | Sval(expr,ppos) -> (let _ = eval_expr expr in () )
-;;
+and exec_list l counter stmt = match l with
+    | [] -> ()
+    | y::l1 -> 
+      begin 
+      Hashtbl.replace gvar counter y;
+      eval_stmt stmt;
+      exec_list l1 counter stmt
+      end
 
 let eval_global_stmt gstmt = match gstmt with
   |Gstmt(stmt,ppos) -> (eval_stmt stmt)
