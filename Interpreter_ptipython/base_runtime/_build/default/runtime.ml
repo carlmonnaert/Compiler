@@ -68,11 +68,17 @@ let rec eval_expr expr = match expr with
                             | Non(ppos) -> Elementary(Vnone)                            
                          end
 
-  | Val(left_value,ppos) -> (
+  | Val(left_value,ppos) ->
+    begin
     match left_value with 
-      | Var(var_name,ppos) -> Hashtbl.find gvar var_name
-      | Tab(left_value1,expr1,ppos) -> failwith "Tab not implemented"
-  )
+      | Var(var_name,ppos1) -> Hashtbl.find gvar var_name
+      | Tab(left_value1,expr1,ppos1) -> 
+        begin
+          match eval_expr (Val(left_value1,ppos1)), eval_expr expr1 with
+            | Combined(l) , Elementary(Vint(x)) -> (List.nth l x)
+            | _ , _ -> failwith "invalid access in a Tab"
+        end
+    end 
 
   | Moins(expr1,ppos) -> (match eval_expr expr1 with | Elementary(Vint(x)) -> Elementary(Vint(-x)) | _ -> failwith "something went wrong in eval_expr : Moins")
 
@@ -115,16 +121,19 @@ let rec eval_stmt stmt = match stmt with
         | Combined(l) -> exec_list l counter stmt
         | Elementary(e) -> failwith "unable to use for in something else than a list"
     end
-  | Sblock(stmt_list, ppos) -> List.iter eval_stmt stmt_list
+  
+    | Sblock(stmt_list, ppos) -> List.iter eval_stmt stmt_list
+
   | Sreturn(expr,ppos) -> failwith "evalexpr : Sreturn not implemented"
+  
   | Sassign(left_value,expr,ppos) ->
-     let var_name = match left_value with
-       | Tab(l,e,p) -> failwith "Tab not implemented"
-       | Var(var_name,pos) -> var_name
-     in
-     if Hashtbl.mem gvar var_name then Hashtbl.replace gvar var_name (eval_expr expr)
-     else Hashtbl.add gvar var_name (eval_expr expr)
+    begin
+    match left_value with
+      | Var(var_name,ppos1) -> Hashtbl.replace gvar var_name (eval_expr expr)
+      | Tab(l,e,p) -> failwith "Assigning values is not possible in Tab"
+    end
   | Sval(expr,ppos) -> (let _ = eval_expr expr in () )
+
 and exec_list l counter stmt = match l with
     | [] -> ()
     | y::l1 -> 

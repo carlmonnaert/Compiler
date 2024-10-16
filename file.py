@@ -1,3 +1,3 @@
-for x in ["Bonjour","Bonsoir"] :
-    for j in ["Ceci", "Est", 58]:
-        print(j)
+t = [1,"2","3"]
+print(t)
+print(t[0]+10)
