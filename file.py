@@ -1,5 +1,5 @@
-y = 2
 def f (x):
-    x + y
+    print(x)
+    f(x+1)
 
-print(f(5))
+print(f(0))
