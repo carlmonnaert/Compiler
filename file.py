@@ -1,3 +1,6 @@
-t = [1,"2","3"]
-print(t)
-print(t[0]+10)
+def f(x):
+    for k in [1,2,3]:
+        print(k)
+    return(x)
+
+print( f(18) )

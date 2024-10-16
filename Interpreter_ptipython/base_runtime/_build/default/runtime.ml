@@ -16,7 +16,16 @@ type gen_value =
   | Elementary of value
   | Combined of gen_value list
 
+let ret = ref []
+
+type func = {fun_name : string ; args : string list ; body : stmt ; mutable local_env : (string, gen_value) Hashtbl.t}
+
+
+
 let gvar : (string, gen_value) Hashtbl.t = Hashtbl.create 10
+
+let gfun : (string, func) Hashtbl.t = Hashtbl.create 10
+
 
 
 (*Section d'affichage*)
@@ -59,7 +68,7 @@ let rec cmp_gen_leq x y = match x,y with
       end
     | _ , _ -> failwith "Unable to compare diffenrently typed elements"
 
-let rec eval_expr expr = match expr with
+let rec eval_expr expr local_e = match expr with
   | Const(const,ppos) -> begin
                           match const with 
                             | Int(str,ppos1) -> Elementary(Vint(int_of_string str))
@@ -70,23 +79,24 @@ let rec eval_expr expr = match expr with
 
   | Val(left_value,ppos) ->
     begin
-    match left_value with 
+    match left_value with
+      | Var(var_name,ppos1) when Hashtbl.mem local_e var_name -> Hashtbl.find local_e var_name
       | Var(var_name,ppos1) -> Hashtbl.find gvar var_name
       | Tab(left_value1,expr1,ppos1) -> 
         begin
-          match eval_expr (Val(left_value1,ppos1)), eval_expr expr1 with
+          match eval_expr (Val(left_value1,ppos1)) local_e, eval_expr expr1 local_e with
             | Combined(l) , Elementary(Vint(x)) -> (List.nth l x)
             | _ , _ -> failwith "invalid access in a Tab"
         end
     end 
 
-  | Moins(expr1,ppos) -> (match eval_expr expr1 with | Elementary(Vint(x)) -> Elementary(Vint(-x)) | _ -> failwith "something went wrong in eval_expr : Moins")
+  | Moins(expr1,ppos) -> (match eval_expr expr1 local_e with | Elementary(Vint(x)) -> Elementary(Vint(-x)) | _ -> failwith "something went wrong in eval_expr : Moins")
 
 
-  | Not(expr1, ppos) -> (match eval_expr expr1 with | Elementary(Vbool(x)) -> if x = true then Elementary(Vbool(false)) else Elementary(Vbool(true)) | _ -> failwith "something went wrong in eval_expr : Not")
+  | Not(expr1, ppos) -> (match eval_expr expr1 local_e with | Elementary(Vbool(x)) -> if x = true then Elementary(Vbool(false)) else Elementary(Vbool(true)) | _ -> failwith "something went wrong in eval_expr : Not")
   | Op(binop,expr1,expr2,ppos)->
     begin
-      match binop , eval_expr expr1, eval_expr expr2 with
+      match binop , eval_expr expr1 local_e , eval_expr expr2 local_e with
         | Add , Elementary(Vint(x)) , Elementary(Vint(y)) -> Elementary(Vint(x+y))
         | Add , Elementary(Vstring(x)) , Elementary(Vstring(y))-> Elementary(Vstring (x^y))
         | Add , Combined(lx), Combined(ly) -> Combined(lx @ ly)
@@ -105,47 +115,64 @@ let rec eval_expr expr = match expr with
         | _ , _ , _ -> failwith "eval_expr : not implemented binop"
     end
     
-    | List(expr_list, ppos) -> Combined(List.map eval_expr expr_list)
+    | List(expr_list, ppos) -> Combined(List.map (fun x -> eval_expr x local_e ) expr_list)
    
-    | Ecall(fun_name,expr_list,ppos)->   ( if String.equal fun_name "print"
-                                       then match expr_list with
-                                              | [expr1] -> (print_gen_value (eval_expr expr1); Elementary(Vnone) )
-                                              | _ -> failwith "someting went wrong in print"
-                                       else failwith "evalexpr : Ecall not implemented")
-;;
+    | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "print" ->
+      begin
+        match expr_list with
+          | [expr1] -> (print_gen_value (eval_expr expr1 local_e); Elementary(Vnone) )
+          | _ -> failwith "someting went wrong in print"
+      end
+    | Ecall(fun_name,expr_list,ppos) ->
+      begin
+      let f = Hashtbl.find gfun fun_name in
+      List.iteri (fun i x -> Hashtbl.replace f.local_env x (eval_expr (List.nth expr_list i) (Hashtbl.copy local_e) )) f.args;
+      eval_stmt f.body f.local_env;
+      print_string "good !!\n";
+      match !ret with 
+        | x::ret1 -> x 
+        | _ -> failwith "noting to return"
+      end      
 
-let rec eval_stmt stmt = match stmt with
-  | Sfor(counter,expr,stmt,ppos) -> 
+and eval_stmt stmt local_e = match stmt with
+  | Sfor(counter,expr,stmt,ppos) ->
     begin
-      match eval_expr expr with 
-        | Combined(l) -> exec_list l counter stmt
+      match eval_expr expr local_e with 
+        | Combined(l) -> exec_list l counter stmt local_e
         | Elementary(e) -> failwith "unable to use for in something else than a list"
     end
   
-    | Sblock(stmt_list, ppos) -> List.iter eval_stmt stmt_list
+  | Sblock(stmt_list, ppos) -> List.iter (fun x -> eval_stmt x local_e) stmt_list
 
-  | Sreturn(expr,ppos) -> failwith "evalexpr : Sreturn not implemented"
+  | Sreturn(expr,ppos) -> 
+    print_string "good !!\n";
+    ret := (eval_expr expr local_e) :: (!ret);
+    print_string "good !!\n"
+
   
   | Sassign(left_value,expr,ppos) ->
     begin
     match left_value with
-      | Var(var_name,ppos1) -> Hashtbl.replace gvar var_name (eval_expr expr)
+      | Var(var_name,ppos1) -> Hashtbl.replace gvar var_name (eval_expr expr local_e)
       | Tab(l,e,p) -> failwith "Assigning values is not possible in Tab"
     end
-  | Sval(expr,ppos) -> (let _ = eval_expr expr in () )
+  | Sval(expr,ppos) -> (let _ = eval_expr expr local_e in () )
 
-and exec_list l counter stmt = match l with
+and exec_list l counter stmt local_e = match l with
     | [] -> ()
     | y::l1 -> 
       begin 
       Hashtbl.replace gvar counter y;
-      eval_stmt stmt;
-      exec_list l1 counter stmt
+      eval_stmt stmt local_e;
+      exec_list l1 counter stmt local_e
       end
 
 let eval_global_stmt gstmt = match gstmt with
-  |Gstmt(stmt,ppos) -> (eval_stmt stmt)
-  |GFunDef(fun_name,var_list,stmt,ppos) -> failwith "functions not implemented"
+  |Gstmt(stmt,ppos) -> (eval_stmt stmt (Hashtbl.create 0) )
+  |GFunDef(fun_name,var_list,stmt,ppos) -> 
+    begin
+    Hashtbl.replace gfun fun_name { fun_name = fun_name ; args = var_list ; body = stmt ; local_env = Hashtbl.create 10 };
+    end
 ;;
 
 let eval program_ast  = List.iter eval_global_stmt program_ast;;
