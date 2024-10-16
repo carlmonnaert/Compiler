@@ -81,7 +81,8 @@ let rec eval_expr expr local_e = match expr with
     begin
     match left_value with
       | Var(var_name,ppos1) when Hashtbl.mem local_e var_name -> Hashtbl.find local_e var_name
-      | Var(var_name,ppos1) -> Hashtbl.find gvar var_name
+      | Var(var_name,ppos1) when Hashtbl.mem gvar var_name -> Hashtbl.find gvar var_name
+      | Var(var_name,ppos1) -> failwith "unfound value"
       | Tab(left_value1,expr1,ppos1) -> 
         begin
           match eval_expr (Val(left_value1,ppos1)) local_e, eval_expr expr1 local_e with
@@ -126,11 +127,11 @@ let rec eval_expr expr local_e = match expr with
     | Ecall(fun_name,expr_list,ppos) ->
       begin
       let f = Hashtbl.find gfun fun_name in
-      List.iteri (fun i x -> Hashtbl.replace local_e x (eval_expr (List.nth expr_list i) (Hashtbl.copy local_e) )) f.args;
+      List.iteri (fun i x -> Hashtbl.replace local_e x (eval_expr (List.nth expr_list i) (local_e) )) f.args;
       let to_compare_ret = !ret in
       eval_stmt f.body local_e;
       match !ret with
-        | x::ret1 when !ret = to_compare_ret -> x
+        | x::ret1 when !ret != to_compare_ret -> x
         | _ -> Elementary(Vnone)
       end      
 
