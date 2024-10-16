@@ -1,2 +1,3 @@
 for x in ["Bonjour","Bonsoir"] :
-    print(x)
+    for j in ["Ceci", "Est", 58]:
+        print(j)
