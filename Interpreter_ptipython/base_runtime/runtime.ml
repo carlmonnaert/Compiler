@@ -127,10 +127,11 @@ let rec eval_expr expr local_e = match expr with
       begin
       let f = Hashtbl.find gfun fun_name in
       List.iteri (fun i x -> Hashtbl.replace local_e x (eval_expr (List.nth expr_list i) (Hashtbl.copy local_e) )) f.args;
+      let to_compare_ret = !ret in
       eval_stmt f.body local_e;
-      match !ret with 
-        | x::ret1 -> x 
-        | _ -> failwith "noting to return"
+      match !ret with
+        | x::ret1 when !ret = to_compare_ret -> x
+        | _ -> Elementary(Vnone)
       end      
 
 and eval_stmt stmt local_e = match stmt with
