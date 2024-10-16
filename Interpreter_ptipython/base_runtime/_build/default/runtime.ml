@@ -49,7 +49,7 @@ let print_gen_value gv = match gv with
   | Elementary(Vint(x)) -> Printf.printf "%d\n" x
   | Elementary(Vstring(x)) -> Printf.printf "%s\n" x
   | Elementary(Vbool(x)) -> Printf.printf "%s\n" (match x with | true -> "True" |false -> "False")
-  | Elementary(Vnone) -> print_string "None"
+  | Elementary(Vnone) -> print_string "None\n"
   | Combined(l) -> print_combined gv; print_string "\n"
 
 (*Section de comparaison/conversion de types*)
