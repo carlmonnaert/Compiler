@@ -1,2 +1,5 @@
-def f(x):
-    
+print(type(["bonjour"]))
+print(type("bonjour"))
+print(type(1))
+print(type(True))
+print(type(None))

@@ -118,6 +118,15 @@ let rec eval_expr expr local_e = match expr with
     
     | List(expr_list, ppos) -> Combined(List.map (fun x -> eval_expr x local_e ) expr_list)
    
+    | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "type" -> 
+      begin
+        match (match expr_list with | [e] -> eval_expr e local_e| _ -> failwith "wrong use of type function") with
+        | Elementary(Vint(x)) -> Elementary(Vstring("<class 'int'>"))
+        | Elementary(Vstring(x)) -> Elementary(Vstring("<class 'str'>"))
+        | Elementary(Vbool(x)) -> Elementary(Vstring("<class 'bool'>"))
+        | Elementary(Vnone) -> Elementary(Vstring("<class 'NoneType'>"))
+        | Combined(l) -> Elementary(Vstring("<class 'list'>"))
+      end
     | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "print" ->
       begin
         match expr_list with
