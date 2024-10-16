@@ -170,7 +170,7 @@ and eval_stmt stmt local_e = match stmt with
   | Sassign(left_value,expr,ppos) ->
     begin
     match left_value with
-      | Var(var_name,ppos1) -> Hashtbl.replace gvar var_name (eval_expr expr local_e)
+      | Var(var_name,ppos1) -> Hashtbl.replace local_e var_name (eval_expr expr local_e)
       | Tab(l,e,p) -> failwith "Assigning values is not possible in Tab"
     end
   | Sval(expr,ppos) -> (let _ = eval_expr expr local_e in () )
