@@ -147,8 +147,8 @@ let rec eval_expr expr local_e = match expr with
   | Ecall(fun_name,expr_list,ppos) ->
     begin
     let f = Hashtbl.find gfun fun_name in
-    List.iteri (fun i x -> Hashtbl.replace local_e x (eval_expr (List.nth expr_list i) (local_e) )) f.args;
-    eval_stmt f.body (Hashtbl.copy local_e);
+    List.iteri (fun i x -> Hashtbl.replace f.local_env x (eval_expr (List.nth expr_list i) (local_e) )) f.args;
+    eval_stmt f.body (Hashtbl.copy f.local_env);
     match !ret with
       | x::ret1 when !bret = true -> ret := ret1; x
       | _ -> Elementary(Vnone)
