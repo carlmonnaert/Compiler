@@ -126,9 +126,8 @@ let rec eval_expr expr local_e = match expr with
     | Ecall(fun_name,expr_list,ppos) ->
       begin
       let f = Hashtbl.find gfun fun_name in
-      List.iteri (fun i x -> Hashtbl.replace f.local_env x (eval_expr (List.nth expr_list i) (Hashtbl.copy local_e) )) f.args;
-      eval_stmt f.body f.local_env;
-      print_string "good !!\n";
+      List.iteri (fun i x -> Hashtbl.replace local_e x (eval_expr (List.nth expr_list i) (Hashtbl.copy local_e) )) f.args;
+      eval_stmt f.body local_e;
       match !ret with 
         | x::ret1 -> x 
         | _ -> failwith "noting to return"
@@ -145,9 +144,7 @@ and eval_stmt stmt local_e = match stmt with
   | Sblock(stmt_list, ppos) -> List.iter (fun x -> eval_stmt x local_e) stmt_list
 
   | Sreturn(expr,ppos) -> 
-    print_string "good !!\n";
     ret := (eval_expr expr local_e) :: (!ret);
-    print_string "good !!\n"
 
   
   | Sassign(left_value,expr,ppos) ->
@@ -168,10 +165,10 @@ and exec_list l counter stmt local_e = match l with
       end
 
 let eval_global_stmt gstmt = match gstmt with
-  |Gstmt(stmt,ppos) -> (eval_stmt stmt (Hashtbl.create 0) )
+  |Gstmt(stmt,ppos) -> (eval_stmt stmt gvar )
   |GFunDef(fun_name,var_list,stmt,ppos) -> 
     begin
-    Hashtbl.replace gfun fun_name { fun_name = fun_name ; args = var_list ; body = stmt ; local_env = Hashtbl.create 10 };
+    Hashtbl.replace gfun fun_name { fun_name = fun_name ; args = var_list ; body = stmt ; local_env = gvar };
     end
 ;;
 
