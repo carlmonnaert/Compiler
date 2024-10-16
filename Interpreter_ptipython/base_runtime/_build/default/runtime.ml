@@ -33,6 +33,7 @@ let rec print_combined gv = match gv with
   | Elementary(Vint(x)) -> Printf.printf "%d" x
   | Elementary(Vstring(x)) -> print_string"'" ; Printf.printf "%s" x ; print_string "'"
   | Elementary(Vbool(x)) -> Printf.printf "%s" (match x with | true -> "True" |false -> "False")
+  | Elementary(Vnone) -> print_string "None"
   | Combined(l) -> 
     begin
     Printf.printf "[";
