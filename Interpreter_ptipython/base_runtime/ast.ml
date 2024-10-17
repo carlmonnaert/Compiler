@@ -12,8 +12,8 @@ and stmt =
   | Sreturn of expr * ppos
   | Sassign of left_value*expr * ppos
   | Sval of expr * ppos
-  | Sif of expr * stmt * (expr * stmt) list * stmt option * ppos
-  | Swhile of expr * stmt * ppos
+  | Sif of expr * stmt list* (expr * stmt list) list * stmt list option * ppos
+  | Swhile of expr * stmt list * ppos
 
 and const = 
   | Int of string * ppos

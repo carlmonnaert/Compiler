@@ -293,7 +293,7 @@ type ('s, 'r) _menhir_state =
 
 
 and ('s, 'r) _menhir_cell1_elif_clause = 
-  | MenhirCell1_elif_clause of 's * ('s, 'r) _menhir_state * (Ast.expr * Ast.stmt)
+  | MenhirCell1_elif_clause of 's * ('s, 'r) _menhir_state * (Ast.expr * Ast.stmt list)
 
 and ('s, 'r) _menhir_cell1_expr = 
   | MenhirCell1_expr of 's * ('s, 'r) _menhir_state * (Ast.expr) * Lexing.position * Lexing.position
@@ -305,7 +305,7 @@ and ('s, 'r) _menhir_cell1_left_value =
   | MenhirCell1_left_value of 's * ('s, 'r) _menhir_state * (Ast.left_value) * Lexing.position * Lexing.position
 
 and ('s, 'r) _menhir_cell1_list_elif_clause_ = 
-  | MenhirCell1_list_elif_clause_ of 's * ('s, 'r) _menhir_state * ((Ast.expr * Ast.stmt) list)
+  | MenhirCell1_list_elif_clause_ of 's * ('s, 'r) _menhir_state * ((Ast.expr * Ast.stmt list) list)
 
 and ('s, 'r) _menhir_cell1_loption_separated_nonempty_list_COMMA_IDENT__ = 
   | MenhirCell1_loption_separated_nonempty_list_COMMA_IDENT__ of 's * ('s, 'r) _menhir_state * (string list)
@@ -443,17 +443,17 @@ let _menhir_action_06 =
   fun block cond ->
     (
 # 67 "parser.mly"
-                                                  ( (cond, block) )
+                                                  ( (cond, [block]) )
 # 448 "parser.ml"
-     : (Ast.expr * Ast.stmt))
+     : (Ast.expr * Ast.stmt list))
 
 let _menhir_action_07 =
   fun block ->
     (
 # 64 "parser.mly"
-                                ( block )
+                                ( [block] )
 # 456 "parser.ml"
-     : (Ast.stmt))
+     : (Ast.stmt list))
 
 let _menhir_action_08 =
   fun _endpos_c_ _startpos_c_ c ->
@@ -834,7 +834,7 @@ let _menhir_action_36 =
 # 216 "<standard.mly>"
     ( [] )
 # 837 "parser.ml"
-     : ((Ast.expr * Ast.stmt) list))
+     : ((Ast.expr * Ast.stmt list) list))
 
 let _menhir_action_37 =
   fun x xs ->
@@ -842,7 +842,7 @@ let _menhir_action_37 =
 # 219 "<standard.mly>"
     ( x :: xs )
 # 845 "parser.ml"
-     : ((Ast.expr * Ast.stmt) list))
+     : ((Ast.expr * Ast.stmt list) list))
 
 let _menhir_action_38 =
   fun () ->
@@ -930,7 +930,7 @@ let _menhir_action_48 =
 # 111 "<standard.mly>"
     ( None )
 # 933 "parser.ml"
-     : (Ast.stmt option))
+     : (Ast.stmt list option))
 
 let _menhir_action_49 =
   fun x ->
@@ -938,7 +938,7 @@ let _menhir_action_49 =
 # 114 "<standard.mly>"
     ( Some x )
 # 941 "parser.ml"
-     : (Ast.stmt option))
+     : (Ast.stmt list option))
 
 let _menhir_action_50 =
   fun x ->
@@ -1031,7 +1031,7 @@ let _menhir_action_59 =
     let _loc = (_startpos, _endpos) in
     (
 # 74 "parser.mly"
-      ( Sif(cond, then_block, elif_blocks, else_block, _loc) )
+      ( Sif(cond, [then_block], elif_blocks, else_block, _loc) )
 # 1036 "parser.ml"
      : (Ast.stmt))
 
@@ -1042,7 +1042,7 @@ let _menhir_action_60 =
     let _loc = (_startpos, _endpos) in
     (
 # 75 "parser.mly"
-                                                ( Swhile(cond,block,_loc) )
+                                                ( Swhile(cond,[block],_loc) )
 # 1047 "parser.ml"
      : (Ast.stmt))
 

@@ -1,10 +1,8 @@
 def fib(n):
     if n <= 1 :
         return 1
-    else :
+    else:
         return fib(n-1) + fib(n-2)
-    
-i = 0
-while i <= 10 :
-    print(fib(i))
-    i = i + 1
+
+
+print(fib(10))
