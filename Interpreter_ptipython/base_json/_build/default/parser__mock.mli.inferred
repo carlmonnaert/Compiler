@@ -18,6 +18,7 @@ type token =
   | LE
   | LB
   | IN
+  | IF
   | IDENT of string
   | GEQ
   | GE
@@ -27,6 +28,8 @@ type token =
   | EQ
   | EOF
   | END
+  | ELSE
+  | ELIF
   | DIV
   | DEF
   | CST of string
@@ -42,16 +45,20 @@ val xv_separated_nonempty_list_COMMA_expr_ : Ast.expr list
 val xv_separated_nonempty_list_COMMA_IDENT_ : string list
 val xv_separated_list_COMMA_expr_ : Ast.expr list
 val xv_separated_list_COMMA_IDENT_ : string list
+val xv_option_else_clause_ : Ast.stmt option
 val xv_option_NEWLINE_ : unit option
 val xv_op : Ast.binop
 val xv_nonempty_list_stmt_ : Ast.stmt list
 val xv_nonempty_list_global_stmt_ : Ast.program
 val xv_loption_separated_nonempty_list_COMMA_expr__ : Ast.expr list
 val xv_loption_separated_nonempty_list_COMMA_IDENT__ : string list
+val xv_list_elif_clause_ : (Ast.expr * Ast.stmt) list
 val xv_list_NEWLINE_ : unit list
 val xv_left_value : Ast.left_value
 val xv_global_stmt : Ast.global_stmt
 val xv_file : Ast.program
 val xv_expr : Ast.expr
+val xv_else_clause : Ast.stmt
+val xv_elif_clause : Ast.expr * Ast.stmt
 val xv_const : Ast.const
 val menhir_end_marker : int

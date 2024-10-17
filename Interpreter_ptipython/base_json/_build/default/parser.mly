@@ -14,6 +14,7 @@
 %token EQ EQQ
 %token NEWLINE BEGIN END
 %token LEQ GEQ LE GE NEQ
+%token IF ELIF ELSE
 
 /* Définitions des priorités et associativités des tokens */
 %left OR
@@ -58,9 +59,18 @@ simple_stmt:
   | e = expr { Sval(e, $loc) } 
 ;
 
+else_clause:
+  | ELSE; COLON ; block = suite { block }
+
+elif_clause:
+    | ELIF ; cond = expr ; COLON ; block = suite  { (cond, block) }
+;
+
 stmt:
-| s = simple_stmt ; NEWLINE  { s }
-| FOR ; s = IDENT ; IN ; e = expr ; COLON ; b = suite  {Sfor(s,e,b, $loc) }
+  | s = simple_stmt ; NEWLINE  { s }
+  | FOR ; s = IDENT ; IN ; e = expr ; COLON ; b = suite  { Sfor(s,e,b, $loc) }
+  | IF ; cond = expr ; COLON ; then_block = suite ; elif_blocks = elif_clause* ; else_block = else_clause? 
+      { Sif(cond, then_block, elif_blocks, else_block, $loc) }
 ;
 
 expr:
