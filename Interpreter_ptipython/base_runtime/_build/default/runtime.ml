@@ -176,6 +176,22 @@ and eval_stmt stmt local_e = match stmt with
     end
   | Sval(expr,ppos) -> (let _ = eval_expr expr local_e in () )
 
+  | Sif(cond_expr,then_stmt,elif_expr_stmt_list,else_stmt_option,ppos) ->
+    begin
+      match eval_expr cond_expr local_e , else_stmt_option with
+        | Elementary(Vbool(true)) , _ -> eval_stmt then_stmt local_e
+        | Elementary(Vbool(false)) , None when List.length elif_expr_stmt_list == 0 -> ()
+        | Elementary(Vbool(false)) , Some(else_stmt) when List.length elif_expr_stmt_list == 0 -> eval_stmt else_stmt local_e
+        | Elementary(Vbool(false)) , _ when List.length elif_expr_stmt_list > 0 ->
+          begin
+            let cond1,stmt1 = (match elif_expr_stmt_list with | x::l1 -> x | _ -> failwith "Something went wrong in eval_stmt Sif") in
+            let l1 = (match elif_expr_stmt_list with | x :: l1 -> l1  | _ -> failwith "Something went wrong in eval_stmt Sif") in
+            eval_stmt (Sif(cond1,stmt1,l1,else_stmt_option,ppos)) local_e
+          end
+        | _ -> failwith "misuse of if"
+
+    end
+
 and exec_list l counter stmt local_e = match l with
     | [] -> ()
     | y::l1 -> 

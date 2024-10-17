@@ -21,6 +21,7 @@ type token =
   | LE
   | LB
   | IN
+  | IF
   | IDENT of (string)
   | GEQ
   | GE
@@ -30,6 +31,8 @@ type token =
   | EQ
   | EOF
   | END
+  | ELSE
+  | ELIF
   | DIV
   | DEF
   | CST of (string)

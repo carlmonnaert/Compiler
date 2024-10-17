@@ -12,6 +12,8 @@ and stmt =
   | Sreturn of expr * ppos
   | Sassign of left_value*expr * ppos
   | Sval of expr * ppos
+  | Sif of expr * stmt * (expr * stmt) list * stmt option * ppos
+
 and const = 
   | Int of string * ppos
   | Str of string * ppos
