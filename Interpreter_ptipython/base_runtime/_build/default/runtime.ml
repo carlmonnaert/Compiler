@@ -192,6 +192,14 @@ and eval_stmt stmt local_e = match stmt with
 
     end
 
+  | Swhile(cond_expr,body_stmt,ppos) ->
+    begin
+      match eval_expr cond_expr local_e with
+        | Elementary(Vbool(true)) -> eval_stmt body_stmt local_e; eval_stmt (Swhile(cond_expr,body_stmt,ppos)) local_e
+        | Elementary(Vbool(false)) -> ()
+        | _ -> failwith "misuse of while"
+    end
+
 and exec_list l counter stmt local_e = match l with
     | [] -> ()
     | y::l1 -> 

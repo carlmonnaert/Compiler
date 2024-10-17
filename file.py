@@ -1,5 +1,5 @@
-if False :
-    print("magnifique")
+x = 10
 
-else:
-    print("pas magnifique")
+while x > 0 :
+    print(x)
+    x = x - 1

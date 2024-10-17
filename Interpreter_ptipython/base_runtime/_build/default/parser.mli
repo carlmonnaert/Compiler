@@ -2,6 +2,7 @@
 (* The type of tokens. *)
 
 type token = 
+  | WHILE
   | TRUE
   | TIMES
   | STR of (string)

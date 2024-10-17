@@ -1,5 +1,6 @@
 type token =
-    TRUE
+    WHILE
+  | TRUE
   | TIMES
   | STR of string
   | RP

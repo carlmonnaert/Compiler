@@ -15,6 +15,7 @@
 %token NEWLINE BEGIN END
 %token LEQ GEQ LE GE NEQ
 %token IF ELIF ELSE
+%token WHILE
 
 /* Définitions des priorités et associativités des tokens */
 %left OR
@@ -71,6 +72,7 @@ stmt:
   | FOR ; s = IDENT ; IN ; e = expr ; COLON ; b = suite  { Sfor(s,e,b, $loc) }
   | IF ; cond = expr ; COLON ; then_block = suite ; elif_blocks = elif_clause* ; else_block = else_clause? 
       { Sif(cond, then_block, elif_blocks, else_block, $loc) }
+  | WHILE ; cond = expr ; COLON ; block = suite { Swhile(cond,block,$loc) }
 ;
 
 expr:
