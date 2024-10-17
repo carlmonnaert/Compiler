@@ -1,8 +1,10 @@
-def f(x,y,z):
-    return x + y + z
-
-x = 1
-
-while(x<100):
-    x  = x + 1
-    print(f(x,2*x,3*x))
+def fib(n):
+    if n <= 1 :
+        return 1
+    else :
+        return fib(n-1) + fib(n-2)
+    
+i = 0
+while i <= 10 :
+    print(fib(i))
+    i = i + 1
