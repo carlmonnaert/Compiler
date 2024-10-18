@@ -1,10 +1,7 @@
-x = "Carl"
+def fact (n):
+    if n > 0 :
+        return n * fact(n-1)
+    
+    return 1
 
-while True:
-    x = "Carl"
-    print(x)
-    if "Carl" == x and x == "Carl" :
-        print("Yes")
-        print("No")
-        if True :
-            print("Pedro")
+print(fact(5))

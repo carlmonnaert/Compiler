@@ -150,7 +150,7 @@ let rec eval_expr expr local_e = match expr with
     List.iteri (fun i x -> Hashtbl.replace f.local_env x (eval_expr (List.nth expr_list i) (local_e) )) f.args;
     eval_stmt f.body (Hashtbl.copy f.local_env);
     match !ret with
-      | x::ret1 when !bret = true -> ret := ret1; x
+      | x::ret1 when !bret = true -> bret:= true; ret := ret1; x
       | _ -> Elementary(Vnone)
     end      
 
@@ -165,9 +165,13 @@ and eval_stmt stmt local_e = match stmt with
   | Sblock(stmt_list, ppos) -> List.iter (fun x -> eval_stmt x local_e) stmt_list
 
   | Sreturn(expr,ppos) -> 
-    ret := (eval_expr expr local_e) :: (!ret);
-    bret := true;
-  
+    begin
+    if !bret = false then
+    (
+      ret := (eval_expr expr local_e) :: (!ret);
+      bret := true;
+    )
+    end
   | Sassign(left_value,expr,ppos) ->
     begin
     match left_value with
