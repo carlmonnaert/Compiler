@@ -149,15 +149,12 @@ let rec eval_expr expr local_e = match expr with
     let f = Hashtbl.find gfun fun_name in
     List.iteri (fun i x -> Hashtbl.replace f.local_env x (eval_expr (List.nth expr_list i) (local_e) )) f.args;
     eval_stmt f.body (Hashtbl.copy f.local_env);
-    if !bret = true then
-      begin
-      bret := false;
-      match !ret with
-        | x::ret1 -> ret := ret1; x
-        | _ ->  failwith "erreur de retour"
-      end
-    else Elementary(Vnone)      
-
+    begin
+    bret := false;
+    match !ret with
+      | x::ret1 -> ret := ret1; x
+      | _ ->  failwith "erreur de retour"
+    end
     end
 
 and eval_stmt stmt local_e = match stmt with
@@ -179,6 +176,7 @@ and eval_stmt stmt local_e = match stmt with
     )
     end
     else ()
+    
   | Sassign(left_value,expr,ppos) ->
     begin
     match left_value with

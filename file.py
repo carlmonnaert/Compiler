@@ -4,3 +4,10 @@ def fact(n):
     return 1
 
 print(fact(5))
+
+def myrange(n):
+    if n > 1 :
+        return (myrange(n-1)+[n-1])
+    return [0]
+
+print(myrange(5))
