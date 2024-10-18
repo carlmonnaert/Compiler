@@ -170,14 +170,15 @@ and eval_stmt stmt local_e = match stmt with
   
   | Sblock(stmt_list, ppos) -> List.iter (fun x -> eval_stmt x local_e) stmt_list
 
-  | Sreturn(expr,ppos) -> 
+  | Sreturn(expr,ppos) ->
+    if !bret = false then 
     begin
-    if !bret = false then
     (
       ret := (eval_expr expr local_e) :: (!ret);
       bret := true;
     )
     end
+    else ()
   | Sassign(left_value,expr,ppos) ->
     begin
     match left_value with
