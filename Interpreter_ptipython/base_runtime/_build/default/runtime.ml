@@ -205,8 +205,8 @@ and eval_stmt stmt local_e = match stmt with
 
   | Swhile(cond_expr,body_stmt,ppos) ->
     begin
-      match eval_expr cond_expr local_e with
-        | Elementary(Vbool(true)) -> eval_stmt (Sblock(body_stmt,ppos)) local_e; eval_stmt (Swhile(cond_expr,body_stmt,ppos)) local_e
+      match eval_expr cond_expr (Hashtbl.copy local_e) with
+        | Elementary(Vbool(true)) -> eval_stmt (Sblock(body_stmt,ppos)) local_e; eval_stmt (Swhile(cond_expr,body_stmt,ppos)) (Hashtbl.copy local_e)
         | Elementary(Vbool(false)) -> ()
         | _ -> failwith "misuse of while"
     end
