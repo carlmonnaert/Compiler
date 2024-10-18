@@ -168,7 +168,7 @@ and eval_stmt stmt local_e = match stmt with
         | Elementary(e) -> failwith "unable to use for in something else than a list"
     end
   
-  | Sblock(stmt_list, ppos) -> List.iter (fun x -> eval_stmt x (Hashtbl.copy local_e)) stmt_list
+  | Sblock(stmt_list, ppos) -> List.iter (fun x -> eval_stmt x local_e) stmt_list
 
   | Sreturn(expr,ppos) ->
     if !bret = false then 
@@ -182,7 +182,7 @@ and eval_stmt stmt local_e = match stmt with
   | Sassign(left_value,expr,ppos) ->
     begin
     match left_value with
-      | Var(var_name,ppos1) -> Hashtbl.replace local_e var_name (eval_expr expr (Hashtbl.copy local_e))
+      | Var(var_name,ppos1) -> Hashtbl.replace local_e var_name (eval_expr expr local_e)
       | Tab(l,e,p) -> failwith "Assigning values is not possible in Tab"
     end
   | Sval(expr,ppos) -> (let _ = eval_expr expr local_e in () )
@@ -190,9 +190,9 @@ and eval_stmt stmt local_e = match stmt with
   | Sif(cond_expr,then_stmt,elif_expr_stmt_list,else_stmt_option,ppos) ->
     begin
       match eval_expr cond_expr local_e , else_stmt_option with
-        | Elementary(Vbool(true)) , _ -> eval_stmt (Sblock(then_stmt,ppos)) (Hashtbl.copy local_e)
+        | Elementary(Vbool(true)) , _ -> eval_stmt (Sblock(then_stmt,ppos)) local_e
         | Elementary(Vbool(false)) , None when List.length elif_expr_stmt_list == 0 -> ()
-        | Elementary(Vbool(false)) , Some(else_stmt) when List.length elif_expr_stmt_list == 0 -> eval_stmt (Sblock(else_stmt,ppos)) (Hashtbl.copy local_e)
+        | Elementary(Vbool(false)) , Some(else_stmt) when List.length elif_expr_stmt_list == 0 -> eval_stmt (Sblock(else_stmt,ppos)) local_e
         | Elementary(Vbool(false)) , _ when List.length elif_expr_stmt_list > 0 ->
           begin
             let cond1,stmt1 = (match elif_expr_stmt_list with | x::l1 -> x | _ -> failwith "Something went wrong in eval_stmt Sif") in
@@ -205,8 +205,8 @@ and eval_stmt stmt local_e = match stmt with
 
   | Swhile(cond_expr,body_stmt,ppos) ->
     begin
-      match eval_expr cond_expr (Hashtbl.copy local_e) with
-        | Elementary(Vbool(true)) -> eval_stmt (Sblock(body_stmt,ppos)) local_e; eval_stmt (Swhile(cond_expr,body_stmt,ppos)) (Hashtbl.copy local_e)
+      match eval_expr cond_expr local_e with
+        | Elementary(Vbool(true)) -> eval_stmt (Sblock(body_stmt,ppos)) local_e; eval_stmt (Swhile(cond_expr,body_stmt,ppos)) local_e
         | Elementary(Vbool(false)) -> ()
         | _ -> failwith "misuse of while"
     end
