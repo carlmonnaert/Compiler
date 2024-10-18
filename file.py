@@ -8,6 +8,9 @@ print(fact(5))
 def myrange(n):
     if n > 1 :
         return (myrange(n-1)+[n-1])
+    else :
+        if n == 1 :
+            return [0]
     return [0]
 
 print(myrange(5))
@@ -16,6 +19,8 @@ print(myrange(5))
 for x in ["Je", 5 , False , None]:
     if type(x) == "<class 'str'>" or type(x) == "<class 'int'>":
         print(x)
+        print("Cela fonctionne")
+    print("A merveille")
 
 def complex(x,y,z):
     print(x)
