@@ -27,5 +27,3 @@ def complex(x,y,z):
         return complex(x-1,y,z)
     else :
         return complex(y,z,x)
-
-complex(2,2,2)
