@@ -51,7 +51,7 @@ suite: b = simple_stmt ; NEWLINE { b }
 
 left_value:
 | s = IDENT { Var(s, $loc) }
-| l = left_value; LB ; e = expr ; RB { Tab(l,e,$loc) }
+| e1 = expr ; LB ; e2 = expr ; RB { Tab(e1,e2,$loc) }
 ;
 
 simple_stmt: 

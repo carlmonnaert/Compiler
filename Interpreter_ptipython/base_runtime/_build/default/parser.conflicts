@@ -1,0 +1,480 @@
+
+** Conflict (shift/reduce) in state 59.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) NOT expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 59, looking ahead at LB, reducing production
+** expr -> NOT expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+NOT expr . 
+
+** In state 59, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+NOT expr 
+    left_value 
+    expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 58.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) MINUS expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 58, looking ahead at LB, reducing production
+** expr -> MINUS expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+MINUS expr . 
+
+** In state 58, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+MINUS expr 
+      left_value 
+      expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 51.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr AND expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 51, looking ahead at LB, reducing production
+** expr -> expr AND expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr AND expr . 
+
+** In state 51, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr AND expr 
+         left_value 
+         expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 49.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr EQQ expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 49, looking ahead at LB, reducing production
+** expr -> expr EQQ expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr EQQ expr . 
+
+** In state 49, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr EQQ expr 
+         left_value 
+         expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 47.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr GE expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 47, looking ahead at LB, reducing production
+** expr -> expr GE expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr GE expr . 
+
+** In state 47, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr GE expr 
+        left_value 
+        expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 45.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr GEQ expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 45, looking ahead at LB, reducing production
+** expr -> expr GEQ expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr GEQ expr . 
+
+** In state 45, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr GEQ expr 
+         left_value 
+         expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 43.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr LE expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 43, looking ahead at LB, reducing production
+** expr -> expr LE expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr LE expr . 
+
+** In state 43, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr LE expr 
+        left_value 
+        expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 41.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr LEQ expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 41, looking ahead at LB, reducing production
+** expr -> expr LEQ expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr LEQ expr . 
+
+** In state 41, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr LEQ expr 
+         left_value 
+         expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 39.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr MINUS expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 39, looking ahead at LB, reducing production
+** expr -> expr MINUS expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr MINUS expr . 
+
+** In state 39, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr MINUS expr 
+           left_value 
+           expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 37.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr NEQ expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 37, looking ahead at LB, reducing production
+** expr -> expr NEQ expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr NEQ expr . 
+
+** In state 37, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr NEQ expr 
+         left_value 
+         expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 35.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr OR expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 35, looking ahead at LB, reducing production
+** expr -> expr OR expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr OR expr . 
+
+** In state 35, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr OR expr 
+        left_value 
+        expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 33.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr DIV expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 33, looking ahead at LB, reducing production
+** expr -> expr DIV expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr DIV expr . 
+
+** In state 33, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr DIV expr 
+         left_value 
+         expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 30.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr MOD expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 30, looking ahead at LB, reducing production
+** expr -> expr MOD expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr MOD expr . 
+
+** In state 30, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr MOD expr 
+         left_value 
+         expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 28.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr PLUS expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 28, looking ahead at LB, reducing production
+** expr -> expr PLUS expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr PLUS expr . 
+
+** In state 28, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr PLUS expr 
+          left_value 
+          expr . LB expr RB 
+
+** Conflict (shift/reduce) in state 23.
+** Token involved: LB
+** This state is reached from file after reading:
+
+option(NEWLINE) expr TIMES expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF 
+                global_stmt 
+                stmt 
+                simple_stmt NEWLINE 
+                (?)
+
+** In state 23, looking ahead at LB, reducing production
+** expr -> expr TIMES expr 
+** is permitted because of the following sub-derivation:
+
+left_value EQ expr 
+expr LB expr RB // lookahead token appears
+expr TIMES expr . 
+
+** In state 23, looking ahead at LB, shifting is permitted
+** because of the following sub-derivation:
+
+expr 
+expr TIMES expr 
+           left_value 
+           expr . LB expr RB 

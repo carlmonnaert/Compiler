@@ -84,12 +84,21 @@ let rec eval_expr expr local_e = match expr with
       | Var(var_name,ppos1) when Hashtbl.mem local_e var_name -> Hashtbl.find local_e var_name
       | Var(var_name,ppos1) when Hashtbl.mem gvar var_name -> Hashtbl.find gvar var_name
       | Var(var_name,ppos1) -> failwith "unfound value"
-      | Tab(left_value1,expr1,ppos1) -> 
+      (*| Tab(left_value1,expr1,ppos1) -> 
         begin
           match eval_expr (Val(left_value1,ppos1)) local_e, eval_expr expr1 local_e with
             | Combined(l) , Elementary(Vint(x)) -> (List.nth l x)
             | _ , _ -> failwith "invalid access in a Tab"
-        end
+        end*)
+      | Tab(expr1,expr2,ppos) -> 
+        begin
+          match eval_expr expr1 local_e, eval_expr expr2 local_e with
+            | Combined(l) , Elementary(Vint(x)) -> (List.nth l x)
+            | _ , _ -> failwith "invalid access in a Tab"
+        end  
+
+
+
     end 
 
   | Moins(expr1,ppos) -> (match eval_expr expr1 local_e with | Elementary(Vint(x)) -> Elementary(Vint(-x)) | _ -> failwith "something went wrong in eval_expr : Moins")
