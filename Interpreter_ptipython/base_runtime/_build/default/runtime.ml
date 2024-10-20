@@ -177,7 +177,7 @@ and eval_stmt stmt local_e = match stmt with
         | Elementary(e) -> failwith "unable to use for in something else than a list"
     end
   
-  | Sblock(stmt_list, ppos) -> List.iter (fun x -> eval_stmt x local_e) stmt_list
+  | Sblock(stmt_list, ppos) -> List.iter (fun x -> if !bret = false then eval_stmt x local_e else () ) stmt_list
 
   | Sreturn(expr,ppos) ->
     if !bret = false then 
@@ -236,7 +236,7 @@ and eval_stmt stmt local_e = match stmt with
       begin
       match eval_expr cond_expr local_e with
         | Elementary(Vbool(true)) -> eval_stmt (Sblock(then_stmt,ppos)) local_e
-        | Elementary(Vint(i)) when i<>0 -> eval_stmt (Sblock(then_stmt,ppos)) local_e
+        | Elementary(Vint(i)) when i <> 0 -> eval_stmt (Sblock(then_stmt,ppos)) local_e
         | Elementary(Vstring(s)) when String.equal s "" = false -> eval_stmt (Sblock(then_stmt,ppos)) local_e
         | Combined(lst) when (lst = []) = false -> eval_stmt (Sblock(then_stmt,ppos)) local_e
         | _ -> 
