@@ -219,10 +219,13 @@ and eval_stmt stmt local_e = match stmt with
   | Sval(expr,ppos) -> (let _ = eval_expr expr local_e in () )
 
   | Sif(cond_expr,then_stmt,elif_expr_stmt_list,else_stmt_option,ppos) ->
-    begin
+    (*begin
       match eval_expr cond_expr local_e , else_stmt_option with
         | Elementary(Vbool(true)) , _ -> eval_stmt (Sblock(then_stmt,ppos)) local_e
-        | Elementary(Vbool(false)) , None when List.length elif_expr_stmt_list == 0 -> ()
+        | Elementary(Vint(i)) , _  when i<>0-> eval_stmt (Sblock(then_stmt,ppos)) local_e
+        | Elementary(Vstr(s)) , _ when s<>"" -> eval_stmt (Sblock(then_stmt,ppos)) local_e
+        | Combined(lst) , _  when lst<>[] -> eval_stmt (Sblock(then_stmt,ppos)) local_e
+        | Elementary(Vbool(false)) , None | Elementary(None) , None when List.length elif_expr_stmt_list == 0 -> ()
         | Elementary(Vbool(false)) , Some(else_stmt) when List.length elif_expr_stmt_list == 0 -> eval_stmt (Sblock(else_stmt,ppos)) local_e
         | Elementary(Vbool(false)) , _ when List.length elif_expr_stmt_list > 0 ->
           begin
@@ -231,7 +234,27 @@ and eval_stmt stmt local_e = match stmt with
             eval_stmt (Sif(cond1,stmt1,l1,else_stmt_option,ppos)) local_e
           end
         | _ -> failwith "misuse of if"
+        end*)
 
+      begin
+      match eval_expr cond_expr local_e with
+        | Elementary(Vbool(true)) -> eval_stmt (Sblock(then_stmt,ppos)) local_e
+        | Elementary(Vint(i)) when i<>0 -> eval_stmt (Sblock(then_stmt,ppos)) local_e
+        | Elementary(Vstring(s)) when s<>"" -> eval_stmt (Sblock(then_stmt,ppos)) local_e
+        | Combined(lst) when lst<>[] -> eval_stmt (Sblock(then_stmt,ppos)) local_e
+        | Elementary(Vbool(false)) | Elementary(Vnone) -> 
+          begin 
+            match  else_stmt_option with
+            |None when List.length elif_expr_stmt_list == 0 -> ()
+            |Some(else_stmt) when List.length elif_expr_stmt_list == 0 -> eval_stmt (Sblock(else_stmt,ppos)) local_e
+            | _ when List.length elif_expr_stmt_list > 0 ->
+              begin
+                let cond1,stmt1 = (match elif_expr_stmt_list with | x::l1 -> x | _ -> failwith "Something went wrong in eval_stmt Sif") in
+                let l1 = (match elif_expr_stmt_list with | x :: l1 -> l1  | _ -> failwith "Something went wrong in eval_stmt Sif") in
+                eval_stmt (Sif(cond1,stmt1,l1,else_stmt_option,ppos)) local_e
+              end
+            end
+        | _ -> print_string "erreur"
     end
 
   | Swhile(cond_expr,body_stmt,ppos) ->
