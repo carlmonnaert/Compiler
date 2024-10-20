@@ -94,6 +94,8 @@ let rec eval_expr expr local_e = match expr with
         begin
           match eval_expr expr1 local_e, eval_expr expr2 local_e with
             | Combined(l) , Elementary(Vint(x)) -> (List.nth l x)
+            | Elementary(Vnone) , _ -> Elementary(Vnone)
+            | _ , Elementary(Vnone) -> Elementary(Vnone)
             | _ , _ -> failwith "invalid access in a Tab"
         end  
 

@@ -4,9 +4,7 @@
 
 
 
-cd Interpreter_ptipython/base_json ;
-dune build ;
-cd ../base_runtime ;
+cd Interpreter_ptipython/base_runtime ;
 dune build ;
 cd ../.. ;
 cp Interpreter_ptipython/base_runtime/ptipython.exe .

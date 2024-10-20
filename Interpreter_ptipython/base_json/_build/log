@@ -14,4 +14,26 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_cdf294_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_41e2fb_output
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .ptipython2json.eobjs/byte -I /home/carl/.opam/default/lib/seq -I /home/carl/.opam/default/lib/yojson -no-alias-deps -opaque -open Dune__exe -o .ptipython2json.eobjs/byte/dune__exe__Tojson.cmo -c -impl tojson.ml)
+> File "tojson.ml", lines 38-71, characters 19-13:
+> 38 | ...................function
+> 39 |   | Sfor (varname, in_set, body, p) ->
+> 40 |      `Assoc([
+> 41 |         "type", `String "for" ;
+> 42 |         "varname", `String varname ;
+> ...
+> 68 |                "type", `String "expr" ;
+> 69 |                "value", to_json_expr e ;
+> 70 |                pos p
+> 71 |            ]).
+> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+> Here is an example of a case that is not matched:
+> Sif (_, _, _, _, _)
+> File "tojson.ml", line 128, characters 43-44:
+> 128 |                "array", to_json_left_value l ;
+>                                                  ^
+> Error: This expression has type Dune__exe.Ast.expr = Dune__exe__Ast.expr
+>        but an expression was expected of type
+>          Dune__exe.Ast.left_value = Dune__exe__Ast.left_value
+[2]
