@@ -1,10 +1,10 @@
 # dune build
 # OCAMLPARAM: unset
 # Shared cache: disabled
-# Shared cache location: /home/mathys/.cache/dune/db
+# Shared cache location: /home/carl/.cache/dune/db
 # Workspace root:
-# /mnt/c/Users/Mathys/Documents/Informatique/1A/git_1a/compil_1A/Interpreter_ptipython/base_json
-# Auto-detected concurrency: 4
+# "/home/carl/T\195\169l\195\169com/INF-108/projet_1/compil_1A/Interpreter_ptipython/base_json"
+# Auto-detected concurrency: 8
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -14,4 +14,4 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /home/mathys/.opam/4.13.1/bin/ocamlc.opt -config > /tmp/dune_00ef1e_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_1f9aaf_output

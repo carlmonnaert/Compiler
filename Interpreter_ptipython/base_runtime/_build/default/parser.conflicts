@@ -3,7 +3,7 @@
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) NOT expr 
+option(NEWLINE) NOT expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -16,7 +16,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 59, looking ahead at LB, reducing production
-** expr -> NOT expr 
+** expr -> NOT expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -35,7 +35,7 @@ NOT expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) MINUS expr 
+option(NEWLINE) MINUS expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -48,7 +48,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 58, looking ahead at LB, reducing production
-** expr -> MINUS expr 
+** expr -> MINUS expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -67,7 +67,7 @@ MINUS expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr AND expr 
+option(NEWLINE) expr AND expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -80,7 +80,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 51, looking ahead at LB, reducing production
-** expr -> expr AND expr 
+** expr -> expr AND expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -99,7 +99,7 @@ expr AND expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr EQQ expr 
+option(NEWLINE) expr EQQ expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -112,7 +112,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 49, looking ahead at LB, reducing production
-** expr -> expr EQQ expr 
+** expr -> expr EQQ expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -131,7 +131,7 @@ expr EQQ expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr GE expr 
+option(NEWLINE) expr GE expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -144,7 +144,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 47, looking ahead at LB, reducing production
-** expr -> expr GE expr 
+** expr -> expr GE expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -163,7 +163,7 @@ expr GE expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr GEQ expr 
+option(NEWLINE) expr GEQ expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -176,7 +176,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 45, looking ahead at LB, reducing production
-** expr -> expr GEQ expr 
+** expr -> expr GEQ expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -195,7 +195,7 @@ expr GEQ expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr LE expr 
+option(NEWLINE) expr LE expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -208,7 +208,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 43, looking ahead at LB, reducing production
-** expr -> expr LE expr 
+** expr -> expr LE expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -227,7 +227,7 @@ expr LE expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr LEQ expr 
+option(NEWLINE) expr LEQ expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -240,7 +240,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 41, looking ahead at LB, reducing production
-** expr -> expr LEQ expr 
+** expr -> expr LEQ expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -259,7 +259,7 @@ expr LEQ expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr MINUS expr 
+option(NEWLINE) expr MINUS expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -272,7 +272,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 39, looking ahead at LB, reducing production
-** expr -> expr MINUS expr 
+** expr -> expr MINUS expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -291,7 +291,7 @@ expr MINUS expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr NEQ expr 
+option(NEWLINE) expr NEQ expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -304,7 +304,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 37, looking ahead at LB, reducing production
-** expr -> expr NEQ expr 
+** expr -> expr NEQ expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -323,7 +323,7 @@ expr NEQ expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr OR expr 
+option(NEWLINE) expr OR expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -336,7 +336,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 35, looking ahead at LB, reducing production
-** expr -> expr OR expr 
+** expr -> expr OR expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -355,7 +355,7 @@ expr OR expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr DIV expr 
+option(NEWLINE) expr DIV expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -368,7 +368,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 33, looking ahead at LB, reducing production
-** expr -> expr DIV expr 
+** expr -> expr DIV expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -387,7 +387,7 @@ expr DIV expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr MOD expr 
+option(NEWLINE) expr MOD expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -400,7 +400,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 30, looking ahead at LB, reducing production
-** expr -> expr MOD expr 
+** expr -> expr MOD expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -419,7 +419,7 @@ expr MOD expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr PLUS expr 
+option(NEWLINE) expr PLUS expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -432,7 +432,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 28, looking ahead at LB, reducing production
-** expr -> expr PLUS expr 
+** expr -> expr PLUS expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 
@@ -451,7 +451,7 @@ expr PLUS expr
 ** Token involved: LB
 ** This state is reached from file after reading:
 
-option(NEWLINE) expr TIMES expr 
+option(NEWLINE) expr TIMES expr
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -464,7 +464,7 @@ option(NEWLINE) nonempty_list(global_stmt) option(NEWLINE) EOF
                 (?)
 
 ** In state 23, looking ahead at LB, reducing production
-** expr -> expr TIMES expr 
+** expr -> expr TIMES expr
 ** is permitted because of the following sub-derivation:
 
 left_value EQ expr 

@@ -237,9 +237,9 @@ and eval_stmt stmt local_e = match stmt with
       match eval_expr cond_expr local_e with
         | Elementary(Vbool(true)) -> eval_stmt (Sblock(then_stmt,ppos)) local_e
         | Elementary(Vint(i)) when i<>0 -> eval_stmt (Sblock(then_stmt,ppos)) local_e
-        | Elementary(Vstring(s)) when s<>"" -> eval_stmt (Sblock(then_stmt,ppos)) local_e
-        | Combined(lst) when lst<>[] -> eval_stmt (Sblock(then_stmt,ppos)) local_e
-        | Elementary(Vbool(false)) | Elementary(Vnone) -> 
+        | Elementary(Vstring(s)) when String.equal s "" = false -> eval_stmt (Sblock(then_stmt,ppos)) local_e
+        | Combined(lst) when (lst = []) = false -> eval_stmt (Sblock(then_stmt,ppos)) local_e
+        | _ -> 
           begin 
             match  else_stmt_option with
             |None when List.length elif_expr_stmt_list == 0 -> ()
@@ -250,8 +250,8 @@ and eval_stmt stmt local_e = match stmt with
                 let l1 = (match elif_expr_stmt_list with | x :: l1 -> l1  | _ -> failwith "Something went wrong in eval_stmt Sif") in
                 eval_stmt (Sif(cond1,stmt1,l1,else_stmt_option,ppos)) local_e
               end
+            | _ -> failwith "unmatched case in if"
             end
-        | _ -> failwith "misuse of it"
       end
 
   | Swhile(cond_expr,body_stmt,ppos) ->
