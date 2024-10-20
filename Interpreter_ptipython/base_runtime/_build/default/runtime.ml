@@ -192,7 +192,29 @@ and eval_stmt stmt local_e = match stmt with
     begin
     match left_value with
       | Var(var_name,ppos1) -> Hashtbl.replace local_e var_name (eval_expr expr local_e)
-      | Tab(l,e,p) -> failwith "Assigning values is not possible in Tab"
+      (*| Tab(expr_tab,expr_idx,p) -> 
+        begin
+        let valeur = eval_expr expr local_e in
+        match eval_expr expr_tab local_e, eval_expr expr_idx local_e with
+        |Combined(l), Elementary(Vint(i)) -> 
+        let new_tab = (replace_in_lst l i valeur) in (*list of gen value*)
+        (*eval_stmt (Sassign(Tab(expr_tab , expr_idx,ppos) , Val(new_value,ppos),ppos)) local_e*)
+        eval_stmt (Sassign())
+        |_ -> failwith "le tableau est au mauvais format"
+        end *)
+      | Tab(expr_tab,expr_idx,p) -> 
+        begin
+        let t = eval_expr expr_tab local_e in
+        let idx = eval_expr expr_idx local_e in
+        let valeur = eval_expr expr  local_e in
+        match t, idx with
+        |Combined(l), Elementary(Vint(i)) -> (
+          let new_lst = (uneval_general (Combined(replace_in_lst l i valeur)) ppos) in
+          match expr_tab with
+          |Val(lv, ppos2) -> eval_stmt (Sassign(lv, new_lst ,ppos2)) local_e
+          |_ -> failwith "erreur de type : Sassign travaille sur des left_value" )
+        |_ -> failwith "erreur de type : il faut un tableau"
+        end          
     end
   | Sval(expr,ppos) -> (let _ = eval_expr expr local_e in () )
 
@@ -220,6 +242,7 @@ and eval_stmt stmt local_e = match stmt with
         | _ -> failwith "misuse of while"
     end
 
+
 and exec_list l counter stmt local_e = match l with
     | [] -> ()
     | y::l1 -> 
@@ -228,6 +251,43 @@ and exec_list l counter stmt local_e = match l with
       eval_stmt stmt local_e;
       exec_list l1 counter stmt local_e
       end
+
+  
+  and replace_in_lst lst j x = 
+    List.mapi (fun i elt -> if i=j then x else elt) lst
+
+  and uneval value ppos = match value with
+  |Vint(x) -> Const(Int(string_of_int x, ppos),ppos)
+  |Vbool(x) -> Const(Bool(x, ppos), ppos)
+  |Vstring(x) -> Const(Str(x, ppos), ppos)
+  |Vnone -> Const(Non(ppos), ppos)
+  
+  and uneval_general gv ppos = match gv with
+  |Elementary(v) -> uneval v ppos
+  |Combined(lst) ->
+    List((List.map (fun v -> uneval_general v ppos) lst), ppos)
+
+    (* begin
+      match lst with
+      |[] -> failwith "liste vide"
+      |[x] -> uneval_general x ppos
+      |x::q -> =
+    end *)
+
+    (* uneval_g_lst lst ppos
+  |_ -> failwith "erreur"
+
+  and uneval_g_lst lst ppos = match lst with
+  |[] -> []
+  |x::q -> (uneval_general x ppos)::(uneval_g_lst Combined(q) ppos) *)
+
+    (*
+    begin
+      match lst with
+      |[] -> []
+      |v::q -> (uneval_general v ppos)::(uneval_general q ppos)
+    end*)
+
 
 let eval_global_stmt gstmt = match gstmt with
   |Gstmt(stmt,ppos) -> (eval_stmt stmt gvar)
