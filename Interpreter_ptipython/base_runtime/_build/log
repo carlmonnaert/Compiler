@@ -14,4 +14,400 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_724d81_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_cbee98_output
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl runtime.ml) > _build/default/.eval.objs/eval__Runtime.impl.d
+$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -27-32-66-33 -g -bin-annot -I .eval.objs/byte -no-alias-deps -opaque -open Eval__ -o .eval.objs/byte/eval__Runtime.cmo -c -impl runtime.ml)
+> File "runtime.ml", line 2, characters 0-12:
+> 2 | open Hashtbl ;;
+>     ^^^^^^^^^^^^
+> Warning 33 [unused-open]: unused open Stdlib.Hashtbl.
+> File "runtime.ml", line 3, characters 0-11:
+> 3 | open Printf ;;
+>     ^^^^^^^^^^^
+> Warning 33 [unused-open]: unused open Stdlib.Printf.
+> File "runtime.ml", line 4, characters 0-11:
+> 4 | open String ;;
+>     ^^^^^^^^^^^
+> Warning 33 [unused-open]: unused open Stdlib.String.
+> File "runtime.ml", line 55, characters 12-15:
+> 55 |   | Combined(l) -> print_combined gv; print_string "\n"
+>                  ^^^
+> Warning 27 [unused-var-strict]: unused variable l.
+> File "runtime.ml", line 61, characters 21-25:
+> 61 |     |Elementary(Vbool(x1)),Elementary(Vbool(y1))-> failwith "arithmetics not implemented  on bools"
+>                           ^^^^
+> Warning 27 [unused-var-strict]: unused variable x1.
+> File "runtime.ml", line 61, characters 43-47:
+> 61 |     |Elementary(Vbool(x1)),Elementary(Vbool(y1))-> failwith "arithmetics not implemented  on bools"
+>                                                 ^^^^
+> Warning 27 [unused-var-strict]: unused variable y1.
+> File "runtime.ml", line 66, characters 17-19:
+> 66 |           | [] , l2 -> true
+>                       ^^
+> Warning 27 [unused-var-strict]: unused variable l2.
+> File "runtime.ml", line 67, characters 12-14:
+> 67 |           | l1 , [] -> false
+>                  ^^
+> Warning 27 [unused-var-strict]: unused variable l1.
+> File "runtime.ml", line 79, characters 16-20:
+> 79 |   | Const(const,ppos) -> begin
+>                      ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 81, characters 38-43:
+> 81 |                             | Int(str,ppos1) -> Elementary(Vint(int_of_string str))
+>                                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 82, characters 38-43:
+> 82 |                             | Str(str,ppos1) ->  Elementary(Vstring(str))
+>                                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 83, characters 37-42:
+> 83 |                             | Bool(b,ppos1) -> Elementary(Vbool(b))
+>                                           ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 84, characters 33-39:
+> 84 |                             | Non(ppos) -> Elementary(Vnone)                            
+>                                       ^^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 87, characters 19-23:
+> 87 |   | Val(left_value,ppos) ->
+>                         ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 98, characters 21-26:
+> 98 |       | Var(var_name,ppos1) when Hashtbl.mem gvar var_name -> Hashtbl.find gvar var_name
+>                           ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 99, characters 12-20:
+> 99 |       | Var(var_name,ppos1) -> failwith "unfound value"
+>                  ^^^^^^^^
+> Warning 27 [unused-var-strict]: unused variable var_name.
+> File "runtime.ml", line 99, characters 21-26:
+> 99 |       | Var(var_name,ppos1) -> failwith "unfound value"
+>                           ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 106, characters 24-28:
+> 106 |       | Tab(expr1,expr2,ppos) -> 
+>                               ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 119, characters 16-20:
+> 119 |   | Moins(expr1,ppos) -> (match eval_expr expr1 local_e with | Elementary(Vint(x)) -> Elementary(Vint(-x)) | _ -> failwith "something went wrong in eval_expr : Moins")
+>                       ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 122, characters 15-19:
+> 122 |   | Not(expr1, ppos) -> (match eval_expr expr1 local_e with | Elementary(Vbool(x)) -> if x = true then Elementary(Vbool(false)) else Elementary(Vbool(true)) | _ -> failwith "something went wrong in eval_expr : Not")
+>                      ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 123, characters 25-29:
+> 123 |   | Op(binop,expr1,expr2,ppos)->
+>                                ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 144, characters 20-24:
+> 144 |   | List(expr_list, ppos) -> Combined(List.map (fun x -> eval_expr x local_e ) expr_list)
+>                           ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 146, characters 29-33:
+> 146 |   | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "type" -> 
+>                                    ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 150, characters 23-26:
+> 150 |       | Elementary(Vint(x)) -> Elementary(Vstring("<class 'int'>"))
+>                              ^^^
+> Warning 27 [unused-var-strict]: unused variable x.
+> File "runtime.ml", line 151, characters 26-29:
+> 151 |       | Elementary(Vstring(x)) -> Elementary(Vstring("<class 'str'>"))
+>                                 ^^^
+> Warning 27 [unused-var-strict]: unused variable x.
+> File "runtime.ml", line 152, characters 24-27:
+> 152 |       | Elementary(Vbool(x)) -> Elementary(Vstring("<class 'bool'>"))
+>                               ^^^
+> Warning 27 [unused-var-strict]: unused variable x.
+> File "runtime.ml", line 154, characters 16-19:
+> 154 |       | Combined(l) -> Elementary(Vstring("<class 'list'>"))
+>                       ^^^
+> Warning 27 [unused-var-strict]: unused variable l.
+> File "runtime.ml", line 157, characters 29-33:
+> 157 |   | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "len" ->
+>                                    ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 165, characters 29-33:
+> 165 |   | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "print" ->
+>                                    ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 172, characters 29-33:
+> 172 |   | Ecall(fun_name,expr_list,ppos) ->
+>                                    ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 189, characters 27-31:
+> 189 |   | Sfor(counter,expr,stmt,ppos) ->
+>                                  ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 193, characters 20-23:
+> 193 |         | Elementary(e) -> failwith "unable to use for in something else than a list"
+>                           ^^^
+> Warning 27 [unused-var-strict]: unused variable e.
+> File "runtime.ml", line 196, characters 22-26:
+> 196 |   | Sblock(stmt_list, ppos) -> List.iter (fun x -> if !bret = false then eval_stmt x local_e else () ) stmt_list
+>                             ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 198, characters 17-21:
+> 198 |   | Sreturn(expr,ppos) ->
+>                        ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 210, characters 21-26:
+> 210 |       | Var(var_name,ppos1) , _ , _ when String.equal var_name (get_repres var_name local_e) = true -> print_string var_name ; print_string "ok\n"; Hashtbl.replace local_e var_name (eval_expr expr local_e)
+>                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 211, characters 21-26:
+> 211 |       | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) when String.equal var_name (get_repres var_name local_e) = false -> Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
+>                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 211, characters 48-53:
+> 211 |       | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) when String.equal var_name (get_repres var_name local_e) = false -> Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
+>                                                       ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos2.
+> File "runtime.ml", line 211, characters 55-59:
+> 211 |       | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) when String.equal var_name (get_repres var_name local_e) = false -> Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
+>                                                              ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 211, characters 71-74:
+> 211 |       | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) when String.equal var_name (get_repres var_name local_e) = false -> Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
+>                                                                              ^^^
+> Warning 27 [unused-var-strict]: unused variable l.
+> File "runtime.ml", line 212, characters 21-26:
+> 212 |       | Var(var_name,ppos1) , _ , _ when (match Hashtbl.find_opt local_e var_name with | Some(Elementary(Vpoint(x))) -> true | _ -> false ) = true -> Hashtbl.replace local_e (get_repres var_name local_e) (eval_expr expr local_e) 
+>                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 212, characters 111-114:
+> 212 |       | Var(var_name,ppos1) , _ , _ when (match Hashtbl.find_opt local_e var_name with | Some(Elementary(Vpoint(x))) -> true | _ -> false ) = true -> Hashtbl.replace local_e (get_repres var_name local_e) (eval_expr expr local_e) 
+>                                                                                                                      ^^^
+> Warning 27 [unused-var-strict]: unused variable x.
+> File "runtime.ml", line 213, characters 21-26:
+> 213 |       | Var(var_name,ppos1) , _ , _ -> Hashtbl.replace local_e var_name (eval_expr expr local_e)
+>                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 225, characters 30-31:
+> 225 |       | Tab(expr_tab,expr_idx,p), _ ,_-> 
+>                                     ^
+> Warning 27 [unused-var-strict]: unused variable p.
+> File "runtime.ml", line 239, characters 14-18:
+> 239 |   | Sval(expr,ppos) -> (let _ = eval_expr expr local_e in () )
+>                     ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 269, characters 71-73:
+> 269 |                 let cond1,stmt1 = (match elif_expr_stmt_list with | x::l1 -> x | _ -> failwith "Something went wrong in eval_stmt Sif") in
+>                                                                              ^^
+> Warning 27 [unused-var-strict]: unused variable l1.
+> File "runtime.ml", line 270, characters 59-60:
+> 270 |                 let l1 = (match elif_expr_stmt_list with | x :: l1 -> l1  | _ -> failwith "Something went wrong in eval_stmt Sif") in
+>                                                                  ^
+> Warning 27 [unused-var-strict]: unused variable x.
+> File "runtime.ml", line 333, characters 14-18:
+> 333 |   |Gstmt(stmt,ppos) -> (eval_stmt stmt gvar)
+>                     ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 334, characters 34-38:
+> 334 |   |GFunDef(fun_name,var_list,stmt,ppos) -> 
+>                                         ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -27-32-66-33 -g -bin-annot -I .eval.objs/byte -no-alias-deps -opaque -open Eval__ -o .eval.objs/byte/eval.cmo -c -impl eval.ml)
+$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -27-32-66-33 -g -a -o eval.cma .eval.objs/byte/eval__.cmo .eval.objs/byte/eval__Ast.cmo .eval.objs/byte/eval__Runtime.cmo .eval.objs/byte/eval__Parser.cmo .eval.objs/byte/eval__Lexer.cmo .eval.objs/byte/eval.cmo)
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I .ptipython.eobjs/byte -I .eval.objs/byte -no-alias-deps -opaque -o .ptipython.eobjs/byte/dune__exe__Ptipython.cmi -c -intf ptipython.mli)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -27-32-66-33 -g -I .eval.objs/byte -I .eval.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Eval__ -o .eval.objs/native/eval.cmx -c -impl eval.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I .ptipython.eobjs/byte -I .ptipython.eobjs/native -I .eval.objs/byte -I .eval.objs/native -intf-suffix .ml -no-alias-deps -opaque -o .ptipython.eobjs/native/dune__exe__Ptipython.cmx -c -impl ptipython.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -27-32-66-33 -g -I .eval.objs/byte -I .eval.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Eval__ -o .eval.objs/native/eval__Runtime.cmx -c -impl runtime.ml)
+> File "runtime.ml", line 2, characters 0-12:
+> 2 | open Hashtbl ;;
+>     ^^^^^^^^^^^^
+> Warning 33 [unused-open]: unused open Stdlib.Hashtbl.
+> File "runtime.ml", line 3, characters 0-11:
+> 3 | open Printf ;;
+>     ^^^^^^^^^^^
+> Warning 33 [unused-open]: unused open Stdlib.Printf.
+> File "runtime.ml", line 4, characters 0-11:
+> 4 | open String ;;
+>     ^^^^^^^^^^^
+> Warning 33 [unused-open]: unused open Stdlib.String.
+> File "runtime.ml", line 55, characters 12-15:
+> 55 |   | Combined(l) -> print_combined gv; print_string "\n"
+>                  ^^^
+> Warning 27 [unused-var-strict]: unused variable l.
+> File "runtime.ml", line 61, characters 21-25:
+> 61 |     |Elementary(Vbool(x1)),Elementary(Vbool(y1))-> failwith "arithmetics not implemented  on bools"
+>                           ^^^^
+> Warning 27 [unused-var-strict]: unused variable x1.
+> File "runtime.ml", line 61, characters 43-47:
+> 61 |     |Elementary(Vbool(x1)),Elementary(Vbool(y1))-> failwith "arithmetics not implemented  on bools"
+>                                                 ^^^^
+> Warning 27 [unused-var-strict]: unused variable y1.
+> File "runtime.ml", line 66, characters 17-19:
+> 66 |           | [] , l2 -> true
+>                       ^^
+> Warning 27 [unused-var-strict]: unused variable l2.
+> File "runtime.ml", line 67, characters 12-14:
+> 67 |           | l1 , [] -> false
+>                  ^^
+> Warning 27 [unused-var-strict]: unused variable l1.
+> File "runtime.ml", line 79, characters 16-20:
+> 79 |   | Const(const,ppos) -> begin
+>                      ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 81, characters 38-43:
+> 81 |                             | Int(str,ppos1) -> Elementary(Vint(int_of_string str))
+>                                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 82, characters 38-43:
+> 82 |                             | Str(str,ppos1) ->  Elementary(Vstring(str))
+>                                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 83, characters 37-42:
+> 83 |                             | Bool(b,ppos1) -> Elementary(Vbool(b))
+>                                           ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 84, characters 33-39:
+> 84 |                             | Non(ppos) -> Elementary(Vnone)                            
+>                                       ^^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 87, characters 19-23:
+> 87 |   | Val(left_value,ppos) ->
+>                         ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 98, characters 21-26:
+> 98 |       | Var(var_name,ppos1) when Hashtbl.mem gvar var_name -> Hashtbl.find gvar var_name
+>                           ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 99, characters 12-20:
+> 99 |       | Var(var_name,ppos1) -> failwith "unfound value"
+>                  ^^^^^^^^
+> Warning 27 [unused-var-strict]: unused variable var_name.
+> File "runtime.ml", line 99, characters 21-26:
+> 99 |       | Var(var_name,ppos1) -> failwith "unfound value"
+>                           ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 106, characters 24-28:
+> 106 |       | Tab(expr1,expr2,ppos) -> 
+>                               ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 119, characters 16-20:
+> 119 |   | Moins(expr1,ppos) -> (match eval_expr expr1 local_e with | Elementary(Vint(x)) -> Elementary(Vint(-x)) | _ -> failwith "something went wrong in eval_expr : Moins")
+>                       ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 122, characters 15-19:
+> 122 |   | Not(expr1, ppos) -> (match eval_expr expr1 local_e with | Elementary(Vbool(x)) -> if x = true then Elementary(Vbool(false)) else Elementary(Vbool(true)) | _ -> failwith "something went wrong in eval_expr : Not")
+>                      ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 123, characters 25-29:
+> 123 |   | Op(binop,expr1,expr2,ppos)->
+>                                ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 144, characters 20-24:
+> 144 |   | List(expr_list, ppos) -> Combined(List.map (fun x -> eval_expr x local_e ) expr_list)
+>                           ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 146, characters 29-33:
+> 146 |   | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "type" -> 
+>                                    ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 150, characters 23-26:
+> 150 |       | Elementary(Vint(x)) -> Elementary(Vstring("<class 'int'>"))
+>                              ^^^
+> Warning 27 [unused-var-strict]: unused variable x.
+> File "runtime.ml", line 151, characters 26-29:
+> 151 |       | Elementary(Vstring(x)) -> Elementary(Vstring("<class 'str'>"))
+>                                 ^^^
+> Warning 27 [unused-var-strict]: unused variable x.
+> File "runtime.ml", line 152, characters 24-27:
+> 152 |       | Elementary(Vbool(x)) -> Elementary(Vstring("<class 'bool'>"))
+>                               ^^^
+> Warning 27 [unused-var-strict]: unused variable x.
+> File "runtime.ml", line 154, characters 16-19:
+> 154 |       | Combined(l) -> Elementary(Vstring("<class 'list'>"))
+>                       ^^^
+> Warning 27 [unused-var-strict]: unused variable l.
+> File "runtime.ml", line 157, characters 29-33:
+> 157 |   | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "len" ->
+>                                    ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 165, characters 29-33:
+> 165 |   | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "print" ->
+>                                    ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 172, characters 29-33:
+> 172 |   | Ecall(fun_name,expr_list,ppos) ->
+>                                    ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 189, characters 27-31:
+> 189 |   | Sfor(counter,expr,stmt,ppos) ->
+>                                  ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 193, characters 20-23:
+> 193 |         | Elementary(e) -> failwith "unable to use for in something else than a list"
+>                           ^^^
+> Warning 27 [unused-var-strict]: unused variable e.
+> File "runtime.ml", line 196, characters 22-26:
+> 196 |   | Sblock(stmt_list, ppos) -> List.iter (fun x -> if !bret = false then eval_stmt x local_e else () ) stmt_list
+>                             ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 198, characters 17-21:
+> 198 |   | Sreturn(expr,ppos) ->
+>                        ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 210, characters 21-26:
+> 210 |       | Var(var_name,ppos1) , _ , _ when String.equal var_name (get_repres var_name local_e) = true -> print_string var_name ; print_string "ok\n"; Hashtbl.replace local_e var_name (eval_expr expr local_e)
+>                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 211, characters 21-26:
+> 211 |       | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) when String.equal var_name (get_repres var_name local_e) = false -> Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
+>                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 211, characters 48-53:
+> 211 |       | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) when String.equal var_name (get_repres var_name local_e) = false -> Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
+>                                                       ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos2.
+> File "runtime.ml", line 211, characters 55-59:
+> 211 |       | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) when String.equal var_name (get_repres var_name local_e) = false -> Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
+>                                                              ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 211, characters 71-74:
+> 211 |       | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) when String.equal var_name (get_repres var_name local_e) = false -> Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
+>                                                                              ^^^
+> Warning 27 [unused-var-strict]: unused variable l.
+> File "runtime.ml", line 212, characters 21-26:
+> 212 |       | Var(var_name,ppos1) , _ , _ when (match Hashtbl.find_opt local_e var_name with | Some(Elementary(Vpoint(x))) -> true | _ -> false ) = true -> Hashtbl.replace local_e (get_repres var_name local_e) (eval_expr expr local_e) 
+>                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 212, characters 111-114:
+> 212 |       | Var(var_name,ppos1) , _ , _ when (match Hashtbl.find_opt local_e var_name with | Some(Elementary(Vpoint(x))) -> true | _ -> false ) = true -> Hashtbl.replace local_e (get_repres var_name local_e) (eval_expr expr local_e) 
+>                                                                                                                      ^^^
+> Warning 27 [unused-var-strict]: unused variable x.
+> File "runtime.ml", line 213, characters 21-26:
+> 213 |       | Var(var_name,ppos1) , _ , _ -> Hashtbl.replace local_e var_name (eval_expr expr local_e)
+>                            ^^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos1.
+> File "runtime.ml", line 225, characters 30-31:
+> 225 |       | Tab(expr_tab,expr_idx,p), _ ,_-> 
+>                                     ^
+> Warning 27 [unused-var-strict]: unused variable p.
+> File "runtime.ml", line 239, characters 14-18:
+> 239 |   | Sval(expr,ppos) -> (let _ = eval_expr expr local_e in () )
+>                     ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 269, characters 71-73:
+> 269 |                 let cond1,stmt1 = (match elif_expr_stmt_list with | x::l1 -> x | _ -> failwith "Something went wrong in eval_stmt Sif") in
+>                                                                              ^^
+> Warning 27 [unused-var-strict]: unused variable l1.
+> File "runtime.ml", line 270, characters 59-60:
+> 270 |                 let l1 = (match elif_expr_stmt_list with | x :: l1 -> l1  | _ -> failwith "Something went wrong in eval_stmt Sif") in
+>                                                                  ^
+> Warning 27 [unused-var-strict]: unused variable x.
+> File "runtime.ml", line 333, characters 14-18:
+> 333 |   |Gstmt(stmt,ppos) -> (eval_stmt stmt gvar)
+>                     ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+> File "runtime.ml", line 334, characters 34-38:
+> 334 |   |GFunDef(fun_name,var_list,stmt,ppos) -> 
+>                                         ^^^^
+> Warning 27 [unused-var-strict]: unused variable ppos.
+$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -27-32-66-33 -g -a -o eval.cmxa .eval.objs/native/eval__.cmx .eval.objs/native/eval__Ast.cmx .eval.objs/native/eval__Runtime.cmx .eval.objs/native/eval__Parser.cmx .eval.objs/native/eval__Lexer.cmx .eval.objs/native/eval.cmx)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -27-32-66-33 -g -shared -linkall -I . -o eval.cmxs eval.cmxa)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -o ptipython.exe /usr/lib/ocaml/unix.cmxa -I /usr/lib/ocaml eval.cmxa .ptipython.eobjs/native/dune__exe__Ptipython.cmx)
+# Promoting "_build/default/ptipython.exe" to "ptipython.exe"
