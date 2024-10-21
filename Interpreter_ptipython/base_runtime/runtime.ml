@@ -11,6 +11,7 @@ type value =
   | Vstring of string
   | Vbool of bool
   | Vnone
+  | Vpoint of string
 
 type gen_value = 
   | Elementary of value
@@ -21,8 +22,6 @@ let bret = ref false
 
 type func = {fun_name : string ; args : string list ; body : stmt ; mutable local_env : (string, gen_value) Hashtbl.t}
 
-
-
 let gvar : (string, gen_value) Hashtbl.t = Hashtbl.create 10
 
 let gfun : (string, func) Hashtbl.t = Hashtbl.create 10
@@ -31,6 +30,7 @@ let gfun : (string, func) Hashtbl.t = Hashtbl.create 10
 
 (*Section d'affichage*)
 let rec print_combined gv = match gv with
+  | Elementary(Vpoint(x)) -> print_combined ( Hashtbl.find gvar x )
   | Elementary(Vint(x)) -> Printf.printf "%d" x
   | Elementary(Vstring(x)) -> print_string"'" ; Printf.printf "%s" x ; print_string "'"
   | Elementary(Vbool(x)) -> Printf.printf "%s" (match x with | true -> "True" |false -> "False")
@@ -46,7 +46,8 @@ pretty_print_list l = match l with
   | [x] -> (print_combined x;print_string "]")
   | x::l1 -> (print_combined x; print_string ", "; pretty_print_list l1)
 
-let print_gen_value gv = match gv with
+let rec print_gen_value gv = match gv with
+  | Elementary(Vpoint(x)) -> print_gen_value (Hashtbl.find gvar x)
   | Elementary(Vint(x)) -> Printf.printf "%d\n" x
   | Elementary(Vstring(x)) -> Printf.printf "%s\n" x
   | Elementary(Vbool(x)) -> Printf.printf "%s\n" (match x with | true -> "True" |false -> "False")
@@ -81,7 +82,14 @@ let rec eval_expr expr local_e = match expr with
   | Val(left_value,ppos) ->
     begin
     match left_value with
-      | Var(var_name,ppos1) when Hashtbl.mem local_e var_name -> Hashtbl.find local_e var_name
+      | Var(var_name,ppos1) when Hashtbl.mem local_e var_name -> 
+        begin
+          match (Hashtbl.find local_e var_name) with 
+            | Elementary(Vpoint(var_name1)) -> eval_expr (Val(Var(var_name1,ppos1),ppos1)) local_e
+            | x -> x
+        end
+      
+      
       | Var(var_name,ppos1) when Hashtbl.mem gvar var_name -> Hashtbl.find gvar var_name
       | Var(var_name,ppos1) -> failwith "unfound value"
       (*| Tab(left_value1,expr1,ppos1) -> 
@@ -133,6 +141,7 @@ let rec eval_expr expr local_e = match expr with
   | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "type" -> 
     begin
       match (match expr_list with | [e] -> eval_expr e local_e| _ -> failwith "wrong use of type function") with
+      | Elementary(Vpoint(x)) -> Hashtbl.find local_e x
       | Elementary(Vint(x)) -> Elementary(Vstring("<class 'int'>"))
       | Elementary(Vstring(x)) -> Elementary(Vstring("<class 'str'>"))
       | Elementary(Vbool(x)) -> Elementary(Vstring("<class 'bool'>"))
@@ -192,8 +201,9 @@ and eval_stmt stmt local_e = match stmt with
     else ()
   | Sassign(left_value,expr,ppos) ->
     begin
-    match left_value with
-      | Var(var_name,ppos1) -> Hashtbl.replace local_e var_name (eval_expr expr local_e)
+    match left_value , expr , eval_expr expr local_e with
+      | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) -> Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
+      | Var(var_name,ppos1) , _ , _ -> Hashtbl.replace local_e var_name (eval_expr expr local_e)
       (*| Tab(expr_tab,expr_idx,p) -> 
         begin
         let valeur = eval_expr expr local_e in
@@ -204,14 +214,14 @@ and eval_stmt stmt local_e = match stmt with
         eval_stmt (Sassign())
         |_ -> failwith "le tableau est au mauvais format"
         end *)
-      | Tab(expr_tab,expr_idx,p) -> 
+      | Tab(expr_tab,expr_idx,p), _ ,_-> 
         begin
         let t = eval_expr expr_tab local_e in
         let idx = eval_expr expr_idx local_e in
         let valeur = eval_expr expr  local_e in
         match t, idx with
         |Combined(l), Elementary(Vint(i)) -> (
-          let new_lst = (uneval_general (Combined(replace_in_lst l i valeur)) ppos) in
+          let new_lst = (uneval_general (Combined(replace_in_lst l i valeur)) ppos local_e ) in
           match expr_tab with
           |Val(lv, ppos2) -> eval_stmt (Sassign(lv, new_lst ,ppos2)) local_e
           |_ -> failwith "erreur de type : Sassign travaille sur des left_value" )
@@ -278,16 +288,17 @@ and exec_list l counter stmt local_e = match l with
   and replace_in_lst lst j x = 
     List.mapi (fun i elt -> if i=j then x else elt) lst
 
-  and uneval value ppos = match value with
+  and uneval value ppos local_e = match value with
+  |Vpoint(x) -> uneval_general (Hashtbl.find local_e x) ppos local_e
   |Vint(x) -> Const(Int(string_of_int x, ppos),ppos)
   |Vbool(x) -> Const(Bool(x, ppos), ppos)
   |Vstring(x) -> Const(Str(x, ppos), ppos)
   |Vnone -> Const(Non(ppos), ppos)
   
-  and uneval_general gv ppos = match gv with
-  |Elementary(v) -> uneval v ppos
+  and uneval_general gv ppos local_e = match gv with
+  |Elementary(v) -> uneval v ppos local_e
   |Combined(lst) ->
-    List((List.map (fun v -> uneval_general v ppos) lst), ppos)
+    List((List.map (fun v -> uneval_general v ppos local_e) lst), ppos)
 
     (* begin
       match lst with

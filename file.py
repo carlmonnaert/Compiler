@@ -1,4 +1,5 @@
-def f(x):
-    print(x)
-
-print(f(0)[f(1)][f(2)])
+x = [0,1,2,3]
+y = x
+x[0]=42
+print(y[0])
+print(x[0])
