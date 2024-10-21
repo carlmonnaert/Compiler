@@ -15,7 +15,7 @@ type value =
 
 type gen_value = 
   | Elementary of value
-  | Combined of gen_value list
+  | Combined of gen_value array
 
 let ret = ref []
 let bret = ref false
@@ -41,10 +41,10 @@ let rec print_combined gv = match gv with
     pretty_print_list l;
     end
 and
-pretty_print_list l = match l with
+pretty_print_list l = match Array.to_list l with
   | [] -> print_string "]"
   | [x] -> (print_combined x;print_string "]")
-  | x::l1 -> (print_combined x; print_string ", "; pretty_print_list l1)
+  | x::l1 -> (print_combined x; print_string ", "; pretty_print_list (Array.of_list l1))
 
 let rec print_gen_value gv = match gv with
   | Elementary(Vpoint(x)) -> print_gen_value (Hashtbl.find gvar x)
@@ -61,11 +61,11 @@ let rec cmp_gen_leq x y = match x,y with
     |Elementary(Vbool(x1)),Elementary(Vbool(y1))-> failwith "arithmetics not implemented  on bools"
     |Combined(l1),Combined(l2) -> 
       begin 
-        match l1,l2 with
+        match Array.to_list l1,Array.to_list l2 with
           | [] , [] -> true
           | [] , l2 -> true
           | l1 , [] -> false
-          | x2::l11 , y2::l22 -> if (cmp_gen_leq x2 y2) = true && (cmp_gen_leq y2 x2) = true then cmp_gen_leq (Combined(l11)) (Combined(l22))
+          | x2::l11 , y2::l22 -> if (cmp_gen_leq x2 y2) = true && (cmp_gen_leq y2 x2) = true then cmp_gen_leq (Combined(Array.of_list l11)) (Combined(Array.of_list l22))
                                  else cmp_gen_leq x2 y2
       end
     | _ , _ -> failwith "Unable to compare diffenrently typed elements"
@@ -106,7 +106,7 @@ let rec eval_expr expr local_e = match expr with
       | Tab(expr1,expr2,ppos) -> 
         begin
           match eval_expr expr1 local_e, eval_expr expr2 local_e with
-            | Combined(l) , Elementary(Vint(x)) -> (List.nth l x)
+            | Combined(l) , Elementary(Vint(x)) -> (l.(x))
             | Elementary(Vnone) , _ -> Elementary(Vnone)
             | _ , Elementary(Vnone) -> Elementary(Vnone)
             | _ , _ -> failwith "invalid access in a Tab"
@@ -125,7 +125,7 @@ let rec eval_expr expr local_e = match expr with
       match binop , eval_expr expr1 local_e , eval_expr expr2 local_e with
         | Add , Elementary(Vint(x)) , Elementary(Vint(y)) -> Elementary(Vint(x+y))
         | Add , Elementary(Vstring(x)) , Elementary(Vstring(y))-> Elementary(Vstring (x^y))
-        | Add , Combined(lx), Combined(ly) -> Combined(lx @ ly)
+        | Add , Combined(lx), Combined(ly) -> Combined(Array.of_list (Array.to_list lx @ Array.to_list ly))
         | Sub , Elementary(Vint(x)) , Elementary(Vint(y)) -> Elementary(Vint(x-y))
         | Mul , Elementary(Vint(x)) , Elementary(Vint(y)) -> Elementary(Vint(x*y))
         | Div , Elementary(Vint(x)) , Elementary(Vint(y)) -> Elementary(Vint(x/y))
@@ -141,7 +141,7 @@ let rec eval_expr expr local_e = match expr with
         | _ , _ , _ -> failwith "eval_expr : not implemented binop"
     end
     
-  | List(expr_list, ppos) -> Combined(List.map (fun x -> eval_expr x local_e ) expr_list)
+  | List(expr_list, ppos) -> Combined(Array.of_list (List.map (fun x -> eval_expr x local_e ) expr_list))
 
   | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "type" -> 
     begin
@@ -157,7 +157,7 @@ let rec eval_expr expr local_e = match expr with
   | Ecall(fun_name,expr_list,ppos) when String.equal fun_name "len" ->
     begin 
     match (match expr_list with | [e] -> eval_expr e (Hashtbl.copy local_e)| _ -> failwith "wrong use of len function") with
-      | Combined(l) -> Elementary(Vint(List.length l))
+      | Combined(l) -> Elementary(Vint(Array.length l))
       | _ -> failwith "misuse of len function"
     end
 
@@ -223,16 +223,10 @@ and eval_stmt stmt local_e = match stmt with
         end *)
       | Tab(expr_tab,expr_idx,p), _ ,_-> 
         begin
-        let t = eval_expr expr_tab local_e in
-        let idx = eval_expr expr_idx local_e in
-        let valeur = eval_expr expr  local_e in
-        match t, idx with
-        |Combined(l), Elementary(Vint(i)) -> (
-          let new_lst = (uneval_general (Combined(replace_in_lst l i valeur)) ppos local_e ) in
-          match expr_tab with
-          |Val(lv, ppos2) -> eval_stmt (Sassign(lv, new_lst ,ppos2)) local_e
-          |_ -> failwith "erreur de type : Sassign travaille sur des left_value" )
-        |_ -> failwith "erreur de type : il faut un tableau"
+        let t = (match eval_expr expr_tab local_e with | Combined(a) -> a | _ -> failwith "pas un tableau" )in
+        let idx = (match eval_expr expr_idx local_e with | Elementary(Vint(n))-> n | _ -> failwith "pas un entier" ) in
+        let valeur = eval_expr expr local_e in
+        t.(idx) <- valeur
         end          
     end
   | Sval(expr,ppos) -> (let _ = eval_expr expr local_e in () )
@@ -257,7 +251,7 @@ and eval_stmt stmt local_e = match stmt with
         | Elementary(Vbool(true)) -> eval_stmt (Sblock(then_stmt,ppos)) local_e
         | Elementary(Vint(i)) when i <> 0 -> eval_stmt (Sblock(then_stmt,ppos)) local_e
         | Elementary(Vstring(s)) when String.equal s "" = false -> eval_stmt (Sblock(then_stmt,ppos)) local_e
-        | Combined(lst) when (lst = []) = false -> eval_stmt (Sblock(then_stmt,ppos)) local_e
+        | Combined(lst) when (Array.to_list lst = []) = false -> eval_stmt (Sblock(then_stmt,ppos)) local_e
         | _ -> 
           begin 
             match  else_stmt_option with
@@ -282,13 +276,13 @@ and eval_stmt stmt local_e = match stmt with
     end
 
 
-and exec_list l counter stmt local_e = match l with
+and exec_list l counter stmt local_e = match Array.to_list l with
     | [] -> ()
     | y::l1 -> 
       begin 
       Hashtbl.replace gvar counter y;
       eval_stmt stmt local_e;
-      exec_list l1 counter stmt local_e
+      exec_list (Array.of_list l1) counter stmt local_e
       end
 
   
@@ -305,7 +299,7 @@ and exec_list l counter stmt local_e = match l with
   and uneval_general gv ppos local_e = match gv with
   |Elementary(v) -> uneval v ppos local_e
   |Combined(lst) ->
-    List((List.map (fun v -> uneval_general v ppos local_e) lst), ppos)
+    List((List.map (fun v -> uneval_general v ppos local_e) (Array.to_list lst)), ppos)
 
     (* begin
       match lst with
