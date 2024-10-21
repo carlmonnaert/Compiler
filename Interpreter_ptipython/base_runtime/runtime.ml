@@ -207,8 +207,7 @@ and eval_stmt stmt local_e = match stmt with
   | Sassign(left_value,expr,ppos) ->
     begin
     match left_value , expr , eval_expr expr local_e with
-      | Var(var_name,ppos1) , _ , _ when String.equal var_name (get_repres var_name local_e) = true -> print_string var_name ; print_string "ok\n"; Hashtbl.replace local_e var_name (eval_expr expr local_e)
-      | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) when String.equal var_name (get_repres var_name local_e) = false -> Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
+      | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) -> Hashtbl.replace local_e var_name2 (eval_expr expr local_e) ; Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
       | Var(var_name,ppos1) , _ , _ when (match Hashtbl.find_opt local_e var_name with | Some(Elementary(Vpoint(x))) -> true | _ -> false ) = true -> Hashtbl.replace local_e (get_repres var_name local_e) (eval_expr expr local_e) 
       | Var(var_name,ppos1) , _ , _ -> Hashtbl.replace local_e var_name (eval_expr expr local_e)
 
