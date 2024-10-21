@@ -26,7 +26,7 @@ and left_value =
 
 and expr =
   | Const of const * ppos
-  | Val of left_value *  ppos
+  | Val of left_value * ppos
   | Moins of expr * ppos
   | Not of expr * ppos
   | Op of binop * expr*expr * ppos

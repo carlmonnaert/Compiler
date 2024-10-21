@@ -70,7 +70,7 @@ elif_clause:
 stmt:
   | s = simple_stmt ; NEWLINE  { s }
   | FOR ; s = IDENT ; IN ; e = expr ; COLON ; b = suite  { Sfor(s,e,b, $loc) }
-  | IF ; cond = expr ; COLON ; then_block = suite ; elif_blocks = elif_clause* ; else_block = else_clause? 
+  | IF ; cond = expr ; COLON ; then_block = suite ; elif_blocks = elif_clause* ; else_block = else_clause?
       { Sif(cond, [then_block], elif_blocks, else_block, $loc) }
   | WHILE ; cond = expr ; COLON ; block = suite { Swhile(cond,[block],$loc) }
 ;
