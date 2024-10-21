@@ -202,8 +202,10 @@ and eval_stmt stmt local_e = match stmt with
   | Sassign(left_value,expr,ppos) ->
     begin
     match left_value , expr , eval_expr expr local_e with
+      | Var(var_name,ppos1) , _ , _ when (match Hashtbl.find_opt local_e var_name with | Some(Elementary(Vpoint(x))) -> true | _ -> false ) = true -> let to_point = (match Hashtbl.find local_e var_name with | Elementary(Vpoint(x)) -> x | _ -> failwith "erreur impossible") in eval_stmt (Sassign(Var(to_point,ppos),expr,ppos)) local_e
       | Var(var_name,ppos1) , Val(Var(var_name2,ppos2),ppos) , Combined(l) -> Hashtbl.replace local_e var_name (Elementary(Vpoint(var_name2)))
       | Var(var_name,ppos1) , _ , _ -> Hashtbl.replace local_e var_name (eval_expr expr local_e)
+
       (*| Tab(expr_tab,expr_idx,p) -> 
         begin
         let valeur = eval_expr expr local_e in
