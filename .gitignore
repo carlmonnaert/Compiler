@@ -1,6 +1,3 @@
 /expr2json/_build
 /base_runtime/_build
 a.out
-*.exe
-*.json
-*.s
