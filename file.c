@@ -1,11 +1,7 @@
 
+
 int main(int argc) {
-    int x;
-    int y;
-    read(x);
-    read(y);
-    print(x + y);
-
-
+    int x = 3;
+    print_int(x);
     return 0;
 }

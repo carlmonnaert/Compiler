@@ -8,7 +8,7 @@
   exception Lexing_error of char
     
   let id_or_kwd s = match s with
-  | "print" -> PRINT
+  | "print_int" -> PRINT_INT
   | "read" -> READ
   | "int" -> INT
   | "return" -> RETURN
@@ -40,6 +40,7 @@ rule token = parse
   | '{'     { LB }
   | '}'     { RB }
   | ';'     { SEMICOLON }
+  | ','     { COMMA }
   | integer as s { CST (int_of_string s) }
   | eof     { EOF }
   (* | allchar* { ALLCHAR } *)

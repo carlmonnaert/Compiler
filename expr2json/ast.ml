@@ -5,13 +5,21 @@ type ppos = Lexing.position * Lexing.position
 type program = gdef list 
 
 and gdef =
-  | Function of string*string*stmt list*ppos   
+  | Function of string*declaration list*stmt list*ppos   
   | Gvar of string*ppos
+  | GvarInit of string*expr*ppos
+
+and declaration = 
+  | DECLARATION of type_var*string
+
+and type_var =
+  | TYPE_INT
     
 and stmt = 
   | Read of string*ppos
-  | Print of expr*ppos
+  | Print_int of expr*ppos
   | Lvar of string*ppos
+  | LvarInit of string*expr*ppos
   | Return of expr*ppos
   | Set of string*expr*ppos
 
@@ -19,9 +27,11 @@ and expr =
   | Cst of int*ppos
   | Var of string*ppos
   | Binop of binop * expr * expr*ppos
-  | Call of string * expr*ppos
+  | Call of string * expr list*ppos
 
 and binop = Add | Sub | Mul | Div
+
+
 
 let binopname = function
   | Add -> "+"
@@ -44,26 +54,38 @@ let rec toJSONexpr = function
                             "binop", `String (binopname b);
                             "e1", toJSONexpr e1 ;
                             "e2", toJSONexpr e2] @ pos p)
-  | Call(funname, argvalue,p) ->
+  | Call(funname, args,p) ->
      `Assoc ([
         "type", `String "application" ;
         "function", `String funname ;
-        "argvalue", toJSONexpr argvalue ]@pos p)
+        "args", `List (List.map toJSONexpr args) ]@pos p)
     
     
 let toJSONinst = function
   | Read(x,p)  -> `Assoc (["action", `String "read";   "var", `String x]@pos p)
-  | Print(e,p) -> `Assoc (["action", `String "print";  "expr", toJSONexpr e]@pos p)
+  | Print_int(e,p) -> `Assoc (["action", `String "print_int";  "expr", toJSONexpr e]@pos p)
   | Lvar(s,p) -> `Assoc (["action", `String "vardef";  "name", `String s]@pos p)
+  | LvarInit(s,v,p) -> `Assoc (["action", `String "varinitdef"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Set(s,v,p) -> `Assoc (["action", `String "varset"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Return(e,p) -> `Assoc (["action", `String "return";"expr", toJSONexpr e]@pos p)
+
+  let type_to_string x =
+    match x with
+    | TYPE_INT -> "int"
+    
                                    
+let toJSONargs = function
+  | DECLARATION(typeV,id) -> `Assoc (["type", `String (type_to_string typeV) ;"name", `String id; ])
+
 let toJSONdef = function
   | Gvar(name, p)  -> `Assoc (["action", `String "gvardef";
                                              "name", `String name ]@pos p)
-  | Function(name,varname,expr,p) -> `Assoc (["action", `String "fundef";
+  | GvarInit(name,expr,p) -> `Assoc (["action", `String "gvarinitdef";
+                                              "name", `String name ;
+                                              "expr", toJSONexpr expr]@pos p) 
+  | Function(name,args,expr,p) -> `Assoc (["action", `String "fundef";
                                              "name", `String name ;
-                                             "arg", `String varname ;
+                                             "args", `List (List.map toJSONargs args); 
                                              "body", `List (List.map toJSONinst expr)]@pos p)
 
 
