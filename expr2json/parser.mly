@@ -9,9 +9,9 @@
 // %token COMMENT
 %token <int> CST
 %token <string> IDENT
-%token PRINT, READ
+%token PRINT_INT, READ
 %token EOF 
-%token LP RP LB RB
+%token LP RP COMMA LB RB
 %token PLUS MINUS TIMES DIV
 %token EQ
 %token SEMICOLON RETURN INT
@@ -34,15 +34,29 @@ prog:
 | p = list(def) EOF { p }
 ;
 
+
+
 def:
 | INT id = IDENT SEMICOLON { Gvar(id, $loc) }
-| INT id = IDENT LP INT arg = IDENT RP LB body = list(stmt)   RB            { Function(id,arg,body,$loc) }
+| INT id = IDENT EQ e = expr SEMICOLON { GvarInit(id, e, $loc) }
+| INT id = IDENT LP args = separated_list(COMMA,declaration) RP LB body = list(stmt)   RB            { Function(id,args,body,$loc) }
 ;
 
+declaration:
+| typeV = type_var id = IDENT { DECLARATION(typeV,id) }
+;
+
+type_var:
+| INT { TYPE_INT }
+;
+
+
+
 stmt:
-| PRINT LP e = expr RP SEMICOLON            { Print(e, $loc) }
+| PRINT_INT LP e = expr RP SEMICOLON            { Print_int(e, $loc) }
 | READ LP id = IDENT RP SEMICOLON           { Read(id, $loc) }
 | INT id = IDENT SEMICOLON            { Lvar(id, $loc) }
+| INT id = IDENT EQ e = expr SEMICOLON    { LvarInit(id,e,$loc) }
 | id = IDENT EQ e = expr SEMICOLON    { Set(id,e,$loc) }
 | RETURN e = expr SEMICOLON           { Return(e,$loc) }
 ;
@@ -52,7 +66,7 @@ stmt:
 
 expr:
 | c = CST                        { Cst(c,$loc) }
-| fct = IDENT LP arg = expr RP                 { Call(fct,arg,$loc) }
+| fct = IDENT LP args = separated_list(COMMA,expr) RP                 { Call(fct,args,$loc) }
 | id = IDENT                     { Var(id,$loc) }
 | e1 = expr o = op e2 = expr     { Binop (o, e1, e2, $loc) }
 | MINUS e = expr %prec uminus    { Binop (Sub, Cst(0,$loc), e, $loc) } 
