@@ -247,6 +247,27 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tcqo")
             list_instr.append("\tidiv %rbx")
             list_instr.append("\tpush %rax")
+
+        if expr["binop"] == "+":
+            eval_expr(expr["e1"], local_env)
+            if expr["e1"]["type"] == "application":
+                tmp = 0
+                for i in expr["e1"]["args"]:
+                    tmp += 1
+                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
+                list_instr.append("\tpush %rax")
+            eval_expr(expr["e2"], local_env)
+            if expr["e2"]["type"] == "application":
+                tmp = 0
+                for i in expr["e2"]["args"]:
+                    tmp += 1
+                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
+                list_instr.append("\tpush %rax")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tadd %rbx, %rax")
+            list_instr.append("\tpush %rax")
+        
     
     if expr["type"] == "var":
         if expr["name"] in local_env:

@@ -1,5 +1,5 @@
 int main(int a){
     int x ;
-    read(x); 
-    print(x);
+    x=10 ;
+    return(0); 
 }
