@@ -35,6 +35,7 @@ rule token = parse
   | '-'     { MINUS }
   | '*'     { TIMES }
   | '/'     { DIV }
+  | '%'     { MOD }
   | '='     { EQ }
   | '('     { LP }
   | ')'     { RP }

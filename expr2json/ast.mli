@@ -32,6 +32,6 @@ and expr =
 
 
 
-and binop = Add | Sub | Mul | Div
+and binop = Add | Sub | Mul | Div | Mod
 
 val toJSON : program -> Yojson.t

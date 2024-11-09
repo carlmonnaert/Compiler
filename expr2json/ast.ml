@@ -29,7 +29,8 @@ and expr =
   | Binop of binop * expr * expr*ppos
   | Call of string * expr list*ppos
 
-and binop = Add | Sub | Mul | Div
+and binop = Add | Sub | Mul | Div | Mod
+
 
 
 
@@ -38,6 +39,7 @@ let binopname = function
   | Sub -> "-"
   | Mul -> "*"
   | Div -> "/"
+  | Mod -> "%"
 
 let pos ((s,e):ppos) =
   [ "start_line",`Int s.pos_lnum ;
