@@ -20,8 +20,7 @@
 
 let letter = ['a'-'z' 'A'-'Z']
 let digit = ['0'-'9']
-let underscore = '_'
-let ident = letter (letter | digit | underscore)*
+let ident = letter (letter | digit)*
 let integer = ['0'-'9']+
 let space = [' ' '\t']
 let allchar = ['\000' - '\255']

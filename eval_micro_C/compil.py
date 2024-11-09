@@ -78,7 +78,7 @@ def eval_stmt(stmt, local_env = None):
             list_instr.append("\tpop %rbp")
             list_instr.append("\tret")
 
-        if instr["action"] == "print_int":
+        if instr["action"] == "print":
             eval_expr(instr["expr"], local_env)
             if instr["expr"]["type"] == "application":
                 list_instr.append("\tmov %rax, %rsi")
