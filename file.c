@@ -1,11 +1,14 @@
-
-int test(int x, int y, int z, int w) {
-    return w;
+int test2(int x){
+    return x+1;
 }
 
 
+int test(int x){
+    return test2(x);
+}
+
 int main(int argc) {
-    int z = test(0, 1, 2, 3);
+    int z = test(5);
     print_int(z);
     return 0;
 }

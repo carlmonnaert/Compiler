@@ -68,7 +68,7 @@ def eval_stmt(stmt, local_env = None):
         if instr["action"] == "return":
             eval_expr(instr["expr"], local_env)
             if instr["expr"]["type"] == "application":
-                list_instr.append("\push %rax")
+                list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rax")
             tmp = 0
             for t in local_env:
