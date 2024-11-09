@@ -129,6 +129,7 @@ def eval_stmt(stmt, local_env = None):
         
         if instr["action"] == "varset" or instr["action"] == "varinitdef":
 
+
             if instr["name"] in local_env:
 
                 
@@ -138,10 +139,6 @@ def eval_stmt(stmt, local_env = None):
                         list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]*8))
                     else:
                         list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]*8 + 8))
-                    tmp = 0
-                    for i in instr["expr"]["args"]:
-                        tmp += 1
-                    list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                     
                 else:
                     
@@ -177,17 +174,9 @@ def eval_expr(expr, local_env = None):
         if expr["binop"] == "+":
             eval_expr(expr["e1"], local_env)
             if expr["e1"]["type"] == "application":
-                tmp = 0
-                for i in expr["e1"]["args"]:
-                    tmp += 1
-                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 list_instr.append("\tpush %rax")
             eval_expr(expr["e2"], local_env)
             if expr["e2"]["type"] == "application":
-                tmp = 0
-                for i in expr["e2"]["args"]:
-                    tmp += 1
-                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rax")
             list_instr.append("\tpop %rbx")
@@ -197,17 +186,9 @@ def eval_expr(expr, local_env = None):
         if expr["binop"] == "-":
             eval_expr(expr["e1"], local_env)
             if expr["e1"]["type"] == "application":
-                tmp = 0
-                for i in expr["e1"]["args"]:
-                    tmp += 1
-                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 list_instr.append("\tpush %rax")
             eval_expr(expr["e2"], local_env)
             if expr["e2"]["type"] == "application":
-                tmp = 0
-                for i in expr["e2"]["args"]:
-                    tmp += 1
-                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rbx")
             list_instr.append("\tpop %rax")
@@ -216,17 +197,9 @@ def eval_expr(expr, local_env = None):
         if expr["binop"] == "*":
             eval_expr(expr["e1"], local_env)
             if expr["e1"]["type"] == "application":
-                tmp = 0
-                for i in expr["e1"]["args"]:
-                    tmp += 1
-                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 list_instr.append("\tpush %rax")
             eval_expr(expr["e2"], local_env)
             if expr["e2"]["type"] == "application":
-                tmp = 0
-                for i in expr["e2"]["args"]:
-                    tmp += 1
-                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rax")
             list_instr.append("\tpop %rbx")
@@ -235,17 +208,9 @@ def eval_expr(expr, local_env = None):
         if expr["binop"] == "/":
             eval_expr(expr["e1"], local_env)
             if expr["e1"]["type"] == "application":
-                tmp = 0
-                for i in expr["e1"]["args"]:
-                    tmp += 1
-                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 list_instr.append("\tpush %rax")
             eval_expr(expr["e2"], local_env)
             if expr["e2"]["type"] == "application":
-                tmp = 0
-                for i in expr["e2"]["args"]:
-                    tmp += 1
-                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rbx")
             list_instr.append("\tpop %rax")
@@ -255,17 +220,9 @@ def eval_expr(expr, local_env = None):
         if expr["binop"] == "%":
             eval_expr(expr["e1"], local_env)
             if expr["e1"]["type"] == "application":
-                tmp = 0
-                for i in expr["e1"]["args"]:
-                    tmp += 1
-                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 list_instr.append("\tpush %rax")
             eval_expr(expr["e2"], local_env)
             if expr["e2"]["type"] == "application":
-                tmp = 0
-                for i in expr["e2"]["args"]:
-                    tmp += 1
-                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rbx")
             list_instr.append("\tpop %rax")
