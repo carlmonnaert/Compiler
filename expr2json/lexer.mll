@@ -12,6 +12,8 @@
   | "read" -> READ
   | "int" -> INT
   | "return" -> RETURN
+  | "if" -> IF
+  | "else" -> ELSE
   | s -> IDENT s
   
 
@@ -37,6 +39,15 @@ rule token = parse
   | '/'     { DIV }
   | '%'     { MOD }
   | '='     { EQ }
+  | '=''='  { EQEQ }
+  | '<'     { LT }
+  | '>'     { GT }
+  | '<''='  { LTEQ }
+  | '>''='  { GTEQ }
+  | '!'     { NOT }
+  | '!''='  { NOTEQ }
+  | '&''&'     { AND }
+  | '|''|'     { OR }
   | '('     { LP }
   | ')'     { RP }
   | '{'     { LB }
@@ -46,7 +57,6 @@ rule token = parse
   | comment       { token lexbuf }
   | integer as s { CST (int_of_string s) }
   | eof     { EOF }
-  (* | allchar* { ALLCHAR } *)
   | _ as c  { raise (Lexing_error c) }
  
 

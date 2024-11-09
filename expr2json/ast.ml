@@ -16,12 +16,15 @@ and type_var =
   | TYPE_INT
     
 and stmt = 
+  | IfElse of expr*stmt list*stmt list*ppos
+  | IfNoElse of expr*stmt list*ppos
   | Read of string*ppos
   | Print_int of expr*ppos
   | Lvar of string*ppos
   | LvarInit of string*expr*ppos
   | Return of expr*ppos
   | Set of string*expr*ppos
+  | Expression of expr*ppos
 
 and expr = 
   | Cst of int*ppos
@@ -29,7 +32,7 @@ and expr =
   | Binop of binop * expr * expr*ppos
   | Call of string * expr list*ppos
 
-and binop = Add | Sub | Mul | Div | Mod
+and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or
 
 
 
@@ -40,6 +43,16 @@ let binopname = function
   | Mul -> "*"
   | Div -> "/"
   | Mod -> "%"
+  | Eqeq -> "=="
+  | Noteq -> "!="
+  | Lt -> "<"
+  | Gt -> ">"
+  | Lteq -> "<="
+  | Gteq -> ">="
+  | And -> "&&"
+  | Or -> "||"
+
+
 
 let pos ((s,e):ppos) =
   [ "start_line",`Int s.pos_lnum ;
@@ -63,13 +76,21 @@ let rec toJSONexpr = function
         "args", `List (List.map toJSONexpr args) ]@pos p)
     
     
-let toJSONinst = function
+let rec toJSONinst = function
   | Read(x,p)  -> `Assoc (["action", `String "read";   "var", `String x]@pos p)
   | Print_int(e,p) -> `Assoc (["action", `String "print_int";  "expr", toJSONexpr e]@pos p)
   | Lvar(s,p) -> `Assoc (["action", `String "vardef";  "name", `String s]@pos p)
   | LvarInit(s,v,p) -> `Assoc (["action", `String "varinitdef"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Set(s,v,p) -> `Assoc (["action", `String "varset"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Return(e,p) -> `Assoc (["action", `String "return";"expr", toJSONexpr e]@pos p)
+  | Expression(e,p) -> `Assoc (["action", `String "expression";"expr", toJSONexpr e]@pos p)
+  | IfElse(cond, body1, body2, p) -> `Assoc (["action", `String "ifelse";
+                                               "cond", toJSONexpr cond;
+                                               "then", `List (List.map toJSONinst body1);
+                                               "else", `List (List.map toJSONinst body2)]@pos p)
+  | IfNoElse(cond, body, p) -> `Assoc (["action", `String "ifnoelse";
+                                        "cond", toJSONexpr cond;
+                                        "then", `List (List.map toJSONinst body)]@pos p)
 
   let type_to_string x =
     match x with

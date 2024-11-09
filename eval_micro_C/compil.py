@@ -156,6 +156,10 @@ def eval_stmt(stmt, local_env = None):
                     list_instr.append("\tpop %rax")
                     list_instr.append("\tmov %%rax, %s(%%rip)"%instr["name"])
             
+        if instr["action"] == "expression":
+            eval_expr(instr["expr"], local_env)
+            list_instr.append("\tpop %rax")
+            
 
 
 def eval_expr(expr, local_env = None):

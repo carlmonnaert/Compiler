@@ -17,12 +17,15 @@ and type_var =
 
     
 and stmt = 
+  | IfElse of expr*stmt list*stmt list*ppos
+  | IfNoElse of expr*stmt list*ppos
   | Read of string*ppos
   | Print_int of expr*ppos
   | Lvar of string*ppos
   | LvarInit of string*expr*ppos
   | Return of expr*ppos
   | Set of string*expr*ppos
+  | Expression of expr*ppos
 
 and expr = 
   | Cst of int*ppos
@@ -32,6 +35,6 @@ and expr =
 
 
 
-and binop = Add | Sub | Mul | Div | Mod
+and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or
 
 val toJSON : program -> Yojson.t
