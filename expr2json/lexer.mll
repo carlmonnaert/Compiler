@@ -20,7 +20,8 @@
 
 let letter = ['a'-'z' 'A'-'Z']
 let digit = ['0'-'9']
-let ident = letter (letter | digit)*
+let underscore = '_'
+let ident = letter (letter | digit | underscore)*
 let integer = ['0'-'9']+
 let space = [' ' '\t']
 let allchar = ['\000' - '\255']
@@ -34,6 +35,7 @@ rule token = parse
   | '-'     { MINUS }
   | '*'     { TIMES }
   | '/'     { DIV }
+  | '%'     { MOD }
   | '='     { EQ }
   | '('     { LP }
   | ')'     { RP }

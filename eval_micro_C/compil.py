@@ -78,7 +78,7 @@ def eval_stmt(stmt, local_env = None):
             list_instr.append("\tpop %rbp")
             list_instr.append("\tret")
 
-        if instr["action"] == "print":
+        if instr["action"] == "print_int":
             eval_expr(instr["expr"], local_env)
             if instr["expr"]["type"] == "application":
                 list_instr.append("\tmov %rax, %rsi")
@@ -247,8 +247,7 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tcqo")
             list_instr.append("\tidiv %rbx")
             list_instr.append("\tpush %rax")
-
-        if expr["binop"] == "+":
+        if expr["binop"] == "%":
             eval_expr(expr["e1"], local_env)
             if expr["e1"]["type"] == "application":
                 tmp = 0
@@ -263,11 +262,11 @@ def eval_expr(expr, local_env = None):
                     tmp += 1
                 list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 list_instr.append("\tpush %rax")
-            list_instr.append("\tpop %rax")
             list_instr.append("\tpop %rbx")
-            list_instr.append("\tadd %rbx, %rax")
-            list_instr.append("\tpush %rax")
-        
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcdq")
+            list_instr.append("\tidiv %rbx")
+            list_instr.append("\tpush %rdx")
     
     if expr["type"] == "var":
         if expr["name"] in local_env:

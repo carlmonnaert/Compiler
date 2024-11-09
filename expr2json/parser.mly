@@ -12,14 +12,14 @@
 %token PRINT_INT, READ
 %token EOF 
 %token LP RP COMMA LB RB
-%token PLUS MINUS TIMES DIV
+%token PLUS MINUS TIMES DIV MOD
 %token EQ
 %token SEMICOLON RETURN INT
 
 /* D�finitions des priorit�s et associativit�s des tokens */
 
 %left PLUS MINUS 
-%left TIMES DIV
+%left TIMES DIV MOD
 %nonassoc uminus
 
 /* Point d'entr�e de la grammaire */
@@ -78,6 +78,7 @@ expr:
 | MINUS { Sub }
 | TIMES { Mul }
 | DIV   { Div }
+| MOD   { Mod }
 ;
 
 
