@@ -79,12 +79,8 @@ def eval_stmt(stmt, local_env = None):
         if instr["action"] == "print_int":
             eval_expr(instr["expr"], local_env)
             if instr["expr"]["type"] == "application":
+                list_instr.append("\tpop %rax")
                 list_instr.append("\tmov %rax, %rsi")
-                tmp = 0
-                for i in instr["expr"]["args"]:
-                    tmp += 1
-                    
-                list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
             else:
                 list_instr.append("\tpop %rax")
                 list_instr.append("\tmov %rax, %rsi")
@@ -133,6 +129,7 @@ def eval_stmt(stmt, local_env = None):
                 
                 if instr["expr"]["type"] == "application":
                     eval_expr(instr["expr"], local_env)
+                    list_instr.append("\tpop %rax")
                     if local_env[instr["name"]] < 0:
                         list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]*8))
                     else:
@@ -152,11 +149,8 @@ def eval_stmt(stmt, local_env = None):
             elif "%s:"%instr["name"] in list_data:
                 if instr["expr"]["type"] == "application":
                     eval_expr(instr["expr"], local_env)
+                    list_instr.append("\tpop %rax")
                     list_instr.append("\tmov %%rax, %s(%%rip)"%instr["name"])
-                    tmp = 0
-                    for i in instr["expr"]["args"]:
-                        tmp += 1
-                    list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 else:
                     eval_expr(instr["expr"], local_env)
                     list_instr.append("\tpop %rax")
@@ -229,12 +223,9 @@ def eval_expr(expr, local_env = None):
                     
             list_instr.append("\tcall %s"%expr["function"])
 
-            if not "argc" in local_env:
-                if len(expr["args"]) > 0 :  
-                    list_instr.append("\tadd $%d, %%rsp"%int(len(expr["args"])*8))
-            else:
-                if len(expr["args"]) > 0 :  
-                    list_instr.append("\tadd $%d, %%rsp"%int(len(expr["args"])*8 - 8))
+            if len(expr["args"]) > 0 :  
+                list_instr.append("\tadd $%d, %%rsp"%int(len(expr["args"])*8))
+ 
                 
 
             list_instr.append("\tpush %rax")

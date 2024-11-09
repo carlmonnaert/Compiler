@@ -17,7 +17,7 @@
 
 }
 
-
+let comment = '/''/' [^'\n']*
 let letter = ['a'-'z' 'A'-'Z']
 let digit = ['0'-'9']
 let underscore = '_'
@@ -43,6 +43,7 @@ rule token = parse
   | '}'     { RB }
   | ';'     { SEMICOLON }
   | ','     { COMMA }
+  | comment       { token lexbuf }
   | integer as s { CST (int_of_string s) }
   | eof     { EOF }
   (* | allchar* { ALLCHAR } *)
