@@ -128,7 +128,9 @@ def eval_stmt(stmt, local_env = None):
 
         
         if instr["action"] == "varset" or instr["action"] == "varinitdef":
+
             if instr["name"] in local_env:
+                
                 if instr["expr"]["type"] == "application":
                     eval_expr(instr["expr"], local_env)
                     if local_env[instr["name"]] < 0:
@@ -141,6 +143,7 @@ def eval_stmt(stmt, local_env = None):
                     list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                     
                 else:
+                    
                     if local_env[instr["name"]] < 0:
                         eval_expr(instr["expr"], local_env)
                         list_instr.append("\tpop %rax")
@@ -160,6 +163,7 @@ def eval_stmt(stmt, local_env = None):
                     list_instr.append("\tadd $%d, %%rsp"%int(tmp*8))
                 else:
                     eval_expr(instr["expr"], local_env)
+                    list_instr.append("\tpop %rax")
                     list_instr.append("\tmov %%rax, %s(%%rip)"%instr["name"])
             
 
