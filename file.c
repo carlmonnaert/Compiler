@@ -1,10 +1,11 @@
 
-int x;
-
+int test(int x, int y, int z, int w) {
+    return w;
+}
 
 
 int main(int argc) {
-    x = 2 + 3*6 - 3%2;
-    print_int(x);
+    int z = test(0, 1, 2, 3);
+    print_int(z);
     return 0;
 }

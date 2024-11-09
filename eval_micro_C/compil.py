@@ -130,6 +130,7 @@ def eval_stmt(stmt, local_env = None):
         if instr["action"] == "varset" or instr["action"] == "varinitdef":
 
             if instr["name"] in local_env:
+
                 
                 if instr["expr"]["type"] == "application":
                     eval_expr(instr["expr"], local_env)
@@ -285,7 +286,7 @@ def eval_expr(expr, local_env = None):
         if len(expr["args"]) != functions[expr["function"]]:
             raise Interpret_exception("Wrong number of arguments", expr)
         else:
-            for arg in expr["args"]:
+            for arg in reversed(expr["args"]):
                 if arg["type"] == "cst":
                     list_instr.append("\tpush $%s"%arg["value"])
                 else:
