@@ -2,10 +2,17 @@ import sys
 import json
 
 
+
+
 class Interpret_exception(BaseException):
     def __init__(self, msg, term):
         pos = (term["start_line"],term["start_char"],term["end_line"],term["end_char"])
         self.msg = msg + (" at positions (%d,%d)-(%d,%d)"%pos)
+
+
+def codeFromPos(pos): 
+    # take Pos and return a code
+    return f"{pos['start_line']}{pos['start_char']}{pos['end_line']}{pos['end_char']}"
 
 list_data = []
 list_instr = []
@@ -159,7 +166,32 @@ def eval_stmt(stmt, local_env = None):
         if instr["action"] == "expression":
             eval_expr(instr["expr"], local_env)
             list_instr.append("\tpop %rax")
-            
+        
+        if instr["action"] == "ifelse":
+            eval_expr(instr["cond"], local_env)
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp $0, %rax")
+            list_instr.append(f"\tjne .L{codeFromPos(instr['cond'])}")
+            list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}e")
+            list_instr.append(f".L{codeFromPos(instr['cond'])}:")
+            eval_stmt(instr["then"], local_env)
+            list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}end")
+            list_instr.append(f".L{codeFromPos(instr['cond'])}e:")
+
+            eval_stmt(instr["else"], local_env)
+            list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
+        if instr["action"] == "ifnoelse":
+            eval_expr(instr["cond"], local_env)
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp $0, %rax")
+            list_instr.append(f"\tjne .L{codeFromPos(instr['cond'])}")
+            list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}end")
+            list_instr.append(f".L{codeFromPos(instr['cond'])}:")
+            eval_stmt(instr["then"], local_env)
+            list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}end")
+            list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
+
+
 
 
 def eval_expr(expr, local_env = None):
@@ -205,6 +237,63 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tcdq")
             list_instr.append("\tidiv %rbx")
             list_instr.append("\tpush %rdx")
+        if expr["binop"] == "==":
+            eval_expr(expr["e1"], local_env)
+            eval_expr(expr["e2"], local_env)
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp %rbx, %rax")
+            list_instr.append("\tsete %al")
+            list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tpush %rax")
+
+        if expr["binop"] == "!=":
+            eval_expr(expr["e1"], local_env)
+            eval_expr(expr["e2"], local_env)
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp %rbx, %rax")
+            list_instr.append("\tsetne %al")
+            list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tpush %rax")
+        if expr["binop"] == "<":
+            eval_expr(expr["e1"], local_env)
+            eval_expr(expr["e2"], local_env)
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp %rbx, %rax")
+            list_instr.append("\tsetl %al")
+            list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tpush %rax")
+        if expr["binop"] == "<=":
+            eval_expr(expr["e1"], local_env)
+            eval_expr(expr["e2"], local_env)
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp %rbx, %rax")
+            list_instr.append("\tsetle %al")
+            list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tpush %rax")
+        if expr["binop"] == ">":
+            eval_expr(expr["e1"], local_env)
+            eval_expr(expr["e2"], local_env)
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp %rbx, %rax")
+            list_instr.append("\tsetg %al")
+            list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tpush %rax")
+        if expr["binop"] == ">=":
+            eval_expr(expr["e1"], local_env)
+            eval_expr(expr["e2"], local_env)
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp %rbx, %rax")
+            list_instr.append("\tsetge %al")
+            list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tpush %rax")
+
+            
     
     if expr["type"] == "var":
         if expr["name"] in local_env:
