@@ -294,6 +294,11 @@ def eval_expr(expr, local_env = None):
                     
             list_instr.append("\tcall %s"%expr["function"])
 
+            if not "argc" in local_env:
+                if len(expr["args"]) > 0 :  
+                    list_instr.append("\tadd $%d, %%rsp"%int(len(expr["args"])*8))
+
+
 
 
 
