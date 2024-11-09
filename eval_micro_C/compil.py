@@ -67,8 +67,6 @@ def eval_stmt(stmt, local_env = None):
     for instr in stmt:
         if instr["action"] == "return":
             eval_expr(instr["expr"], local_env)
-            if instr["expr"]["type"] == "application":
-                list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rax")
             tmp = 0
             for t in local_env:
@@ -173,11 +171,7 @@ def eval_expr(expr, local_env = None):
     if expr["type"] == "binop":
         if expr["binop"] == "+":
             eval_expr(expr["e1"], local_env)
-            if expr["e1"]["type"] == "application":
-                list_instr.append("\tpush %rax")
             eval_expr(expr["e2"], local_env)
-            if expr["e2"]["type"] == "application":
-                list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rax")
             list_instr.append("\tpop %rbx")
             list_instr.append("\tadd %rbx, %rax")
@@ -185,33 +179,21 @@ def eval_expr(expr, local_env = None):
             
         if expr["binop"] == "-":
             eval_expr(expr["e1"], local_env)
-            if expr["e1"]["type"] == "application":
-                list_instr.append("\tpush %rax")
             eval_expr(expr["e2"], local_env)
-            if expr["e2"]["type"] == "application":
-                list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rbx")
             list_instr.append("\tpop %rax")
             list_instr.append("\tsub %rbx, %rax")
             list_instr.append("\tpush %rax")
         if expr["binop"] == "*":
             eval_expr(expr["e1"], local_env)
-            if expr["e1"]["type"] == "application":
-                list_instr.append("\tpush %rax")
             eval_expr(expr["e2"], local_env)
-            if expr["e2"]["type"] == "application":
-                list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rax")
             list_instr.append("\tpop %rbx")
             list_instr.append("\timul %rbx, %rax")
             list_instr.append("\tpush %rax")
         if expr["binop"] == "/":
             eval_expr(expr["e1"], local_env)
-            if expr["e1"]["type"] == "application":
-                list_instr.append("\tpush %rax")
             eval_expr(expr["e2"], local_env)
-            if expr["e2"]["type"] == "application":
-                list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rbx")
             list_instr.append("\tpop %rax")
             list_instr.append("\tcqo")
@@ -219,11 +201,7 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tpush %rax")
         if expr["binop"] == "%":
             eval_expr(expr["e1"], local_env)
-            if expr["e1"]["type"] == "application":
-                list_instr.append("\tpush %rax")
             eval_expr(expr["e2"], local_env)
-            if expr["e2"]["type"] == "application":
-                list_instr.append("\tpush %rax")
             list_instr.append("\tpop %rbx")
             list_instr.append("\tpop %rax")
             list_instr.append("\tcdq")
@@ -254,7 +232,12 @@ def eval_expr(expr, local_env = None):
             if not "argc" in local_env:
                 if len(expr["args"]) > 0 :  
                     list_instr.append("\tadd $%d, %%rsp"%int(len(expr["args"])*8))
+            else:
+                if len(expr["args"]) > 0 :  
+                    list_instr.append("\tadd $%d, %%rsp"%int(len(expr["args"])*8 - 8))
+                
 
+            list_instr.append("\tpush %rax")
 
 
 
