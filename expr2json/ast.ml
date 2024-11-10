@@ -8,6 +8,7 @@ and gdef =
   | Function of type_var*string*declaration list*stmt list*ppos   
   | Gvar of string*ppos
   | GvarInit of string*expr*ppos
+  | GtabInit of string*expr*ppos
 
 and declaration = 
   | DECLARATION of type_var*string
@@ -24,6 +25,7 @@ and stmt =
   | Print_int of expr*ppos
   | Lvar of string*ppos
   | LvarInit of string*expr*ppos
+  | LtabInit of string*expr*ppos
   | Return of expr*ppos
   | Set of string*expr*ppos
   | Expression of expr*ppos
@@ -35,6 +37,7 @@ and expr =
   | Var of string*ppos
   | Binop of binop * expr * expr*ppos
   | Call of string * expr list*ppos
+  | Acces of string * expr * ppos
 
 and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not
 
@@ -82,6 +85,10 @@ let rec toJSONexpr = function
         "type", `String "application" ;
         "function", `String funname ;
         "args", `List (List.map toJSONexpr args) ]@pos p)
+  | Acces(t,n,p) -> `Assoc ([
+    "type", `String "acces" ;
+    "tab", `String t ;
+    "idex", toJSONexpr n] @pos p)
     
     
 let rec toJSONinst = function
@@ -89,6 +96,7 @@ let rec toJSONinst = function
   | Print_int(e,p) -> `Assoc (["action", `String "print_int";  "expr", toJSONexpr e]@pos p)
   | Lvar(s,p) -> `Assoc (["action", `String "vardef";  "name", `String s]@pos p)
   | LvarInit(s,v,p) -> `Assoc (["action", `String "varinitdef"; "name", `String s; "expr", toJSONexpr v]@pos p)
+  | LtabInit(name,expr,p) ->`Assoc (["action", `String "tabinit"; "name", `String name ; "expr", toJSONexpr expr]@pos p) 
   | Set(s,v,p) -> `Assoc (["action", `String "varset"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Return(e,p) -> `Assoc (["action", `String "return";"expr", toJSONexpr e]@pos p)
   | Break(p) -> `Assoc (["action", `String "break"]@pos p)
@@ -121,7 +129,7 @@ let toJSONdef = function
                                              "name", `String name ;
                                              "args", `List (List.map toJSONargs args); 
                                              "body", `List (List.map toJSONinst expr)]@pos p)
-
+  | GtabInit(name,expr,p) -> `Assoc (["action", `String "gtabinit"; "name", `String name ; "expr", toJSONexpr expr]@pos p) 
 
                                    
 let toJSON p =

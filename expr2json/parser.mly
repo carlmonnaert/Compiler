@@ -11,7 +11,7 @@
 %token <string> IDENT
 %token PRINT_INT, READ
 %token EOF 
-%token LP RP COMMA LB RB
+%token LP RP COMMA LB RB LC RC
 %token PLUS MINUS TIMES DIV MOD
 %token EQ
 %token SEMICOLON RETURN INT
@@ -55,7 +55,7 @@ def:
 | INT id = IDENT LP args = separated_list(COMMA,declaration) RP LB body = list(stmt)   RB            { Function(TYPE_INT,id,args,body,$loc) }
 | INT id = IDENT SEMICOLON { Gvar(id, $loc) }
 | INT id = IDENT EQ e = expr SEMICOLON { GvarInit(id, e, $loc) }
-
+| INT id = IDENT LC n = expr RC SEMICOLON { GtabInit(id, n, $loc) }
 ;
 
 declaration:
@@ -77,6 +77,7 @@ stmt:
 | READ LP id = IDENT RP SEMICOLON           { Read(id, $loc) }
 | INT id = IDENT SEMICOLON            { Lvar(id, $loc) }
 | INT id = IDENT EQ e = expr SEMICOLON    { LvarInit(id,e,$loc) }
+| INT id = IDENT LC e = expr RC SEMICOLON { LtabInit(id,e,$loc)}
 | id = IDENT EQ e = expr SEMICOLON    { Set(id,e,$loc) }
 | RETURN e = expr SEMICOLON           { Return(e,$loc) }
 | CONTINUE SEMICOLON                     { Continue($loc) }
@@ -93,6 +94,7 @@ expr:
 | e1 = expr o = op e2 = expr     { Binop (o, e1, e2, $loc) }
 | MINUS e = expr %prec uminus    { Binop (Sub, Cst(0,$loc), e, $loc) } 
 | LP e = expr RP                 { e }
+| id = IDENT LC e = expr RC      { Acces(id,e,$loc) }
 ;
 
 %inline op:

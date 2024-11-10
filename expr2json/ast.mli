@@ -8,6 +8,7 @@ and gdef =
   | Function of type_var*string*declaration list*stmt list*ppos   
   | Gvar of string*ppos
   | GvarInit of string*expr*ppos
+  | GtabInit of string*expr*ppos
 
 and declaration = 
   | DECLARATION of type_var*string
@@ -25,6 +26,7 @@ and stmt =
   | Print_int of expr*ppos
   | Lvar of string*ppos
   | LvarInit of string*expr*ppos
+  | LtabInit of string*expr*ppos
   | Return of expr*ppos
   | Set of string*expr*ppos
   | Expression of expr*ppos
@@ -36,6 +38,7 @@ and expr =
   | Var of string*ppos
   | Binop of binop * expr * expr*ppos
   | Call of string * expr list*ppos
+  | Acces of string * expr * ppos
 
 
 

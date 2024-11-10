@@ -72,6 +72,7 @@ def eval_program(program):
             if stmt["expr"]["type"] == "cst":
                 list_data.append("\t.quad %d"%stmt["expr"]["value"])
 
+
                     
 
 posWhile = []

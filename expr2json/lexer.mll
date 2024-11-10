@@ -57,6 +57,8 @@ rule token = parse
   | '}'     { RB }
   | ';'     { SEMICOLON }
   | ','     { COMMA }
+  | '['     { LC }
+  | ']'     { RC }
   | comment       { token lexbuf }
   | integer as s { CST (int_of_string s) }
   | eof     { EOF }
