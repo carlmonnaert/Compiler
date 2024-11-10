@@ -11,7 +11,7 @@
 %token <string> IDENT
 %token PRINT_INT, READ
 %token EOF 
-%token LP RP COMMA LB RB
+%token LP RP COMMA LB RB LC RC
 %token PLUS MINUS TIMES DIV MOD
 %token EQ
 %token SEMICOLON RETURN INT
@@ -98,6 +98,7 @@ expr:
 | e1 = expr o = op e2 = expr     { Binop (o, e1, e2, $loc) }
 | MINUS e = expr %prec uminus    { Binop (Sub, Cst(0,$loc), e, $loc) } 
 | LP e = expr RP                 { e }
+| id = IDENT LC e = expr RC      { Acces(id,e,$loc) }
 ;
 
 %inline op:
