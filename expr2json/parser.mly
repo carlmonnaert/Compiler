@@ -79,7 +79,7 @@ stmt:
 | READ LP id = IDENT RP SEMICOLON           { Read(id, $loc) }
 | tVar = type_var id = IDENT EQ e = expr SEMICOLON    { LvarInit(tVar,id,e,$loc) }
 | tVar = type_var id = IDENT SEMICOLON            { Lvar(tVar,id, $loc) }
-// | TIMES ide = expr EQ e = expr SEMICOLON           { SetPtr(ide,e,$loc) }
+| TIMES id = IDENT EQ e = expr SEMICOLON           { SetPtr(id,e,$loc) }
 | id = IDENT EQ e = expr SEMICOLON    { Set(id,e,$loc) }
 | RETURN e = expr SEMICOLON           { Return(e,$loc) }
 | CONTINUE SEMICOLON                     { Continue($loc) }

@@ -113,11 +113,14 @@ def eval_stmt(stmt, local_env = None):
 
         
         if instr["action"] == "ptrset":
-            eval_expr(instr["ptr"], local_env)
-            eval_expr(instr["expr"], local_env)
-            list_instr.append("\tpop %rax")
-            list_instr.append("\tpop %rbx")
-            list_instr.append("\tmov %rax, (%rbx)")
+            if instr["name"] in local_env:
+                eval_expr(instr["expr"], local_env)
+                list_instr.append("\tpop %rax")
+                if local_env[instr["name"]]["index"] < 0:
+                    list_instr.append("\tmov %rax, %d(%%rbp)"%int(local_env[instr["name"]]["index"]*8))
+                else:
+                    list_instr.append("\tmov %rax, %d(%%rbp)"%int(local_env[instr["name"]]["index"]*8 + 8))
+
 
         
         if instr["action"] == "varset" or instr["action"] == "varinitdef":
@@ -129,7 +132,7 @@ def eval_stmt(stmt, local_env = None):
                 if instr["expr"]["type"] == "application":
                     eval_expr(instr["expr"], local_env)
                     list_instr.append("\tpop %rax")
-                    if local_env[instr["name"]["index"]] < 0:
+                    if local_env[instr["name"]]["index"] < 0:
                         list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]["index"]*8))
                     else:
                         list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]["index"]*8 + 8))
@@ -210,7 +213,14 @@ def getTypes(expr, local_env):
     if expr["type"] == "cst":
         return "int"
     if expr["type"] == "var":
-        return ""
+        return local_env[expr["name"]]["type"]
+    if expr["type"] == "binop":
+        e1 = getTypes(expr["e1"], local_env)
+        e2 = getTypes(expr["e2"], local_env)
+        if e1 == "int*" or e2 == "int*":
+            return "int*"
+        else:
+            return "int"
 
 
 
@@ -220,22 +230,42 @@ def eval_expr(expr, local_env = None):
 
     if expr["type"] == "binop":
         if expr["binop"] == "+":
-            # if expr["e1"]
+
+
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
             list_instr.append("\tpop %rax")
             list_instr.append("\tpop %rbx")
+            if getTypes(expr["e1"], local_env) == "int*":
+                if getTypes(expr["e2"], local_env) == "int":
+                    list_instr.append("\timul $8, %rax")
+                else:
+                    raise Interpret_exception("Add 2 pointers", expr)
+            if getTypes(expr["e2"], local_env) == "int*":
+                if getTypes(expr["e1"], local_env) == "int":
+                    list_instr.append("\timul $8, %rbx")
+                else:
+                    raise Interpret_exception("Add 2 pointers", expr)
             list_instr.append("\tadd %rbx, %rax")
             list_instr.append("\tpush %rax")
 
             
         if expr["binop"] == "-":
+            # e1 - e2 -> rbx = e2 et rax = e1
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
             list_instr.append("\tpop %rbx")
             list_instr.append("\tpop %rax")
+            if getTypes(expr["e1"], local_env) == "int*":
+                if getTypes(expr["e2"], local_env) == "int":
+                    list_instr.append("\timul $8, %rbx")
+            if getTypes(expr["e2"], local_env) == "int*":
+                if getTypes(expr["e1"], local_env) == "int":
+                    list_instr.append("\timul $8, %rax")
             list_instr.append("\tsub %rbx, %rax")
             list_instr.append("\tpush %rax")
+
+
 
         if expr["binop"] == "*":
             eval_expr(expr["e1"], local_env)
@@ -366,7 +396,7 @@ def eval_expr(expr, local_env = None):
         if expr["binop"] == "&": #address of
             if expr["e1"]["type"] == "var":
                 if expr["e1"]["name"] in local_env:
-                    if local_env[expr["e1"]["name"]] < 0:
+                    if local_env[expr["e1"]["name"]]["index"] < 0:
                         list_instr.append("\tlea %d(%%rbp), %%rax"%int(local_env[expr["e1"]["name"]]["index"]*8))
                     else:
                         list_instr.append("\tlea %d(%%rbp), %%rax"%int(local_env[expr["e1"]["name"]]["index"]*8 + 8))
