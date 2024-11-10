@@ -8,6 +8,7 @@ and gdef =
   | Function of type_var*string*declaration list*stmt list*ppos   
   | Gvar of type_var*string*ppos
   | GvarInit of type_var*string*expr*ppos
+  | GTab of type_var*string*expr*ppos
 
 and declaration = 
   | DECLARATION of type_var*string
@@ -39,7 +40,7 @@ and expr =
   | Binop of binop * expr * expr*ppos
   | Unop of unop * expr * ppos
   | Call of string * expr list*ppos
-  (* | Acces of string * expr * ppos *)
+  | Acces of string * expr * ppos
 
 and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not 
 and unop = Deref | Adr
@@ -96,6 +97,7 @@ let rec toJSONexpr = function
         "type", `String "application" ;
         "function", `String funname ;
         "args", `List (List.map toJSONexpr args) ]@pos p)
+  | Acces(s,e,p) -> `Assoc (["type", `String "acces" ; "name", `String s; "expr", toJSONexpr e]@pos p)
     
     
 let rec toJSONinst = function
@@ -119,6 +121,7 @@ let rec toJSONinst = function
   | While(cond, body, p) -> `Assoc (["action", `String "while";
                                       "cond", toJSONexpr cond;
                                       "body", `List (List.map toJSONinst body)]@pos p)
+  
 
 
                                    
@@ -131,6 +134,9 @@ let toJSONdef = function
   | GvarInit(t, name,expr,p) -> `Assoc (["type", `String (type_to_string t) ;"action", `String "gvarinitdef";
                                               "name", `String name ;
                                               "expr", toJSONexpr expr]@pos p) 
+  | GTab(t, name,expr,p) -> `Assoc (["type", `String ((type_to_string t)^"[]") ;"action", `String "gtabdef";
+                                              "name", `String name ;
+                                              "expr", toJSONexpr expr]@pos p)
   | Function(typee,name,args,expr,p) -> `Assoc (["type", `String (type_to_string typee);
                                              "action", `String "fundef";
                                              "name", `String name ;

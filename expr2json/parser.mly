@@ -56,6 +56,7 @@ def:
 | typeF = type_var id = IDENT LP args = separated_list(COMMA,declaration) RP LB body = list(stmt) RB { Function(typeF,id,args,body,$loc) }
 | typeV = type_var id = IDENT SEMICOLON { Gvar(typeV,id, $loc) }
 | typeV = type_var id = IDENT EQ e = expr SEMICOLON { GvarInit(typeV,id, e, $loc) }
+| typeV = type_var id = IDENT LC e = expr RC SEMICOLON { GTab(typeV,id, e, $loc) }
 
 ;
 
@@ -67,6 +68,7 @@ type_var:
 | INT { TYPE_INT }
 | VOID { TYPE_VOID }
 | t = type_var TIMES { PTR(t) }
+
 ;
 
 
@@ -98,7 +100,7 @@ expr:
 | e1 = expr o = op e2 = expr     { Binop (o, e1, e2, $loc) }
 | MINUS e = expr %prec uminus    { Binop (Sub, Cst(0,$loc), e, $loc) } 
 | LP e = expr RP                 { e }
-// | id = IDENT LC e = expr RC      { Acces(id,e,$loc) }
+| id = IDENT LC e = expr RC      { Acces(id,e,$loc) }
 ;
 
 %inline op:

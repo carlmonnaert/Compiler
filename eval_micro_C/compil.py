@@ -22,6 +22,9 @@ list_instr = []
 
 functions = {}
 
+def stringOfPos(pos):
+    return f"({pos['start_line']},{pos['start_char']})-({pos['end_line']},{pos['end_char']})"
+
 def eval_program(program):
     list_data.append("\t.data")
     list_data.append("format:")
@@ -73,7 +76,13 @@ def eval_program(program):
             list_data.append("%s:"%stmt["name"])
             if stmt["expr"]["type"] == "cst":
                 list_data.append("\t.quad %d"%stmt["expr"]["value"])
-
+        elif stmt["action"] == "gtabdef":
+            list_data.append(".globl  %s"%stmt["name"])
+            list_data.append("%s:"%stmt["name"])
+            if stmt["expr"]["type"] == "cst":
+                list_data.append("\t.zero %d"%int(stmt["expr"]["value"]*8))
+            else:
+                raise Interpret_exception("Not a constant", stmt["expr"])
 
                     
 
@@ -221,7 +230,12 @@ def getTypes(expr, local_env):
     if expr["type"] == "cst":
         return "int"
     if expr["type"] == "var":
-        return local_env[expr["name"]]["type"]
+        if expr["name"] in local_env:
+            return local_env[expr["name"]]["type"]
+        elif "%s:"%expr["name"] in list_data:
+            return "int"
+        else:
+            raise Interpret_exception("Variable not found", expr)
     if expr["type"] == "binop":
         e1 = getTypes(expr["e1"], local_env)
         e2 = getTypes(expr["e2"], local_env)
@@ -457,9 +471,17 @@ def eval_expr(expr, local_env = None):
             if len(expr["args"]) > 0 :  
                 list_instr.append("\tadd $%d, %%rsp"%int(len(expr["args"])*8))
  
-                
-
+            
             list_instr.append("\tpush %rax")
+    
+    if expr["type"] == "acces":
+        eval_expr(expr["expr"], local_env)
+        list_instr.append("\tpop %rbx")
+        list_instr.append("\timul $8, %rbx")
+        list_instr.append("\tmov %rip, %rdi")
+        list_instr.append("\tadd %rdi, %rbx")
+        list_instr.append(f"\tmov {expr['name']}(%rbx), %rax ")
+        list_instr.append("\tpush %rax")
 
 
 

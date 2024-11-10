@@ -8,6 +8,7 @@ and gdef =
   | Function of type_var*string*declaration list*stmt list*ppos   
   | Gvar of type_var*string*ppos
   | GvarInit of type_var*string*expr*ppos
+  | GTab of type_var*string*expr*ppos
 
 and declaration = 
   | DECLARATION of type_var*string
@@ -40,7 +41,7 @@ and expr =
   | Binop of binop * expr * expr*ppos
   | Unop of unop * expr * ppos
   | Call of string * expr list*ppos
-  (* | Acces of string * expr * ppos *)
+  | Acces of string * expr * ppos
 
 
 
