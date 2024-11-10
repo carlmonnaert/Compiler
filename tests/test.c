@@ -1,0 +1,11 @@
+int main(){
+    print_int(3&&8); 
+    print_int(0&&1);    
+    print_int(1&&1); 
+    print_int(0&&0); 
+    print_int(0||1);
+    print_int(1||0); 
+    print_int(1||1); 
+    print_int(0||0);  
+    return 0 ; 
+}
