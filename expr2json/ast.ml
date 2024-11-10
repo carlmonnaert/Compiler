@@ -26,6 +26,8 @@ and stmt =
   | Return of expr*ppos
   | Set of string*expr*ppos
   | Expression of expr*ppos
+  | Break of ppos
+  | Continue of ppos
 
 and expr = 
   | Cst of int*ppos
@@ -96,6 +98,8 @@ let rec toJSONinst = function
   | While(cond, body, p) -> `Assoc (["action", `String "while";
                                       "cond", toJSONexpr cond;
                                       "body", `List (List.map toJSONinst body)]@pos p)
+  | Break(p) -> `Assoc (["action", `String "break"]@pos p)
+  | Continue(p) -> `Assoc (["action", `String "continue"]@pos p)
 
   let type_to_string x =
     match x with

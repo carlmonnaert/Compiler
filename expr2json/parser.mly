@@ -18,6 +18,7 @@
 %token EQEQ NOT NOTEQ LT GT LTEQ GTEQ
 %token AND OR 
 %token IF ELSE WHILE
+%token CONTINUE BREAK
 
 
 /* D�finitions des priorit�s et associativit�s des tokens */
@@ -75,6 +76,8 @@ stmt:
 | id = IDENT EQ e = expr SEMICOLON    { Set(id,e,$loc) }
 | RETURN e = expr SEMICOLON           { Return(e,$loc) }
 | e = expr SEMICOLON                     { Expression(e,$loc) }
+| CONTINUE SEMICOLON                     { Continue($loc) }
+| BREAK SEMICOLON                     { Break($loc) }
 ;
 
 expr:

@@ -27,6 +27,8 @@ and stmt =
   | Return of expr*ppos
   | Set of string*expr*ppos
   | Expression of expr*ppos
+  | Break of ppos
+  | Continue of ppos
 
 and expr = 
   | Cst of int*ppos
