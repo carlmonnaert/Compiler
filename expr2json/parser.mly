@@ -17,23 +17,19 @@
 %token SEMICOLON RETURN INT
 %token EQEQ NOT NOTEQ LT GT LTEQ GTEQ
 %token AND OR 
-%token IF ELSE WHILE
-%token CONTINUE BREAK
+%token IF ELSE
 
 
 /* D�finitions des priorit�s et associativit�s des tokens */
 
-
 %right EQ
 %left AND OR
-%left EQEQ NOTEQ LT GT LTEQ GTEQ 
-%left NOT
+%left EQEQ NOTEQ LT GT LTEQ GTEQ
 %left PLUS MINUS 
 %left TIMES DIV MOD
 %nonassoc uminus
 %nonassoc IF_NO_ELSE
 %nonassoc ELSE
-
 
 /* Point d'entr�e de la grammaire */
 %start prog
@@ -66,7 +62,6 @@ type_var:
 
 
 stmt:
-| WHILE LP cond = expr RP LB body = list(stmt) RB { While(cond, body, $loc) }
 | IF LP cond = expr RP LB body1 = list(stmt) RB ELSE LB body2 = list(stmt) RB { IfElse(cond, body1, body2, $loc) }
 | IF LP cond = expr RP LB body = list(stmt) RB %prec IF_NO_ELSE { IfNoElse(cond, body, $loc) }
 | PRINT_INT LP e = expr RP SEMICOLON            { Print_int(e, $loc) }
@@ -75,17 +70,13 @@ stmt:
 | INT id = IDENT EQ e = expr SEMICOLON    { LvarInit(id,e,$loc) }
 | id = IDENT EQ e = expr SEMICOLON    { Set(id,e,$loc) }
 | RETURN e = expr SEMICOLON           { Return(e,$loc) }
-| CONTINUE SEMICOLON                     { Continue($loc) }
-| BREAK SEMICOLON                     { Break($loc) }
 | e = expr SEMICOLON                     { Expression(e,$loc) }
-
 ;
 
 expr:
 | c = CST                        { Cst(c,$loc) }
 | fct = IDENT LP args = separated_list(COMMA,expr) RP                 { Call(fct,args,$loc) }
 | id = IDENT                     { Var(id,$loc) }
-| NOT e = expr                   { Binop (Not, e, Cst(0,$loc), $loc) }
 | e1 = expr o = op e2 = expr     { Binop (o, e1, e2, $loc) }
 | MINUS e = expr %prec uminus    { Binop (Sub, Cst(0,$loc), e, $loc) } 
 | LP e = expr RP                 { e }
@@ -105,7 +96,6 @@ expr:
 | GTEQ  { Gteq }
 | AND   { And }
 | OR    { Or }
-| NOT  { Not }
 
 
 ;

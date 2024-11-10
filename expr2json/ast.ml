@@ -16,7 +16,6 @@ and type_var =
   | TYPE_INT
     
 and stmt = 
-  | While of expr*stmt list*ppos
   | IfElse of expr*stmt list*stmt list*ppos
   | IfNoElse of expr*stmt list*ppos
   | Read of string*ppos
@@ -26,8 +25,6 @@ and stmt =
   | Return of expr*ppos
   | Set of string*expr*ppos
   | Expression of expr*ppos
-  | Break of ppos
-  | Continue of ppos
 
 and expr = 
   | Cst of int*ppos
@@ -35,7 +32,7 @@ and expr =
   | Binop of binop * expr * expr*ppos
   | Call of string * expr list*ppos
 
-and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not
+and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or
 
 
 
@@ -54,7 +51,6 @@ let binopname = function
   | Gteq -> ">="
   | And -> "&&"
   | Or -> "||"
-  | Not -> "!"
 
 
 
@@ -87,8 +83,6 @@ let rec toJSONinst = function
   | LvarInit(s,v,p) -> `Assoc (["action", `String "varinitdef"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Set(s,v,p) -> `Assoc (["action", `String "varset"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Return(e,p) -> `Assoc (["action", `String "return";"expr", toJSONexpr e]@pos p)
-  | Break(p) -> `Assoc (["action", `String "break"]@pos p)
-  | Continue(p) -> `Assoc (["action", `String "continue"]@pos p)
   | Expression(e,p) -> `Assoc (["action", `String "expression";"expr", toJSONexpr e]@pos p)
   | IfElse(cond, body1, body2, p) -> `Assoc (["action", `String "ifelse";
                                                "cond", toJSONexpr cond;
@@ -97,10 +91,6 @@ let rec toJSONinst = function
   | IfNoElse(cond, body, p) -> `Assoc (["action", `String "ifnoelse";
                                         "cond", toJSONexpr cond;
                                         "then", `List (List.map toJSONinst body)]@pos p)
-  | While(cond, body, p) -> `Assoc (["action", `String "while";
-                                      "cond", toJSONexpr cond;
-                                      "body", `List (List.map toJSONinst body)]@pos p)
-
 
   let type_to_string x =
     match x with

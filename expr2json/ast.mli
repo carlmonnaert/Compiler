@@ -17,7 +17,6 @@ and type_var =
 
     
 and stmt = 
-  | While of expr*stmt list*ppos
   | IfElse of expr*stmt list*stmt list*ppos
   | IfNoElse of expr*stmt list*ppos
   | Read of string*ppos
@@ -27,8 +26,6 @@ and stmt =
   | Return of expr*ppos
   | Set of string*expr*ppos
   | Expression of expr*ppos
-  | Break of ppos
-  | Continue of ppos
 
 and expr = 
   | Cst of int*ppos
@@ -38,6 +35,6 @@ and expr =
 
 
 
-and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not
+and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or
 
 val toJSON : program -> Yojson.t
