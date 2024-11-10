@@ -87,6 +87,8 @@ let rec toJSONinst = function
   | LvarInit(s,v,p) -> `Assoc (["action", `String "varinitdef"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Set(s,v,p) -> `Assoc (["action", `String "varset"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Return(e,p) -> `Assoc (["action", `String "return";"expr", toJSONexpr e]@pos p)
+  | Break(p) -> `Assoc (["action", `String "break"]@pos p)
+  | Continue(p) -> `Assoc (["action", `String "continue"]@pos p)
   | Expression(e,p) -> `Assoc (["action", `String "expression";"expr", toJSONexpr e]@pos p)
   | IfElse(cond, body1, body2, p) -> `Assoc (["action", `String "ifelse";
                                                "cond", toJSONexpr cond;
@@ -98,8 +100,7 @@ let rec toJSONinst = function
   | While(cond, body, p) -> `Assoc (["action", `String "while";
                                       "cond", toJSONexpr cond;
                                       "body", `List (List.map toJSONinst body)]@pos p)
-  | Break(p) -> `Assoc (["action", `String "break"]@pos p)
-  | Continue(p) -> `Assoc (["action", `String "continue"]@pos p)
+
 
   let type_to_string x =
     match x with

@@ -75,9 +75,10 @@ stmt:
 | INT id = IDENT EQ e = expr SEMICOLON    { LvarInit(id,e,$loc) }
 | id = IDENT EQ e = expr SEMICOLON    { Set(id,e,$loc) }
 | RETURN e = expr SEMICOLON           { Return(e,$loc) }
-| e = expr SEMICOLON                     { Expression(e,$loc) }
 | CONTINUE SEMICOLON                     { Continue($loc) }
 | BREAK SEMICOLON                     { Break($loc) }
+| e = expr SEMICOLON                     { Expression(e,$loc) }
+
 ;
 
 expr:

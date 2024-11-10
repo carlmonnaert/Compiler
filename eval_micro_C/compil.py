@@ -18,6 +18,8 @@ list_data = []
 list_instr = []
 
 
+
+
 functions = {}
 
 def eval_program(program):
@@ -69,8 +71,11 @@ def eval_program(program):
 
                     
 
+posWhile = []
+nbWhile = 0
 
 def eval_stmt(stmt, local_env = None):
+    global nbWhile
     for instr in stmt:
         if instr["action"] == "return":
             eval_expr(instr["expr"], local_env)
@@ -166,10 +171,6 @@ def eval_stmt(stmt, local_env = None):
         if instr["action"] == "expression":
             eval_expr(instr["expr"], local_env)
             list_instr.append("\tpop %rax")
-            # if instr["expr"]["name"] == "break":
-            #     list_instr.append(f"\tjmp .L{posBreak}end")
-            # if instr["expr"]["name"] == "continue":
-            #     list_instr.append(f"\tjmp .L{posBreak}") 
         
         if instr["action"] == "ifelse":
             eval_expr(instr["cond"], local_env)
@@ -197,6 +198,8 @@ def eval_stmt(stmt, local_env = None):
             list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
 
         if instr["action"] == "while":
+
+            posWhile.append(codeFromPos(instr['cond']))
             list_instr.append(f".L{codeFromPos(instr['cond'])}:")
             eval_expr(instr["cond"], local_env)
             list_instr.append("\tpop %rax")
@@ -205,6 +208,14 @@ def eval_stmt(stmt, local_env = None):
             eval_stmt(instr["body"], local_env)
             list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}")
             list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
+            nbWhile -= 1
+
+        if instr["action"] == "break":
+            list_instr.append(f"\tjmp .L{posWhile[nbWhile]}end")
+        
+        if instr["action"] == "continue":
+            list_instr.append(f"\tjmp .L{posWhile[nbWhile]}")
+
 
 
 
