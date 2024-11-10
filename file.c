@@ -1,21 +1,15 @@
-int both_positive(int a, int b) {
-    if (a > 0 && b > 0) {
-        return 1; // Retourne 1 si a et b sont tous deux positifs
+int complex_check(int a, int b) {
+    if ((a > 0 && b < 0) || (! (a == 0) && b > -10)) {
+        return 1; // Retourne 1 si l'une des conditions est remplie
     }
-    return 0;
-}
-
-int either_positive(int a, int b) {
-    if (a > 0 || b > 0) {
-        return 1; // Retourne 1 si au moins l'un des deux est positif
-    }
-    return 0;
+    return 0; // Sinon, retourne 0
 }
 
 int main() {
-    print_int(both_positive(3, 4));    // Devrait afficher 1 (les deux positifs)
-    print_int(both_positive(3, -4));   // Devrait afficher 0 (l'un est négatif)
-    print_int(either_positive(3, -4)); // Devrait afficher 1 (un est positif)
-    print_int(either_positive(-3, -4)); // Devrait afficher 0 (aucun n'est positif)
+    print_int(complex_check(10, -3));   // Devrait afficher 1 (a est positif et b est négatif)
+    print_int(complex_check(0, -5));    // Devrait afficher 0 (a == 0, donc aucune condition remplie)
+    print_int(complex_check(-10, -20)); // Devrait afficher 0 (aucune condition remplie)
+    print_int(complex_check(0, 5));     // Devrait afficher 0 (a est positif, mais b n'est pas négatif)
+    print_int(complex_check(2, -8));    // Devrait afficher 1 (a est positif et b est négatif)
     return 0;
 }

@@ -35,6 +35,6 @@ and expr =
 
 
 
-and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or
+and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not
 
 val toJSON : program -> Yojson.t

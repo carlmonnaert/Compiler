@@ -24,7 +24,8 @@
 
 %right EQ
 %left AND OR
-%left EQEQ NOTEQ LT GT LTEQ GTEQ
+%left EQEQ NOTEQ LT GT LTEQ GTEQ 
+%left NOT
 %left PLUS MINUS 
 %left TIMES DIV MOD
 %nonassoc uminus
@@ -77,6 +78,7 @@ expr:
 | c = CST                        { Cst(c,$loc) }
 | fct = IDENT LP args = separated_list(COMMA,expr) RP                 { Call(fct,args,$loc) }
 | id = IDENT                     { Var(id,$loc) }
+| NOT e = expr                   { Binop (Not, e, Cst(0,$loc), $loc) }
 | e1 = expr o = op e2 = expr     { Binop (o, e1, e2, $loc) }
 | MINUS e = expr %prec uminus    { Binop (Sub, Cst(0,$loc), e, $loc) } 
 | LP e = expr RP                 { e }
@@ -96,6 +98,7 @@ expr:
 | GTEQ  { Gteq }
 | AND   { And }
 | OR    { Or }
+| NOT  { Not }
 
 
 ;

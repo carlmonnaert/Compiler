@@ -32,7 +32,7 @@ and expr =
   | Binop of binop * expr * expr*ppos
   | Call of string * expr list*ppos
 
-and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or
+and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not
 
 
 
@@ -51,6 +51,7 @@ let binopname = function
   | Gteq -> ">="
   | And -> "&&"
   | Or -> "||"
+  | Not -> "!"
 
 
 

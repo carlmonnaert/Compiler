@@ -309,6 +309,14 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tor %rbx, %rax")
             list_instr.append("\tpush %rax")
 
+        if expr["binop"] == "!":
+            eval_expr(expr["e1"], local_env)
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp $0, %rax")
+            list_instr.append("\tsete %al")
+            list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tpush %rax")
+
     
     if expr["type"] == "var":
         if expr["name"] in local_env:
