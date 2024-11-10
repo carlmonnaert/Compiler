@@ -315,10 +315,14 @@ def eval_expr(expr, local_env = None):
             eval_expr(expr["e2"], local_env)
             list_instr.append("\tpop %rax")
             list_instr.append("\tpop %rbx")
-            list_instr.append("\tand %rbx, %rax")
-            # if and is true then i want rax to be 1 else rax = 0
+            # cast rax and rbx to 0 or 1
+            list_instr.append("\tcmp $0, %rax")
             list_instr.append("\tsetne %al")
             list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tcmp $0, %rbx")
+            list_instr.append("\tsetne %al")
+            list_instr.append("\tmovzb %al, %rbx")
+            list_instr.append("\tand %rbx, %rax")
             list_instr.append("\tpush %rax")
 
 
@@ -327,10 +331,14 @@ def eval_expr(expr, local_env = None):
             eval_expr(expr["e2"], local_env)
             list_instr.append("\tpop %rax")
             list_instr.append("\tpop %rbx")
-            list_instr.append("\tor %rbx, %rax")
-            # if or is true then i want rax to be 1 else rax = 0
+            # cast rax and rbx to 0 or 1
+            list_instr.append("\tcmp $0, %rax")
             list_instr.append("\tsetne %al")
             list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tcmp $0, %rbx")
+            list_instr.append("\tsetne %al")
+            list_instr.append("\tmovzb %al, %rbx")
+            list_instr.append("\tor %rbx, %rax")
             list_instr.append("\tpush %rax")
 
         if expr["binop"] == "!":
@@ -340,6 +348,7 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tsete %al")
             list_instr.append("\tmovzb %al, %rax")
             list_instr.append("\tpush %rax")
+
 
     
     if expr["type"] == "var":

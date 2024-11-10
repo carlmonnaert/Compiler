@@ -1,12 +1,10 @@
-int i = 2;
+
 
 
 int main() {
-    
-    while (i >= 0) {
-        print_int(i);
-        i = i - 1;
-        
-    }
+
+
+    print_int(!5165);
+
     return 0;
 }
