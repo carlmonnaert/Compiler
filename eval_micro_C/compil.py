@@ -29,6 +29,9 @@ def eval_program(program):
     # for scanf
     list_data.append("format2:")
     list_data.append("\t.string \"%d\"")
+    for stmt in program:
+        if stmt["action"] == "fundef":
+            functions[stmt["name"]] = len(stmt["args"])
     
     for stmt in program:
         if stmt["action"] == "fundef":
@@ -40,7 +43,6 @@ def eval_program(program):
             for t in stmt["args"]:
                 local_env[t["name"]] = {"index" : x,  "type" : t["type"]}
                 x += 1
-            functions[stmt["name"]] = x -1
             
             x = -1
             for t in stmt["body"]:
