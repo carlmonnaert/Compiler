@@ -70,7 +70,7 @@ def eval_program(program):
                     
 
 
-def eval_stmt(stmt, local_env = None, posBreak = None):
+def eval_stmt(stmt, local_env = None):
     for instr in stmt:
         if instr["action"] == "return":
             eval_expr(instr["expr"], local_env)
@@ -164,36 +164,35 @@ def eval_stmt(stmt, local_env = None, posBreak = None):
                     list_instr.append("\tmov %%rax, %s(%%rip)"%instr["name"])
             
         if instr["action"] == "expression":
-            if instr["expr"]["type"] == "application":
-                eval_expr(instr["expr"], local_env)
-                list_instr.append("\tpop %rax")
+            eval_expr(instr["expr"], local_env)
+            list_instr.append("\tpop %rax")
             # if instr["expr"]["name"] == "break":
             #     list_instr.append(f"\tjmp .L{posBreak}end")
             # if instr["expr"]["name"] == "continue":
             #     list_instr.append(f"\tjmp .L{posBreak}") 
         
         if instr["action"] == "ifelse":
-            eval_expr(instr["cond"], local_env,posBreak)
+            eval_expr(instr["cond"], local_env)
             list_instr.append("\tpop %rax")
             list_instr.append("\tcmp $0, %rax")
             list_instr.append(f"\tjne .L{codeFromPos(instr['cond'])}")
             list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}e")
             list_instr.append(f".L{codeFromPos(instr['cond'])}:")
-            eval_stmt(instr["then"], local_env,posBreak)
+            eval_stmt(instr["then"], local_env)
             list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}end")
             list_instr.append(f".L{codeFromPos(instr['cond'])}e:")
-            eval_stmt(instr["else"], local_env,posBreak)
+            eval_stmt(instr["else"], local_env)
             list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
 
             
         if instr["action"] == "ifnoelse":
-            eval_expr(instr["cond"], local_env,posBreak)
+            eval_expr(instr["cond"], local_env)
             list_instr.append("\tpop %rax")
             list_instr.append("\tcmp $0, %rax")
             list_instr.append(f"\tjne .L{codeFromPos(instr['cond'])}")
             list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}end")
             list_instr.append(f".L{codeFromPos(instr['cond'])}:")
-            eval_stmt(instr["then"], local_env,posBreak)
+            eval_stmt(instr["then"], local_env)
             list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}end")
             list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
 
@@ -203,7 +202,7 @@ def eval_stmt(stmt, local_env = None, posBreak = None):
             list_instr.append("\tpop %rax")
             list_instr.append("\tcmp $0, %rax")
             list_instr.append(f"\tje .L{codeFromPos(instr['cond'])}end")
-            eval_stmt(instr["body"], local_env, codeFromPos(instr['cond']))
+            eval_stmt(instr["body"], local_env)
             list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}")
             list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
 
