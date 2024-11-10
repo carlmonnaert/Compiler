@@ -1,10 +1,8 @@
-
-
+int a;
 
 int main() {
-
-
-    print_int(!5165);
+    a = 5 && 0;
+    print_int(a);
 
     return 0;
 }

@@ -320,8 +320,8 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tsetne %al")
             list_instr.append("\tmovzb %al, %rax")
             list_instr.append("\tcmp $0, %rbx")
-            list_instr.append("\tsetne %al")
-            list_instr.append("\tmovzb %al, %rbx")
+            list_instr.append("\tsetne %bl")
+            list_instr.append("\tmovzb %bl, %rbx")
             list_instr.append("\tand %rbx, %rax")
             list_instr.append("\tpush %rax")
 
@@ -336,8 +336,8 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tsetne %al")
             list_instr.append("\tmovzb %al, %rax")
             list_instr.append("\tcmp $0, %rbx")
-            list_instr.append("\tsetne %al")
-            list_instr.append("\tmovzb %al, %rbx")
+            list_instr.append("\tsetne %bl")
+            list_instr.append("\tmovzb %bl, %rbx")
             list_instr.append("\tor %rbx, %rax")
             list_instr.append("\tpush %rax")
 
