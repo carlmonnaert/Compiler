@@ -177,9 +177,10 @@ def eval_stmt(stmt, local_env = None):
             eval_stmt(instr["then"], local_env)
             list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}end")
             list_instr.append(f".L{codeFromPos(instr['cond'])}e:")
-
             eval_stmt(instr["else"], local_env)
             list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
+
+            
         if instr["action"] == "ifnoelse":
             eval_expr(instr["cond"], local_env)
             list_instr.append("\tpop %rax")
@@ -291,6 +292,21 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tcmp %rbx, %rax")
             list_instr.append("\tsetge %al")
             list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tpush %rax")
+        if expr["binop"] == "&&": #normal evaluation
+            eval_expr(expr["e1"], local_env)
+            eval_expr(expr["e2"], local_env)
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tand %rbx, %rax")
+            list_instr.append("\tpush %rax")
+            
+        if expr["binop"] == "||": #normal evaluation
+            eval_expr(expr["e1"], local_env)
+            eval_expr(expr["e2"], local_env)
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tor %rbx, %rax")
             list_instr.append("\tpush %rax")
 
             

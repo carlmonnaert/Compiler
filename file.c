@@ -1,33 +1,21 @@
-
-int pow(int x, int y) {
-    if(y <= 0) {
-        print_int(x);
-    }else{
-        print_int(-x);
+int both_positive(int a, int b) {
+    if (a > 0 && b > 0) {
+        return 1; // Retourne 1 si a et b sont tous deux positifs
     }
     return 0;
 }
 
-int fact(int n) {
-    if(n == 1) {
-        return 1;
-    }else{
-        return n * fact(n-1);
+int either_positive(int a, int b) {
+    if (a > 0 || b > 0) {
+        return 1; // Retourne 1 si au moins l'un des deux est positif
     }
+    return 0;
 }
 
-
-
-    int main() {
-        if(1){
-            print_int(1);
-            if(1){
-                print_int(2);
-            }else{
-                print_int(3);
-            }
-        }
-        print_int(0);
-        
-        return 0;
-    }
+int main() {
+    print_int(both_positive(3, 4));    // Devrait afficher 1 (les deux positifs)
+    print_int(both_positive(3, -4));   // Devrait afficher 0 (l'un est négatif)
+    print_int(either_positive(3, -4)); // Devrait afficher 1 (un est positif)
+    print_int(either_positive(-3, -4)); // Devrait afficher 0 (aucun n'est positif)
+    return 0;
+}
