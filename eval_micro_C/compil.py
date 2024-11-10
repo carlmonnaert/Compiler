@@ -211,24 +211,6 @@ def getTypes(expr, local_env):
         return ""
 
 
-def eval_binop(binop):
-    list_instr.append("\tpop rax")
-    list_instr.append("\tpop rbx")
-    if binop == "+":
-        list_instr.append("\tadd rax, rbx")
-    if binop == "-":
-        list_instr.append("\tsub rax, rbx")
-    if binop == "*":
-        list_instr.append("\timul rax, rbx")
-    if binop == "/":
-        list_instr.append("\tcqo")
-        list_instr.append("\tidiv rax, rbx")
-    if binop == "%":
-        list_instr.append("\tcdq")
-        list_instr.append("\tidiv rax, rbx")
-        list_instr.append("\tmov rdx, rax")
-    list_instr.append("\tpush rax")
-
 
 def eval_expr(expr, local_env = None):
     if expr["type"] == "cst":
@@ -239,27 +221,48 @@ def eval_expr(expr, local_env = None):
             # if expr["e1"]
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
-            eval_binop("+")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tadd %rbx, %rax")
+            list_instr.append("\tpush %rax")
+
             
         if expr["binop"] == "-":
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
-            eval_binop("-")
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tsub %rbx, %rax")
+            list_instr.append("\tpush %rax")
 
         if expr["binop"] == "*":
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
-            eval_binop("*")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\timul %rbx, %rax")
+            list_instr.append("\tpush %rax")
+
 
         if expr["binop"] == "/":
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
-            eval_binop("/")
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcqo")
+            list_instr.append("\tidiv %rbx")
+            list_instr.append("\tpush %rax")
+
 
         if expr["binop"] == "%":
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
-            eval_binop("%")
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcdq")
+            list_instr.append("\tidiv %rbx")
+            list_instr.append("\tpush %rdx")
+
 
         if expr["binop"] == "==":
             eval_expr(expr["e1"], local_env)

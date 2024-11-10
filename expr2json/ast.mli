@@ -26,7 +26,7 @@ and stmt =
   | Print_int of expr*ppos
   | Lvar of type_var*string*ppos
   | LvarInit of type_var*string*expr*ppos
-  | LtabInit of string*expr*ppos
+  (* | LtabInit of string*expr*ppos *)
   | Return of expr*ppos
   | Set of string*expr*ppos
   | SetPtr of string*expr*ppos
@@ -39,7 +39,7 @@ and expr =
   | Var of string*ppos
   | Binop of binop * expr * expr*ppos
   | Call of string * expr list*ppos
-  | Acces of string * expr * ppos
+  (* | Acces of string * expr * ppos *)
 
 
 

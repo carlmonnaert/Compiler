@@ -1,8 +1,9 @@
 
-int main() {
-    int a ;
-    a = 1 ;
-    print_int(a) ;
 
+
+int main() {
+    int a;
+    a = 5;
+    print_int(a+a);
     
 }

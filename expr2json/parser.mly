@@ -98,7 +98,7 @@ expr:
 | e1 = expr o = op e2 = expr     { Binop (o, e1, e2, $loc) }
 | MINUS e = expr %prec uminus    { Binop (Sub, Cst(0,$loc), e, $loc) } 
 | LP e = expr RP                 { e }
-| id = IDENT LC e = expr RC      { Acces(id,e,$loc) }
+// | id = IDENT LC e = expr RC      { Acces(id,e,$loc) }
 ;
 
 %inline op:
