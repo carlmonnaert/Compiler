@@ -56,6 +56,9 @@ def eval_program(program):
                     tmp += 1
             list_instr.append("\tsub $%d, %%rsp"%(tmp*8+8))
             eval_stmt(stmt["body"], local_env)
+            list_instr.append("\tleave")
+            list_instr.append("\tret")
+
             
 
         elif stmt["action"] == "gvardef" :
@@ -80,12 +83,7 @@ def eval_stmt(stmt, local_env = None):
         if instr["action"] == "return":
             eval_expr(instr["expr"], local_env)
             list_instr.append("\tpop %rax")
-            tmp = 0
-            for t in local_env:
-                if local_env[t] < 0:
-                    tmp += 1
-            list_instr.append("\tadd $%d, %%rsp"%int((tmp+1)*8))
-            list_instr.append("\tpop %rbp")
+            list_instr.append("\tleave")
             list_instr.append("\tret")
 
         if instr["action"] == "print_int":

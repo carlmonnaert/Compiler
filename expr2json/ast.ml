@@ -5,7 +5,7 @@ type ppos = Lexing.position * Lexing.position
 type program = gdef list 
 
 and gdef =
-  | Function of string*declaration list*stmt list*ppos   
+  | Function of type_var*string*declaration list*stmt list*ppos   
   | Gvar of string*ppos
   | GvarInit of string*expr*ppos
 
@@ -14,6 +14,7 @@ and declaration =
 
 and type_var =
   | TYPE_INT
+  | TYPE_VOID
     
 and stmt = 
   | While of expr*stmt list*ppos
@@ -38,7 +39,10 @@ and expr =
 and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not
 
 
-
+let type_to_string x =
+  match x with
+  | TYPE_INT -> "int"
+  | TYPE_VOID -> "void"
 
 let binopname = function
   | Add -> "+"
@@ -102,10 +106,6 @@ let rec toJSONinst = function
                                       "body", `List (List.map toJSONinst body)]@pos p)
 
 
-  let type_to_string x =
-    match x with
-    | TYPE_INT -> "int"
-    
                                    
 let toJSONargs = function
   | DECLARATION(typeV,id) -> `Assoc (["type", `String (type_to_string typeV) ;"name", `String id; ])
@@ -116,7 +116,8 @@ let toJSONdef = function
   | GvarInit(name,expr,p) -> `Assoc (["action", `String "gvarinitdef";
                                               "name", `String name ;
                                               "expr", toJSONexpr expr]@pos p) 
-  | Function(name,args,expr,p) -> `Assoc (["action", `String "fundef";
+  | Function(typee,name,args,expr,p) -> `Assoc (["type", `String (type_to_string typee);
+                                             "action", `String "fundef";
                                              "name", `String name ;
                                              "args", `List (List.map toJSONargs args); 
                                              "body", `List (List.map toJSONinst expr)]@pos p)

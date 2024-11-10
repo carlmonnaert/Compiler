@@ -11,6 +11,7 @@
   | "print_int" -> PRINT_INT
   | "read" -> READ
   | "int" -> INT
+  | "void" -> VOID
   | "return" -> RETURN
   | "if" -> IF
   | "else" -> ELSE
@@ -35,7 +36,6 @@ rule token = parse
   | '\n'    { new_line lexbuf; token lexbuf }
   | space+  { token lexbuf }
   | ident as id { id_or_kwd id }
-  (* | '//'  { COMMENT} *)
   | '+'     { PLUS }
   | '-'     { MINUS }
   | '*'     { TIMES }

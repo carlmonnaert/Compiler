@@ -19,6 +19,7 @@
 %token AND OR 
 %token IF ELSE WHILE
 %token CONTINUE BREAK
+%token VOID
 
 
 /* D�finitions des priorit�s et associativit�s des tokens */
@@ -50,9 +51,11 @@ prog:
 
 
 def:
+| VOID id = IDENT LP args = separated_list(COMMA,declaration) RP LB body = list(stmt)   RB            { Function(TYPE_VOID,id,args,body,$loc) }
+| INT id = IDENT LP args = separated_list(COMMA,declaration) RP LB body = list(stmt)   RB            { Function(TYPE_INT,id,args,body,$loc) }
 | INT id = IDENT SEMICOLON { Gvar(id, $loc) }
 | INT id = IDENT EQ e = expr SEMICOLON { GvarInit(id, e, $loc) }
-| INT id = IDENT LP args = separated_list(COMMA,declaration) RP LB body = list(stmt)   RB            { Function(id,args,body,$loc) }
+
 ;
 
 declaration:
@@ -61,6 +64,7 @@ declaration:
 
 type_var:
 | INT { TYPE_INT }
+| VOID { TYPE_VOID }
 ;
 
 

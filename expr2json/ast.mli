@@ -5,7 +5,7 @@ type ppos = Lexing.position * Lexing.position
 type program = gdef list 
 
 and gdef =
-  | Function of string*declaration list*stmt list*ppos   
+  | Function of type_var*string*declaration list*stmt list*ppos   
   | Gvar of string*ppos
   | GvarInit of string*expr*ppos
 
@@ -14,6 +14,7 @@ and declaration =
 
 and type_var =
   | TYPE_INT
+  | TYPE_VOID
 
     
 and stmt = 
