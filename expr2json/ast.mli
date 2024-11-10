@@ -6,8 +6,8 @@ type program = gdef list
 
 and gdef =
   | Function of type_var*string*declaration list*stmt list*ppos   
-  | Gvar of string*ppos
-  | GvarInit of string*expr*ppos
+  | Gvar of type_var*string*ppos
+  | GvarInit of type_var*string*expr*ppos
 
 and declaration = 
   | DECLARATION of type_var*string
@@ -15,6 +15,7 @@ and declaration =
 and type_var =
   | TYPE_INT
   | TYPE_VOID
+  | PTR of type_var
 
     
 and stmt = 
@@ -23,10 +24,11 @@ and stmt =
   | IfNoElse of expr*stmt list*ppos
   | Read of string*ppos
   | Print_int of expr*ppos
-  | Lvar of string*ppos
-  | LvarInit of string*expr*ppos
+  | Lvar of type_var*string*ppos
+  | LvarInit of type_var*string*expr*ppos
   | Return of expr*ppos
   | Set of string*expr*ppos
+  | SetPtr of string*expr*ppos
   | Expression of expr*ppos
   | Break of ppos
   | Continue of ppos
@@ -39,6 +41,6 @@ and expr =
 
 
 
-and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not
+and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not | Deref | Adr
 
 val toJSON : program -> Yojson.t

@@ -38,21 +38,21 @@ def eval_program(program):
             x = 1
             local_env = {}
             for t in stmt["args"]:
-                local_env[t["name"]] = x
+                local_env[t["name"]] = {"index" : x,  "type" : t["type"]}
                 x += 1
             functions[stmt["name"]] = x -1
             
             x = -1
             for t in stmt["body"]:
                 if t["action"] == "vardef" or t["action"] == "varinitdef":
-                    local_env[t["name"]] = x
+                    local_env[t["name"]] = {"index" : x, "type" : t["type"]}
                     x -= 1
             list_instr.append("\tpush %rbp")
             list_instr.append("\tmov %rsp, %rbp")  
             
             tmp = 0
             for t in local_env:
-                if local_env[t] < 0:
+                if local_env[t]["index"] < 0:
                     tmp += 1
             list_instr.append("\tsub $%d, %%rsp"%(tmp*8+8))
             eval_stmt(stmt["body"], local_env)
@@ -109,26 +109,12 @@ def eval_stmt(stmt, local_env = None):
 
 
         
-        if instr["action"] == "read":
-            list_instr.append("\tpush $0")
-            list_instr.append("\tleaq (%rsp), %rsi")
-            list_instr.append("\tleaq format2(%rip), %rdi")
-            list_instr.append("\tmov $0, %eax")
-            list_instr.append("\tmov %rsp, %r8")
-            list_instr.append("\tand $0xf, %r8 ")
-            list_instr.append("\tsub %r8, %rsp")
-            list_instr.append("\tpush %r8")
-            list_instr.append("\tsub $8, %rsp")
-            list_instr.append("\tcall scanf")
-            list_instr.append("\tadd $8, %rsp")
-            list_instr.append("\tpop %r8")
-            list_instr.append("\tadd %r8, %rsp")
-            if instr["var"] in local_env:
-                list_instr.append("\tmov %%rsi, -%d(%%rbp)"%int(local_env[instr["var"]]*8))
-                list_instr.append("\tpop %rsi")
-            else:
-                list_instr.append("\tmov %%rsi, %s(%%rip)"%instr["var"])
-                list_instr.append("\tpop %rsi")
+        if instr["action"] == "ptrset":
+            eval_expr(instr["ptr"], local_env)
+            eval_expr(instr["expr"], local_env)
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tmov %rax, (%rbx)")
 
         
         if instr["action"] == "varset" or instr["action"] == "varinitdef":
@@ -140,21 +126,21 @@ def eval_stmt(stmt, local_env = None):
                 if instr["expr"]["type"] == "application":
                     eval_expr(instr["expr"], local_env)
                     list_instr.append("\tpop %rax")
-                    if local_env[instr["name"]] < 0:
-                        list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]*8))
+                    if local_env[instr["name"]["index"]] < 0:
+                        list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]["index"]*8))
                     else:
-                        list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]*8 + 8))
+                        list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]["index"]*8 + 8))
                     
                 else:
                     
-                    if local_env[instr["name"]] < 0:
+                    if local_env[instr["name"]]["index"] < 0:
                         eval_expr(instr["expr"], local_env)
                         list_instr.append("\tpop %rax")
-                        list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]*8))
+                        list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]["index"]*8))
                     else:
                         eval_expr(instr["expr"], local_env)
                         list_instr.append("\tpop %rax")
-                        list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]*8 + 8))
+                        list_instr.append("\tmov %%rax, %d(%%rbp)"%int(local_env[instr["name"]]["index"]*8 + 8))
                 
             elif "%s:"%instr["name"] in list_data:
                 if instr["expr"]["type"] == "application":
@@ -217,8 +203,30 @@ def eval_stmt(stmt, local_env = None):
 
 
 
+def getTypes(expr, local_env):
+    if expr["type"] == "cst":
+        return "int"
+    if expr["type"] == "var":
+        return ""
 
 
+def eval_binop(binop):
+    list_instr.append("\tpop rax")
+    list_instr.append("\tpop rbx")
+    if binop == "+":
+        list_instr.append("\tadd rax, rbx")
+    if binop == "-":
+        list_instr.append("\tsub rax, rbx")
+    if binop == "*":
+        list_instr.append("\timul rax, rbx")
+    if binop == "/":
+        list_instr.append("\tcqo")
+        list_instr.append("\tidiv rax, rbx")
+    if binop == "%":
+        list_instr.append("\tcdq")
+        list_instr.append("\tidiv rax, rbx")
+        list_instr.append("\tmov rdx, rax")
+    list_instr.append("\tpush rax")
 
 
 def eval_expr(expr, local_env = None):
@@ -227,43 +235,31 @@ def eval_expr(expr, local_env = None):
 
     if expr["type"] == "binop":
         if expr["binop"] == "+":
+            # if expr["e1"]
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
-            list_instr.append("\tpop %rax")
-            list_instr.append("\tpop %rbx")
-            list_instr.append("\tadd %rbx, %rax")
-            list_instr.append("\tpush %rax")
+            eval_binop("+")
             
         if expr["binop"] == "-":
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
-            list_instr.append("\tpop %rbx")
-            list_instr.append("\tpop %rax")
-            list_instr.append("\tsub %rbx, %rax")
-            list_instr.append("\tpush %rax")
+            eval_binop("-")
+
         if expr["binop"] == "*":
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
-            list_instr.append("\tpop %rax")
-            list_instr.append("\tpop %rbx")
-            list_instr.append("\timul %rbx, %rax")
-            list_instr.append("\tpush %rax")
+            eval_binop("*")
+
         if expr["binop"] == "/":
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
-            list_instr.append("\tpop %rbx")
-            list_instr.append("\tpop %rax")
-            list_instr.append("\tcqo")
-            list_instr.append("\tidiv %rbx")
-            list_instr.append("\tpush %rax")
+            eval_binop("/")
+
         if expr["binop"] == "%":
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
-            list_instr.append("\tpop %rbx")
-            list_instr.append("\tpop %rax")
-            list_instr.append("\tcdq")
-            list_instr.append("\tidiv %rbx")
-            list_instr.append("\tpush %rdx")
+            eval_binop("%")
+
         if expr["binop"] == "==":
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
@@ -319,20 +315,7 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tsetge %al")
             list_instr.append("\tmovzb %al, %rax")
             list_instr.append("\tpush %rax")
-        # if expr["binop"] == "&&": #normal evaluation
-        #     eval_expr(expr["e1"], local_env)
-        #     eval_expr(expr["e2"], local_env)
-        #     list_instr.append("\tpop %rax")
-        #     list_instr.append("\tpop %rbx")
-        #     # cast rax and rbx to 0 or 1
-        #     list_instr.append("\tcmp $0, %rax")
-        #     list_instr.append("\tsetne %al")
-        #     list_instr.append("\tmovzb %al, %rax")
-        #     list_instr.append("\tcmp $0, %rbx")
-        #     list_instr.append("\tsetne %bl")
-        #     list_instr.append("\tmovzb %bl, %rbx")
-        #     list_instr.append("\tand %rbx, %rax")
-        #     list_instr.append("\tpush %rax")
+
 
         if expr["binop"] == "&&" : #short-circuit evaluation
             eval_expr(expr["e1"], local_env)
@@ -366,22 +349,6 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tpush %rax")
             list_instr.append(f".L{codeFromPos(expr['e2'])}end:")
 
-
-        # if expr["binop"] == "||": #normal evaluation
-        #     eval_expr(expr["e1"], local_env)
-        #     eval_expr(expr["e2"], local_env)
-        #     list_instr.append("\tpop %rax")
-        #     list_instr.append("\tpop %rbx")
-        #     # cast rax and rbx to 0 or 1
-        #     list_instr.append("\tcmp $0, %rax")
-        #     list_instr.append("\tsetne %al")
-        #     list_instr.append("\tmovzb %al, %rax")
-        #     list_instr.append("\tcmp $0, %rbx")
-        #     list_instr.append("\tsetne %bl")
-        #     list_instr.append("\tmovzb %bl, %rbx")
-        #     list_instr.append("\tor %rbx, %rax")
-        #     list_instr.append("\tpush %rax")
-
         if expr["binop"] == "!":
             eval_expr(expr["e1"], local_env)
             list_instr.append("\tpop %rax")
@@ -389,15 +356,28 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tsete %al")
             list_instr.append("\tmovzb %al, %rax")
             list_instr.append("\tpush %rax")
+        
+        if expr["binop"] == "&": #address of
+            if expr["e1"]["type"] == "var":
+                if expr["e1"]["name"] in local_env:
+                    if local_env[expr["e1"]["name"]] < 0:
+                        list_instr.append("\tlea %d(%%rbp), %%rax"%int(local_env[expr["e1"]["name"]]["index"]*8))
+                    else:
+                        list_instr.append("\tlea %d(%%rbp), %%rax"%int(local_env[expr["e1"]["name"]]["index"]*8 + 8))
+                else:
+                    list_instr.append("\tlea %s(%%rip), %%rax"%expr["e1"]["name"])
+                list_instr.append("\tpush %rax")
+            else:
+                raise Interpret_exception("Not a variable", expr)
 
 
     
     if expr["type"] == "var":
         if expr["name"] in local_env:
-            if local_env[expr["name"]] < 0:
-                list_instr.append("\tpush %d(%%rbp)"%int(local_env[expr["name"]]*8))
+            if local_env[expr["name"]]["index"] < 0:
+                list_instr.append("\tpush %d(%%rbp)"%int(local_env[expr["name"]]["index"]*8))
             else:
-                list_instr.append("\tpush %d(%%rbp)"%int(local_env[expr["name"]]*8 + 8))
+                list_instr.append("\tpush %d(%%rbp)"%int(local_env[expr["name"]]["index"]*8 + 8))
         else:
             list_instr.append("\tpush %s(%%rip)"%expr["name"])
     

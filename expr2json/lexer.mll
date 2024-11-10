@@ -49,6 +49,7 @@ rule token = parse
   | '>''='  { GTEQ }
   | '!'     { NOT }
   | '!''='  { NOTEQ }
+  | '&'     { ADR }
   | '&''&'     { AND }
   | '|''|'     { OR }
   | '('     { LP }

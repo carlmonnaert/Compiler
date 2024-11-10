@@ -6,8 +6,8 @@ type program = gdef list
 
 and gdef =
   | Function of type_var*string*declaration list*stmt list*ppos   
-  | Gvar of string*ppos
-  | GvarInit of string*expr*ppos
+  | Gvar of type_var*string*ppos
+  | GvarInit of type_var*string*expr*ppos
 
 and declaration = 
   | DECLARATION of type_var*string
@@ -15,6 +15,7 @@ and declaration =
 and type_var =
   | TYPE_INT
   | TYPE_VOID
+  | PTR of type_var
     
 and stmt = 
   | While of expr*stmt list*ppos
@@ -22,10 +23,11 @@ and stmt =
   | IfNoElse of expr*stmt list*ppos
   | Read of string*ppos
   | Print_int of expr*ppos
-  | Lvar of string*ppos
-  | LvarInit of string*expr*ppos
+  | Lvar of type_var*string*ppos
+  | LvarInit of type_var*string*expr*ppos
   | Return of expr*ppos
   | Set of string*expr*ppos
+  | SetPtr of string*expr*ppos
   | Expression of expr*ppos
   | Break of ppos
   | Continue of ppos
@@ -36,13 +38,14 @@ and expr =
   | Binop of binop * expr * expr*ppos
   | Call of string * expr list*ppos
 
-and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not
+and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not | Deref | Adr
 
 
-let type_to_string x =
+let rec type_to_string x =
   match x with
   | TYPE_INT -> "int"
   | TYPE_VOID -> "void"
+  | PTR t -> type_to_string t ^ "*"
 
 let binopname = function
   | Add -> "+"
@@ -59,6 +62,8 @@ let binopname = function
   | And -> "&&"
   | Or -> "||"
   | Not -> "!"
+  | Deref -> "*"
+  | Adr -> "&"
 
 
 
@@ -87,9 +92,10 @@ let rec toJSONexpr = function
 let rec toJSONinst = function
   | Read(x,p)  -> `Assoc (["action", `String "read";   "var", `String x]@pos p)
   | Print_int(e,p) -> `Assoc (["action", `String "print_int";  "expr", toJSONexpr e]@pos p)
-  | Lvar(s,p) -> `Assoc (["action", `String "vardef";  "name", `String s]@pos p)
-  | LvarInit(s,v,p) -> `Assoc (["action", `String "varinitdef"; "name", `String s; "expr", toJSONexpr v]@pos p)
+  | Lvar(t,s,p) -> `Assoc (["type" , `String (type_to_string t) ;"action", `String "vardef";  "name", `String s]@pos p)
+  | LvarInit(t,s,v,p) -> `Assoc (["type" , `String (type_to_string t) ; "action", `String "varinitdef"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Set(s,v,p) -> `Assoc (["action", `String "varset"; "name", `String s; "expr", toJSONexpr v]@pos p)
+  | SetPtr(s,v,p) -> `Assoc (["action", `String "ptrset"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Return(e,p) -> `Assoc (["action", `String "return";"expr", toJSONexpr e]@pos p)
   | Break(p) -> `Assoc (["action", `String "break"]@pos p)
   | Continue(p) -> `Assoc (["action", `String "continue"]@pos p)
@@ -111,9 +117,9 @@ let toJSONargs = function
   | DECLARATION(typeV,id) -> `Assoc (["type", `String (type_to_string typeV) ;"name", `String id; ])
 
 let toJSONdef = function
-  | Gvar(name, p)  -> `Assoc (["action", `String "gvardef";
+  | Gvar(t,name, p)  -> `Assoc (["type" , `String (type_to_string t) ;"action", `String "gvardef";
                                              "name", `String name ]@pos p)
-  | GvarInit(name,expr,p) -> `Assoc (["action", `String "gvarinitdef";
+  | GvarInit(t, name,expr,p) -> `Assoc (["type", `String (type_to_string t) ;"action", `String "gvarinitdef";
                                               "name", `String name ;
                                               "expr", toJSONexpr expr]@pos p) 
   | Function(typee,name,args,expr,p) -> `Assoc (["type", `String (type_to_string typee);
