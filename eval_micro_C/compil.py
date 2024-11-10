@@ -54,6 +54,40 @@ def eval_program(program):
                     tmp += 1
             list_instr.append("\tsub $%d, %%rsp"%(tmp*8+8))
             eval_stmt(stmt["body"], local_env)
+
+        elif stmt["action"] == "fundefvoid":
+            list_instr.append("\t.text")
+            list_instr.append("\t.globl " + stmt["name"])
+            list_instr.append(stmt["name"] + ":")
+            x = 1
+            local_env = {}
+            for t in stmt["args"]:
+                local_env[t["name"]] = x
+                x += 1
+            functions[stmt["name"]] = x -1
+            
+            x = -1
+            for t in stmt["body"]:
+                if t["action"] == "vardef" or t["action"] == "varinitdef":
+                    local_env[t["name"]] = x
+                    x -= 1
+            list_instr.append("\tpush %rbp")
+            list_instr.append("\tmov %rsp, %rbp")  
+            
+            tmp = 0
+            for t in local_env:
+                if local_env[t] < 0:
+                    tmp += 1
+            list_instr.append("\tsub $%d, %%rsp"%(tmp*8+8))
+            eval_stmt(stmt["body"], local_env)
+
+            tmp = 0
+            for t in local_env:
+                if local_env[t] < 0:
+                    tmp += 1
+            list_instr.append("\tadd $%d, %%rsp"%int((tmp+1)*8))
+            list_instr.append("\tpop %rbp")
+            list_instr.append("\tret")
             
 
         elif stmt["action"] == "gvardef" :

@@ -8,6 +8,8 @@ and gdef =
   | Function of string*declaration list*stmt list*ppos   
   | Gvar of string*ppos
   | GvarInit of string*expr*ppos
+  | FunctionVoid of string*declaration list*stmt list*ppos   
+
 
 and declaration = 
   | DECLARATION of type_var*string
@@ -26,6 +28,7 @@ and stmt =
   | Return of expr*ppos
   | Set of string*expr*ppos
   | Expression of expr*ppos
+
 
 and expr = 
   | Cst of int*ppos
