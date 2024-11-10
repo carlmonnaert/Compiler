@@ -17,6 +17,7 @@ and type_var =
 
     
 and stmt = 
+  | While of expr*stmt list*ppos
   | IfElse of expr*stmt list*stmt list*ppos
   | IfNoElse of expr*stmt list*ppos
   | Read of string*ppos

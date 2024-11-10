@@ -192,6 +192,19 @@ def eval_stmt(stmt, local_env = None):
             list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}end")
             list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
 
+        if instr["action"] == "while":
+            list_instr.append(f".L{codeFromPos(instr['cond'])}:")
+            eval_expr(instr["cond"], local_env)
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp $0, %rax")
+            list_instr.append(f"\tje .L{codeFromPos(instr['cond'])}end")
+            eval_stmt(instr["body"], local_env)
+            list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}")
+            list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
+            
+
+
+
 
 
 

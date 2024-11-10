@@ -16,6 +16,7 @@ and type_var =
   | TYPE_INT
     
 and stmt = 
+  | While of expr*stmt list*ppos
   | IfElse of expr*stmt list*stmt list*ppos
   | IfNoElse of expr*stmt list*ppos
   | Read of string*ppos
@@ -92,6 +93,9 @@ let rec toJSONinst = function
   | IfNoElse(cond, body, p) -> `Assoc (["action", `String "ifnoelse";
                                         "cond", toJSONexpr cond;
                                         "then", `List (List.map toJSONinst body)]@pos p)
+  | While(cond, body, p) -> `Assoc (["action", `String "while";
+                                      "cond", toJSONexpr cond;
+                                      "body", `List (List.map toJSONinst body)]@pos p)
 
   let type_to_string x =
     match x with

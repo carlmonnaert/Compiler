@@ -17,10 +17,11 @@
 %token SEMICOLON RETURN INT
 %token EQEQ NOT NOTEQ LT GT LTEQ GTEQ
 %token AND OR 
-%token IF ELSE
+%token IF ELSE WHILE
 
 
 /* D�finitions des priorit�s et associativit�s des tokens */
+
 
 %right EQ
 %left AND OR
@@ -31,6 +32,7 @@
 %nonassoc uminus
 %nonassoc IF_NO_ELSE
 %nonassoc ELSE
+
 
 /* Point d'entr�e de la grammaire */
 %start prog
@@ -63,6 +65,7 @@ type_var:
 
 
 stmt:
+| WHILE LP cond = expr RP LB body = list(stmt) RB { While(cond, body, $loc) }
 | IF LP cond = expr RP LB body1 = list(stmt) RB ELSE LB body2 = list(stmt) RB { IfElse(cond, body1, body2, $loc) }
 | IF LP cond = expr RP LB body = list(stmt) RB %prec IF_NO_ELSE { IfNoElse(cond, body, $loc) }
 | PRINT_INT LP e = expr RP SEMICOLON            { Print_int(e, $loc) }

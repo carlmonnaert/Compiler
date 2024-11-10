@@ -14,6 +14,7 @@
   | "return" -> RETURN
   | "if" -> IF
   | "else" -> ELSE
+  | "while" -> WHILE
   | s -> IDENT s
   
 
