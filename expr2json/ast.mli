@@ -38,11 +38,13 @@ and expr =
   | Cst of int*ppos
   | Var of string*ppos
   | Binop of binop * expr * expr*ppos
+  | Unop of unop * expr * ppos
   | Call of string * expr list*ppos
   (* | Acces of string * expr * ppos *)
 
 
 
-and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not | Deref | Adr
+and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not 
+and unop = Deref | Adr 
 
 val toJSON : program -> Yojson.t

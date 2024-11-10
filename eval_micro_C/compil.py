@@ -117,9 +117,17 @@ def eval_stmt(stmt, local_env = None):
                 eval_expr(instr["expr"], local_env)
                 list_instr.append("\tpop %rax")
                 if local_env[instr["name"]]["index"] < 0:
-                    list_instr.append("\tmov %rax, %d(%%rbp)"%int(local_env[instr["name"]]["index"]*8))
+                    tmpV = int(local_env[instr["name"]]["index"]*8)
+                    list_instr.append(f"\tmov {tmpV}(%rbp), %rdi")
+                    list_instr.append(f"\tmov %rax, (%rdi)")
                 else:
-                    list_instr.append("\tmov %rax, %d(%%rbp)"%int(local_env[instr["name"]]["index"]*8 + 8))
+                    tmpV = int(local_env[instr["name"]]["index"]*8 + 8)
+                    list_instr.append(f"\tmov {tmpV}(%rbp), %rdi")
+                    list_instr.append(f"\tmov %rax, (%rdi)")
+            elif "%s:"%instr["name"] in list_data:
+                eval_expr(instr["expr"], local_env)
+                list_instr.append("\tpop %rax")
+                list_instr.append("\tmov %rax, %s(%%rip)"%instr["name"])
 
 
         
@@ -227,6 +235,34 @@ def getTypes(expr, local_env):
 def eval_expr(expr, local_env = None):
     if expr["type"] == "cst":
         list_instr.append(f"\tpush ${expr['value']}")
+
+    if expr["type"] == "unop":
+        if expr["unop"] == "&": #address of
+            if expr["e"]["type"] == "var":
+                if expr["e"]["name"] in local_env:
+                    if local_env[expr["e"]["name"]]["index"] < 0:
+                        list_instr.append("\tlea %d(%%rbp), %%rax"%int(local_env[expr["e"]["name"]]["index"]*8))
+                    else:
+                        list_instr.append("\tlea %d(%%rbp), %%rax"%int(local_env[expr["e"]["name"]]["index"]*8 + 8))
+                else:
+                    list_instr.append("\tlea %s(%%rip), %%rax"%expr["e"]["name"])
+                list_instr.append("\tpush %rax")
+            else:
+                raise Interpret_exception("Not a variable", expr)
+        if expr["unop"] == "*": #dereference
+            if expr["e"]["type"] == "var":
+                if expr["e"]["name"] in local_env:
+                    if local_env[expr["e"]["name"]]["index"] < 0:
+                        tmpV = int(local_env[expr["e"]["name"]]["index"]*8)
+                        list_instr.append(f"\tmov {tmpV}(%rbp), %rdi")
+                        list_instr.append(f"\tmov (%rdi), %rax")
+                    else:
+                        tmpV = int(local_env[expr["e"]["name"]]["index"]*8 + 8)
+                        list_instr.append(f"\tmov {tmpV}(%rbp), %rdi")
+                        list_instr.append(f"\tmov (%rdi), %rax")
+                elif "%s:"%expr["e"]["name"] in list_data:
+                    list_instr.append("\tpush %s(%%rip)"%expr["e"]["name"])
+                list_instr.append("\tpush %rax")
 
     if expr["type"] == "binop":
         if expr["binop"] == "+":
@@ -393,18 +429,7 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tmovzb %al, %rax")
             list_instr.append("\tpush %rax")
         
-        if expr["binop"] == "&": #address of
-            if expr["e1"]["type"] == "var":
-                if expr["e1"]["name"] in local_env:
-                    if local_env[expr["e1"]["name"]]["index"] < 0:
-                        list_instr.append("\tlea %d(%%rbp), %%rax"%int(local_env[expr["e1"]["name"]]["index"]*8))
-                    else:
-                        list_instr.append("\tlea %d(%%rbp), %%rax"%int(local_env[expr["e1"]["name"]]["index"]*8 + 8))
-                else:
-                    list_instr.append("\tlea %s(%%rip), %%rax"%expr["e1"]["name"])
-                list_instr.append("\tpush %rax")
-            else:
-                raise Interpret_exception("Not a variable", expr)
+
 
 
     

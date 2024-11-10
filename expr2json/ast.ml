@@ -37,10 +37,12 @@ and expr =
   | Cst of int*ppos
   | Var of string*ppos
   | Binop of binop * expr * expr*ppos
+  | Unop of unop * expr * ppos
   | Call of string * expr list*ppos
   (* | Acces of string * expr * ppos *)
 
-and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not | Deref | Adr
+and binop = Add | Sub | Mul | Div | Mod | Eqeq | Noteq | Lt | Gt | Lteq | Gteq | And | Or | Not 
+and unop = Deref | Adr
 
 
 let rec type_to_string x =
@@ -64,6 +66,8 @@ let binopname = function
   | And -> "&&"
   | Or -> "||"
   | Not -> "!"
+
+  let unopname = function
   | Deref -> "*"
   | Adr -> "&"
 
@@ -84,6 +88,9 @@ let rec toJSONexpr = function
                             "binop", `String (binopname b);
                             "e1", toJSONexpr e1 ;
                             "e2", toJSONexpr e2] @ pos p)
+  | Unop (u,e,p) -> `Assoc ([ "type", `String "unop" ;
+                              "unop", `String (unopname u);
+                              "e", toJSONexpr e] @ pos p)
   | Call(funname, args,p) ->
      `Assoc ([
         "type", `String "application" ;

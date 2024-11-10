@@ -89,8 +89,8 @@ stmt:
 ;
 
 expr:
-| ADR e = expr %prec DEREF {  Binop(Adr, e, Cst(0,$loc), $loc) }
-| TIMES e = expr %prec DEREF {  Binop(Deref, e, Cst(0,$loc), $loc) }
+| ADR e = expr %prec DEREF {  Unop(Adr, e, $loc) }
+| TIMES e = expr %prec DEREF {  Unop(Deref, e, $loc) }
 | c = CST                        { Cst(c,$loc) }
 | fct = IDENT LP args = separated_list(COMMA,expr) RP                 { Call(fct,args,$loc) }
 | id = IDENT                     { Var(id,$loc) }
