@@ -18,8 +18,6 @@ list_data = []
 list_instr = []
 
 
-
-
 functions = {}
 
 def eval_program(program):
@@ -105,11 +103,8 @@ def eval_program(program):
 
                     
 
-posWhile = []
-nbWhile = 0
 
 def eval_stmt(stmt, local_env = None):
-    global nbWhile
     for instr in stmt:
         if instr["action"] == "return":
             eval_expr(instr["expr"], local_env)
@@ -231,29 +226,6 @@ def eval_stmt(stmt, local_env = None):
             list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}end")
             list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
 
-        if instr["action"] == "while":
-
-            posWhile.append(codeFromPos(instr['cond']))
-            list_instr.append(f".L{codeFromPos(instr['cond'])}:")
-            eval_expr(instr["cond"], local_env)
-            list_instr.append("\tpop %rax")
-            list_instr.append("\tcmp $0, %rax")
-            list_instr.append(f"\tje .L{codeFromPos(instr['cond'])}end")
-            eval_stmt(instr["body"], local_env)
-            list_instr.append(f"\tjmp .L{codeFromPos(instr['cond'])}")
-            list_instr.append(f".L{codeFromPos(instr['cond'])}end:")
-            nbWhile -= 1
-
-        if instr["action"] == "break":
-            list_instr.append(f"\tjmp .L{posWhile[nbWhile]}end")
-        
-        if instr["action"] == "continue":
-            list_instr.append(f"\tjmp .L{posWhile[nbWhile]}")
-
-
-
-
-
 
 
 
@@ -360,40 +332,16 @@ def eval_expr(expr, local_env = None):
             eval_expr(expr["e2"], local_env)
             list_instr.append("\tpop %rax")
             list_instr.append("\tpop %rbx")
-            # cast rax and rbx to 0 or 1
-            list_instr.append("\tcmp $0, %rax")
-            list_instr.append("\tsetne %al")
-            list_instr.append("\tmovzb %al, %rax")
-            list_instr.append("\tcmp $0, %rbx")
-            list_instr.append("\tsetne %bl")
-            list_instr.append("\tmovzb %bl, %rbx")
             list_instr.append("\tand %rbx, %rax")
             list_instr.append("\tpush %rax")
-
 
         if expr["binop"] == "||": #normal evaluation
             eval_expr(expr["e1"], local_env)
             eval_expr(expr["e2"], local_env)
             list_instr.append("\tpop %rax")
             list_instr.append("\tpop %rbx")
-            # cast rax and rbx to 0 or 1
-            list_instr.append("\tcmp $0, %rax")
-            list_instr.append("\tsetne %al")
-            list_instr.append("\tmovzb %al, %rax")
-            list_instr.append("\tcmp $0, %rbx")
-            list_instr.append("\tsetne %bl")
-            list_instr.append("\tmovzb %bl, %rbx")
             list_instr.append("\tor %rbx, %rax")
             list_instr.append("\tpush %rax")
-
-        if expr["binop"] == "!":
-            eval_expr(expr["e1"], local_env)
-            list_instr.append("\tpop %rax")
-            list_instr.append("\tcmp $0, %rax")
-            list_instr.append("\tsete %al")
-            list_instr.append("\tmovzb %al, %rax")
-            list_instr.append("\tpush %rax")
-
 
     
     if expr["type"] == "var":

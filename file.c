@@ -1,19 +1,21 @@
-int test_continue_after_instruction() {
-    int i = 0;
-    while (i < 5) {
-        i = i + 1;
-        print_int(i);  // Affiche i avant le continue
-        if (i == 3) {
-            continue;  // Ignore la suite de la boucle lorsque i == 3
-        }
-        print_int(i * 10);  // Cette ligne est ignorée lorsque i == 3
+int both_positive(int a, int b) {
+    if (a > 0 && b > 0) {
+        return 1; // Retourne 1 si a et b sont tous deux positifs
     }
     return 0;
 }
 
-
+int either_positive(int a, int b) {
+    if (a > 0 || b > 0) {
+        return 1; // Retourne 1 si au moins l'un des deux est positif
+    }
+    return 0;
+}
 
 int main() {
-    test_continue_after_instruction();
+    print_int(both_positive(3, 4));    // Devrait afficher 1 (les deux positifs)
+    print_int(both_positive(3, -4));   // Devrait afficher 0 (l'un est négatif)
+    print_int(either_positive(3, -4)); // Devrait afficher 1 (un est positif)
+    print_int(either_positive(-3, -4)); // Devrait afficher 0 (aucun n'est positif)
     return 0;
 }
