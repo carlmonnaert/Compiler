@@ -11,7 +11,6 @@
   | "print_int" -> PRINT_INT
   | "read" -> READ
   | "int" -> INT
-  | "void" -> VOID 
   | "return" -> RETURN
   | "if" -> IF
   | "else" -> ELSE

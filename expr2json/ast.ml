@@ -8,8 +8,6 @@ and gdef =
   | Function of string*declaration list*stmt list*ppos   
   | Gvar of string*ppos
   | GvarInit of string*expr*ppos
-  | FunctionVoid of string*declaration list*stmt list*ppos   
-
 
 and declaration = 
   | DECLARATION of type_var*string
@@ -112,10 +110,7 @@ let toJSONdef = function
                                              "name", `String name ;
                                              "args", `List (List.map toJSONargs args); 
                                              "body", `List (List.map toJSONinst expr)]@pos p)
-  | FunctionVoid(name,args,expr,p) -> `Assoc (["action", `String "fundefvoid";
-                                             "name", `String name ;
-                                             "args", `List (List.map toJSONargs args); 
-                                             "body", `List (List.map toJSONinst expr)]@pos p)
+
 
                                    
 let toJSON p =

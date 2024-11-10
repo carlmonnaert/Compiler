@@ -18,7 +18,6 @@
 %token EQEQ NOT NOTEQ LT GT LTEQ GTEQ
 %token AND OR 
 %token IF ELSE
-%token VOID
 
 
 /* D�finitions des priorit�s et associativit�s des tokens */
@@ -50,7 +49,6 @@ def:
 | INT id = IDENT SEMICOLON { Gvar(id, $loc) }
 | INT id = IDENT EQ e = expr SEMICOLON { GvarInit(id, e, $loc) }
 | INT id = IDENT LP args = separated_list(COMMA,declaration) RP LB body = list(stmt)   RB            { Function(id,args,body,$loc) }
-| VOID id = IDENT LP args = separated_list(COMMA,declaration) RP LB body = list(stmt)   RB            { FunctionVoid(id,args,body,$loc) }
 ;
 
 declaration:
@@ -73,7 +71,6 @@ stmt:
 | id = IDENT EQ e = expr SEMICOLON    { Set(id,e,$loc) }
 | RETURN e = expr SEMICOLON           { Return(e,$loc) }
 | e = expr SEMICOLON                     { Expression(e,$loc) }
-
 ;
 
 expr:
