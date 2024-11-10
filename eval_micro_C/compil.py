@@ -293,7 +293,32 @@ def eval_expr(expr, local_env = None):
             list_instr.append("\tmovzb %al, %rax")
             list_instr.append("\tpush %rax")
 
-            
+        if expr["binop"] == "&&":
+            eval_expr(expr["e1"], local_env)
+            eval_expr(expr["e2"], local_env)
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp $0, %rax")
+            list_instr.append("\tsetne %al")
+            list_instr.append("\tcmp $0, %rbx")
+            list_instr.append("\tsetne %bl")
+            list_instr.append("\tand %bl, %al")
+            list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tpush %rax")
+        
+        if expr["binop"] == "||":
+            eval_expr(expr["e1"], local_env)
+            eval_expr(expr["e2"], local_env)
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tpop %rax")
+            list_instr.append("\tcmp $0, %rax")
+            list_instr.append("\tsetne %al")
+            list_instr.append("\tcmp $0, %rbx")
+            list_instr.append("\tsetne %bl")
+            list_instr.append("\tor %bl, %al")
+            list_instr.append("\tmovzb %al, %rax")
+            list_instr.append("\tpush %rax")        
+        
     
     if expr["type"] == "var":
         if expr["name"] in local_env:
