@@ -9,7 +9,7 @@ int main() {
         i = i + 1;
     }
     i = 0;
-    while(i < 1000) {
+    while(i < 5) {
         print_int(t[i]);
         print_int(b[i]);
         i = i + 1;

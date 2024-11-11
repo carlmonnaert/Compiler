@@ -10,8 +10,7 @@ class Interpret_exception(BaseException):
         self.msg = msg + (" at positions (%d,%d)-(%d,%d)"%pos)
 
 
-def codeFromPos(pos): 
-    # take Pos and return a code
+def codeFromPos(pos):   # take Pos and return a code for the label (if or while)
     return f"{pos['start_line']}{pos['start_char']}{pos['end_line']}{pos['end_char']}"
 
 list_data = []
@@ -36,7 +35,7 @@ def eval_program(program):
         if stmt["action"] == "fundef":
             functions[stmt["name"]] = len(stmt["args"])
     
-    for stmt in program:
+    for stmt in program:                             # the arguments are in positive and the local variables in negative
         if stmt["action"] == "fundef":
             list_instr.append("\t.text")
             list_instr.append("\t.globl " + stmt["name"])
@@ -76,6 +75,8 @@ def eval_program(program):
             list_data.append("%s:"%stmt["name"])
             if stmt["expr"]["type"] == "cst":
                 list_data.append("\t.quad %d"%stmt["expr"]["value"])
+            else:
+                raise Interpret_exception("Not a constant", stmt["expr"])
         elif stmt["action"] == "gtabdef":
             list_data.append(".globl  %s"%stmt["name"])
             list_data.append("%s:"%stmt["name"])
@@ -107,7 +108,7 @@ def eval_stmt(stmt, local_env = None):
                 list_instr.append("\tpop %rax")
                 list_instr.append("\tmov %rax, %rsi")
             
-            list_instr.append("\tleaq format(%rip), %rdi")
+            list_instr.append("\tleaq format(%rip), %rdi")  #for printf, the stack needs to be aligned so we get the missaligned part and we substract it from the stack then we add it back
             list_instr.append("\tmov $0, %eax")
             list_instr.append("\tmov %rsp, %r8")
             list_instr.append("\tand $0xf, %r8 ")
@@ -127,12 +128,10 @@ def eval_stmt(stmt, local_env = None):
                 list_instr.append("\tpop %rax")
                 if local_env[instr["name"]]["index"] < 0:
                     tmpV = int(local_env[instr["name"]]["index"]*8)
-                    list_instr.append(f"\tmov {tmpV}(%rbp), %rdi")
-                    list_instr.append(f"\tmov %rax, (%rdi)")
                 else:
                     tmpV = int(local_env[instr["name"]]["index"]*8 + 8)
-                    list_instr.append(f"\tmov {tmpV}(%rbp), %rdi")
-                    list_instr.append(f"\tmov %rax, (%rdi)")
+                list_instr.append(f"\tmov {tmpV}(%rbp), %rdi")
+                list_instr.append(f"\tmov %rax, (%rdi)")
             elif "%s:"%instr["name"] in list_data:
                 eval_expr(instr["expr"], local_env)
                 list_instr.append("\tpop %rax")
@@ -236,7 +235,7 @@ def eval_stmt(stmt, local_env = None):
 
 
 
-def getTypes(expr, local_env):
+def getTypes(expr, local_env):  #usleful for pointers arithmetic
     if expr["type"] == "cst":
         return "int"
     if expr["type"] == "var":
