@@ -222,6 +222,16 @@ def eval_stmt(stmt, local_env = None):
         
         if instr["action"] == "continue":
             list_instr.append(f"\tjmp .L{posWhile[nbWhile]}")
+        
+        if instr["action"] == "tabset":
+            list_instr.append(f"\tlea {instr['name']}(%rip), %rcx")
+            eval_expr(instr["index"], local_env)
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\timul $8, %rbx")
+            list_instr.append("\tadd %rbx, %rcx")
+            eval_expr(instr["expr"], local_env)
+            list_instr.append("\tpop %rbx")
+            list_instr.append("\tmov %rbx, (%rcx)")
 
 
 
@@ -476,12 +486,12 @@ def eval_expr(expr, local_env = None):
     
     if expr["type"] == "acces":
         eval_expr(expr["expr"], local_env)
+        nom = expr["name"]
         list_instr.append("\tpop %rbx")
         list_instr.append("\timul $8, %rbx")
-        list_instr.append("\tmov %rip, %rdi")
-        list_instr.append("\tadd %rdi, %rbx")
-        list_instr.append(f"\tmov {expr['name']}(%rbx), %rax ")
-        list_instr.append("\tpush %rax")
+        list_instr.append(f"\tlea "+ nom +"(%rip), %rax")
+        list_instr.append("\tadd %rbx, %rax")
+        list_instr.append("\tpush (%rax)")
 
 
 

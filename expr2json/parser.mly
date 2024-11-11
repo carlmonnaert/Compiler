@@ -21,6 +21,7 @@
 %token CONTINUE BREAK
 %token VOID
 %token ADR
+%token SIZEOF_INT
 
 
 /* D�finitions des priorit�s et associativit�s des tokens */
@@ -83,6 +84,7 @@ stmt:
 | tVar = type_var id = IDENT SEMICOLON            { Lvar(tVar,id, $loc) }
 | TIMES id = IDENT EQ e = expr SEMICOLON           { SetPtr(id,e,$loc) }
 | id = IDENT EQ e = expr SEMICOLON    { Set(id,e,$loc) }
+| id = IDENT LC index = expr RC EQ e1 = expr SEMICOLON { SetTab(id,index,e1,$loc) }
 | RETURN e = expr SEMICOLON           { Return(e,$loc) }
 | CONTINUE SEMICOLON                     { Continue($loc) }
 | BREAK SEMICOLON                     { Break($loc) }
@@ -91,6 +93,7 @@ stmt:
 ;
 
 expr:
+| SIZEOF_INT                     { Cst(8,$loc) }
 | ADR e = expr %prec DEREF {  Unop(Adr, e, $loc) }
 | TIMES e = expr %prec DEREF {  Unop(Deref, e, $loc) }
 | c = CST                        { Cst(c,$loc) }
@@ -101,6 +104,7 @@ expr:
 | MINUS e = expr %prec uminus    { Binop (Sub, Cst(0,$loc), e, $loc) } 
 | LP e = expr RP                 { e }
 | id = IDENT LC e = expr RC      { Acces(id,e,$loc) }
+
 ;
 
 %inline op:

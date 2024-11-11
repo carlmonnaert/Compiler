@@ -18,6 +18,7 @@
   | "while" -> WHILE
   | "break" -> BREAK
   | "continue" -> CONTINUE
+  | "sizeof(int)" -> SIZEOF_INT
   | s -> IDENT s
   
 

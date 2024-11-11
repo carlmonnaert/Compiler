@@ -28,6 +28,7 @@ and stmt =
   | LvarInit of type_var*string*expr*ppos
   (* | LtabInit of string*expr*ppos *)
   | Return of expr*ppos
+  | SetTab of string*expr*expr*ppos
   | Set of string*expr*ppos
   | SetPtr of string*expr*ppos
   | Expression of expr*ppos
@@ -105,6 +106,7 @@ let rec toJSONinst = function
   | Print_int(e,p) -> `Assoc (["action", `String "print_int";  "expr", toJSONexpr e]@pos p)
   | Lvar(t,s,p) -> `Assoc (["type" , `String (type_to_string t) ;"action", `String "vardef";  "name", `String s]@pos p)
   | LvarInit(t,s,v,p) -> `Assoc (["type" , `String (type_to_string t) ; "action", `String "varinitdef"; "name", `String s; "expr", toJSONexpr v]@pos p)
+  | SetTab(s,i,v,p) -> `Assoc (["action", `String "tabset"; "name", `String s; "index", toJSONexpr i; "expr", toJSONexpr v]@pos p)
   | Set(s,v,p) -> `Assoc (["action", `String "varset"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | SetPtr(s,v,p) -> `Assoc (["action", `String "ptrset"; "name", `String s; "expr", toJSONexpr v]@pos p)
   | Return(e,p) -> `Assoc (["action", `String "return";"expr", toJSONexpr e]@pos p)

@@ -29,6 +29,7 @@ and stmt =
   | LvarInit of type_var*string*expr*ppos
   (* | LtabInit of string*expr*ppos *)
   | Return of expr*ppos
+  | SetTab of string*expr*expr*ppos
   | Set of string*expr*ppos
   | SetPtr of string*expr*ppos
   | Expression of expr*ppos
