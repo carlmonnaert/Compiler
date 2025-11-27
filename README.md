@@ -1,5 +1,3 @@
-# Compiling/interpreting in RISK-V tools for a set of simplified programming languages such as Python and C
-
 ## Description :
 You will find **2 subprojects** in this repository :
 - A C compiler for RISK-V architectures handlind the main features of the C language (such as pointers).
