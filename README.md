@@ -1,10 +1,11 @@
 # Compiling/interpreting in RISK-V tools for a set of simplified programming languages such as Python and C
 
-## Getting started
+## Description :
 You will find **2 subprojects** in this repository :
-- An interpreter for a simplified version of Python (that we called PtiPython), which interprets Python code in C
 - A C compiler for RISK-V architectures handlind the main features of the C language (such as pointers).
+- An interpreter for a simplified version of Python (that we called PtiPython), which interprets Python code in C
 
+## Getting started :
 ### C compiler
 For this project, the files are located in [eval_micro_C](eval_micro_C). To use the compiler, write C code in [file.c](file.c) and run [compile.sh](compile.sh)
 
