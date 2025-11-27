@@ -62,3 +62,5 @@ and expr =
   | Ecall of string*expr list * ppos
 and binop = Add | Sub | Mul | Div | Mod | Leq | Le | Geq | Ge | Neq | Eq | And | Or
 ```
+# Authors :
+This project was realised by Carl Monnaert, Lukas Tabouri and Mathys Menard and monitored by Louis Jachiet.
