@@ -13,6 +13,7 @@ For this project, the files are located in [eval_micro_C](eval_micro_C). To use 
 Here are the features handled by the compiler:
 - assigning global variables (bool, int, string, pointers)
 - for loops, while loops
+- if else structures
 - defining functions (non recursive only)
 - defining local variables in functions
 - evaluating expressions (artihmetic, logic, strings)
