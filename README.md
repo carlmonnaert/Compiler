@@ -5,10 +5,10 @@ You will find **2 subprojects** in this repository :
 
 # Getting started :
 ## C compiler
-For this project, the files are located in [eval_micro_C](eval_micro_C). To use the compiler, write C code in [file.c](file.c) and run [cc.sh](cc.sh)
+For this project, the files are located in [eval_micro_C](eval_micro_C). To use the compiler, write C code in [file.c](file.c) and run [interpreter.sh](interpreter.sh)
 
 ```bash
-./cc.sh
+./interpreter.sh
 ```
 Here are the features handled by the compiler:
 - assigning global variables (bool, int, string, pointers)
